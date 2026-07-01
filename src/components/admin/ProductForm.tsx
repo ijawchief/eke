@@ -6,11 +6,10 @@ import { Trash2, Eye, EyeOff, Upload, Link2, FileText, X, Download, Image as Ima
 import { Block } from "@/types";
 
 /* ─── tokens ─────────────────────────────────────────────────── */
-const LAVENDER = "#f0f1ff";
 const INDIGO = "#6366f1";
 
-const inp = `w-full rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 border-0`;
-const inpStyle = { background: LAVENDER };
+const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50`;
+const inpStyle = {};
 
 /* ─── step tab bar ───────────────────────────────────────────── */
 const STEPS = [
@@ -36,12 +35,11 @@ function StepTabs({ current, unlocked, onSelect }: {
             disabled={!accessible}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border
               ${active
-                ? "border-indigo-200 text-indigo-600 shadow-sm"
+                ? "border-gray-200 bg-white text-gray-800 shadow-sm"
                 : accessible
-                  ? "border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                  ? "border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                   : "border-transparent text-gray-300 cursor-not-allowed"
               }`}
-            style={active ? { background: LAVENDER } : {}}
           >
             <Icon size={14} />
             {label}
@@ -56,7 +54,7 @@ function StepTabs({ current, unlocked, onSelect }: {
 function Label({ n, text }: { n: number; text: string }) {
   return (
     <div className="flex items-center gap-3 mb-5">
-      <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-gray-500 shrink-0" style={{ background: LAVENDER }}>
+      <div className="w-7 h-7 rounded-full border border-gray-200 bg-white flex items-center justify-center text-xs font-semibold text-gray-400 shrink-0">
         {n}
       </div>
       <h2 className="text-sm font-semibold text-gray-800">{text}</h2>
@@ -97,14 +95,14 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
   const Btn = ({ onClick, title, active, children }: { onClick: () => void; title: string; active?: boolean; children: React.ReactNode }) => (
     <button type="button" title={title} onClick={onClick}
       className={`w-7 h-7 flex items-center justify-center rounded text-sm font-medium transition-colors
-        ${active ? "bg-indigo-100 text-indigo-600" : "text-gray-500 hover:bg-indigo-100 hover:text-indigo-600"}`}>
+        ${active ? "bg-indigo-100 text-indigo-600" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}>
       {children}
     </button>
   );
 
   return (
-    <div className="rounded-xl overflow-hidden" style={{ background: LAVENDER }}>
-      <div className="flex items-center gap-0.5 px-3 py-2 border-b border-indigo-100">
+    <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+      <div className="flex items-center gap-0.5 px-3 py-2 border-b border-gray-200 bg-white">
         {!htmlMode && (
           <>
             <Btn onClick={() => exec("formatBlock", "p")} title="Normal">
@@ -388,8 +386,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 placeholder="e.g. The Ultimate Content Playbook"
                 className={inp} style={inpStyle} />
               {!isEdit && (
-                <div className="mt-3 flex items-center rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400" style={{ background: LAVENDER }}>
-                  <span className="px-3 py-3 text-sm text-gray-400 shrink-0 border-r border-indigo-100">/p/</span>
+                <div className="mt-3 flex items-center rounded-xl overflow-hidden border border-gray-200 bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-400 focus-within:border-transparent">
+                  <span className="px-3 py-3 text-sm text-gray-400 shrink-0 border-r border-gray-200">/p/</span>
                   <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)}
                     placeholder="my-product" className="flex-1 px-3 py-3 text-sm focus:outline-none text-gray-800 placeholder-gray-400 bg-transparent" />
                 </div>
@@ -404,7 +402,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 onClick={() => !thumbUploading && thumbInputRef.current?.click()}
               >
                 <div className="flex flex-col items-center gap-5 py-10 px-6">
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: LAVENDER }}>
+                  <div className="w-16 h-16 rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center">
                     {thumbUploading
                       ? <svg className="animate-spin w-6 h-6" style={{ color: INDIGO }} fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                       : <Upload size={22} className="text-indigo-400" />
@@ -496,7 +494,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <p className="text-xs text-gray-400 mb-3">Fields shown at checkout</p>
               <div className="space-y-2 mb-3">
                 {collectFields.map((f) => (
-                  <div key={f.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl ${f.hidden ? "opacity-40" : ""}`} style={{ background: LAVENDER }}>
+                  <div key={f.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 ${f.hidden ? "opacity-40" : ""}`}>
                     <span className="w-4 text-center text-xs text-gray-400 shrink-0">{f.icon}</span>
                     <span className="flex-1 text-sm text-gray-700">{f.label}</span>
                     {f.locked
@@ -540,8 +538,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 </div>
               ) : (
                 <button onClick={() => setAddingField(true)}
-                  className="w-full py-3 rounded-xl text-sm font-medium border transition-colors hover:bg-indigo-50"
-                  style={{ borderColor: INDIGO, color: INDIGO }}>
+                  className="w-full py-3 rounded-xl text-sm font-medium border border-indigo-300 text-indigo-500 transition-colors hover:bg-indigo-50">
                   + Add Field
                 </button>
               )}
@@ -552,15 +549,13 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <Label n={6} text="Upload your Digital Product" />
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-gray-400">Files are sent to the customer automatically after purchase</p>
-                <div className="flex rounded-xl overflow-hidden border shrink-0 ml-4" style={{ borderColor: INDIGO }}>
+                <div className="flex rounded-xl overflow-hidden border border-gray-200 shrink-0 ml-4">
                   <button onClick={() => setDeliverMode("file")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors"
-                    style={{ background: deliverMode === "file" ? INDIGO : "white", color: deliverMode === "file" ? "white" : INDIGO }}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "file" ? "bg-indigo-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
                     <Upload size={12} /> Upload File
                   </button>
                   <button onClick={() => setDeliverMode("url")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors"
-                    style={{ background: deliverMode === "url" ? INDIGO : "white", color: deliverMode === "url" ? "white" : INDIGO }}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "url" ? "bg-indigo-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
                     <Link2 size={12} /> Redirect to URL
                   </button>
                 </div>
@@ -596,7 +591,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                       }} />
                   </div>
                   {uploadedFile && (
-                    <div className="mt-3 flex items-center gap-3 rounded-xl px-4 py-3" style={{ background: LAVENDER }}>
+                    <div className="mt-3 flex items-center gap-3 rounded-xl px-4 py-3 border border-gray-100 bg-gray-50">
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
                         <span className="text-white text-xs font-bold">✓</span>
                       </div>
@@ -621,7 +616,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             {/* Active toggle */}
             <div className="mb-8">
               <Label n={7} text="Visibility" />
-              <div className="flex items-center justify-between rounded-xl px-4 py-4" style={{ background: LAVENDER }}>
+              <div className="flex items-center justify-between rounded-xl px-4 py-4 border border-gray-100 bg-gray-50">
                 <div>
                   <p className="text-sm font-medium text-gray-700">Product active</p>
                   <p className="text-xs text-gray-400 mt-0.5">Visible and purchasable by buyers</p>
@@ -655,11 +650,10 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             {/* Email & Webhooks */}
             <div className="mb-8">
               <Label n={9} text="Email & Webhooks" />
-              <div className="flex gap-1 p-1 rounded-xl mb-4" style={{ background: LAVENDER }}>
+              <div className="flex gap-1 p-1 rounded-xl mb-4 border border-gray-200 bg-gray-50">
                 {(["Pixels", "Email & Webhooks"] as const).map((t) => (
                   <button key={t} onClick={() => setOptionsTab(t)}
-                    className="flex-1 py-2 text-xs font-medium rounded-lg transition-colors"
-                    style={{ background: optionsTab === t ? "white" : "transparent", color: optionsTab === t ? "#111" : "#9ca3af" }}>
+                    className={`flex-1 py-2 text-xs font-medium rounded-lg transition-colors ${optionsTab === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}>
                     {t}
                   </button>
                 ))}
