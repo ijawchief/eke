@@ -1,127 +1,145 @@
 import { getServiceClient } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, ExternalLink, Pencil, Radio, Mail } from "lucide-react";
+import { Plus, ExternalLink, Pencil, GripVertical, Download, MoreHorizontal } from "lucide-react";
 
-function formatNaira(kobo: number) {
+const PINK = "#e91e8c";
+
+function fmt(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
+}
+
+function getThumbnail(blocks: { type: string; data: Record<string, unknown> }[]): string | null {
+  const img = blocks?.find((b) => b.type === "image");
+  return img ? (img.data.url as string) ?? null : null;
 }
 
 export default async function ProductsPage() {
   const db = getServiceClient();
   const { data: products } = await db
     .from("product")
-    .select("id, name, slug, price_kobo, active, created_at, meta_pixel_id, tiktok_pixel_id, webhook_url")
+    .select("id, name, slug, price_kobo, active, created_at, page_blocks, external_url")
     .order("created_at", { ascending: false });
 
+  const list = products ?? [];
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-400 text-sm mt-1">{(products ?? []).length} total</p>
+    <div className="max-w-2xl">
+      {/* Header */}
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">My Store</h1>
+
+      {/* Tab bar */}
+      <div className="flex items-center gap-1 mb-6 border-b border-gray-100">
+        <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px"
+          style={{ color: PINK, borderColor: PINK }}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+          Store
+        </button>
+        <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors border-b-2 border-transparent -mb-px">
+          <ExternalLink size={13} />
+          Landing Pages
+        </button>
+        <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors border-b-2 border-transparent -mb-px">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" strokeWidth="1.5"/><path d="M7 1v2M7 11v2M1 7h2M11 7h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          Edit Design
+        </button>
+      </div>
+
+      {/* Store profile card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4 flex items-center gap-4">
+        <div className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-xl shrink-0"
+          style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
+          E
         </div>
-        <Link
-          href="/admin/products/new"
-          className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm"
-        >
+        <div>
+          <p className="font-bold text-gray-900">Eke Store</p>
+          <p className="text-sm text-gray-400">@eke</p>
+        </div>
+      </div>
+
+      {/* Product list card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
+        {list.length === 0 ? (
+          <div className="text-center py-16 px-6">
+            <p className="text-4xl mb-3">📦</p>
+            <p className="font-semibold text-gray-700 mb-1">No products yet</p>
+            <p className="text-sm text-gray-400">Add your first digital product to start selling.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {list.map((p: {
+              id: string; name: string; slug: string; price_kobo: number;
+              active: boolean; page_blocks: { type: string; data: Record<string, unknown> }[];
+              external_url: string | null;
+            }) => {
+              const thumb = getThumbnail(p.page_blocks ?? []);
+              const hasFile = p.external_url !== null;
+              return (
+                <div key={p.id} className="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors group">
+                  {/* Drag handle */}
+                  <GripVertical size={16} className="text-gray-300 shrink-0 cursor-grab" />
+
+                  {/* Thumbnail */}
+                  <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-gray-100 bg-gray-50">
+                    {thumb
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={thumb} alt="" className="w-full h-full object-cover" />
+                      : <div className="w-full h-full flex items-center justify-center"
+                            style={{ background: "linear-gradient(135deg, #f3f0ff, #fff0f8)" }}>
+                          <span className="text-sm font-bold" style={{ color: PINK }}>
+                            {p.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                    }
+                  </div>
+
+                  {/* Name + price */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-semibold text-gray-800 text-sm truncate">{p.name}</p>
+                      {hasFile && <Download size={12} className="text-gray-400 shrink-0" />}
+                      {!p.active && (
+                        <span className="text-[10px] font-bold bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Draft</span>
+                      )}
+                    </div>
+                    <p className="text-sm font-bold mt-0.5" style={{ color: PINK }}>{fmt(p.price_kobo)}</p>
+                  </div>
+
+                  {/* Hover actions */}
+                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Link href={`/admin/products/${p.id}`}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                      title="Edit">
+                      <Pencil size={13} />
+                    </Link>
+                    <a href={`/p/${p.slug}`} target="_blank" rel="noopener noreferrer"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                      title="View page">
+                      <ExternalLink size={13} />
+                    </a>
+                  </div>
+
+                  <button className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-500 transition-colors">
+                    <MoreHorizontal size={15} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Add Product */}
+        <Link href="/admin/products/new"
+          className="flex items-center justify-center gap-2 w-full py-4 text-sm font-bold text-white"
+          style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
           <Plus size={16} />
-          New Product
+          Add Product
         </Link>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        {(products ?? []).length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <p className="mb-3 text-4xl">📦</p>
-            <p className="font-medium mb-1">No products yet</p>
-            <Link href="/admin/products/new" className="text-pink-500 hover:underline text-sm">
-              Create your first product
-            </Link>
-          </div>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wide">
-                <th className="text-left px-6 py-4">Name</th>
-                <th className="text-left px-6 py-4">Slug</th>
-                <th className="text-left px-6 py-4">Price</th>
-                <th className="text-left px-6 py-4">Status</th>
-                <th className="text-left px-6 py-4">Tracking</th>
-                <th className="text-left px-6 py-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {(products ?? []).map((p: {
-                id: string; name: string; slug: string; price_kobo: number; active: boolean;
-                meta_pixel_id?: string | null; tiktok_pixel_id?: string | null; webhook_url?: string | null;
-              }) => (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-gray-800">{p.name}</td>
-                  <td className="px-6 py-4 text-gray-400 font-mono text-xs">/p/{p.slug}</td>
-                  <td className="px-6 py-4 font-semibold">{formatNaira(p.price_kobo)}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      p.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-                    }`}>
-                      {p.active ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      {p.meta_pixel_id && (
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">Meta</span>
-                      )}
-                      {p.tiktok_pixel_id && (
-                        <span className="px-2 py-0.5 bg-black text-white text-xs font-semibold rounded-full">TikTok</span>
-                      )}
-                      {p.webhook_url && (
-                        <span className="px-2 py-0.5 bg-purple-100 text-purple-600 text-xs font-semibold rounded-full">Hook</span>
-                      )}
-                      {!p.meta_pixel_id && !p.tiktok_pixel_id && !p.webhook_url && (
-                        <span className="text-gray-300 text-xs">None</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href={`/admin/products/${p.id}`}
-                        className="text-gray-400 hover:text-pink-500 transition-colors"
-                        title="Edit product"
-                      >
-                        <Pencil size={15} />
-                      </Link>
-                      <Link
-                        href={`/admin/products/${p.id}?tab=tracking`}
-                        className={`transition-colors ${p.meta_pixel_id || p.tiktok_pixel_id ? "text-blue-500 hover:text-blue-700" : "text-gray-300 hover:text-blue-400"}`}
-                        title="Pixel & CAPI settings"
-                      >
-                        <Radio size={15} />
-                      </Link>
-                      <Link
-                        href={`/admin/products/${p.id}?tab=email`}
-                        className={`transition-colors ${p.webhook_url ? "text-purple-500 hover:text-purple-700" : "text-gray-300 hover:text-purple-400"}`}
-                        title="Email & webhook settings"
-                      >
-                        <Mail size={15} />
-                      </Link>
-                      <a
-                        href={`/p/${p.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                        title="View product page"
-                      >
-                        <ExternalLink size={15} />
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {/* Add Section */}
+      <p className="text-center text-sm font-medium" style={{ color: PINK }}>
+        + Add Section
+      </p>
     </div>
   );
 }
