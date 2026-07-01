@@ -6,9 +6,9 @@ import { Trash2, Eye, EyeOff, Upload, Link2, FileText, X, Download, Image as Ima
 import { Block } from "@/types";
 
 /* ─── tokens ─────────────────────────────────────────────────── */
-const INDIGO = "#6366f1";
+const PINK = "#e91e8c";
 
-const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50`;
+const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent bg-gray-50`;
 const inpStyle = {};
 
 /* ─── step tab bar ───────────────────────────────────────────── */
@@ -95,7 +95,7 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
   const Btn = ({ onClick, title, active, children }: { onClick: () => void; title: string; active?: boolean; children: React.ReactNode }) => (
     <button type="button" title={title} onClick={onClick}
       className={`w-7 h-7 flex items-center justify-center rounded text-sm font-medium transition-colors
-        ${active ? "bg-indigo-100 text-indigo-600" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}>
+        ${active ? "bg-pink-100 text-pink-600" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}>
       {children}
     </button>
   );
@@ -168,10 +168,10 @@ function PreviewCard({ name, subtitle, price, compareAt, thumbnail, ctaText }: {
         <p className="font-bold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">{name || "Product title"}</p>
         {subtitle && <p className="text-xs text-gray-500 mb-2 leading-snug line-clamp-2">{subtitle}</p>}
         <div className="flex items-baseline gap-1.5 mb-3">
-          <span className="text-sm font-bold" style={{ color: INDIGO }}>{fmt(price) || "₦0"}</span>
+          <span className="text-sm font-bold" style={{ color: PINK }}>{fmt(price) || "₦0"}</span>
           {compareAt && <span className="text-xs text-gray-400 line-through">{fmt(compareAt)}</span>}
         </div>
-        <button className="w-full text-white text-xs font-bold py-2 rounded-xl uppercase tracking-wide" style={{ background: INDIGO }}>
+        <button className="w-full text-white text-xs font-bold py-2 rounded-xl uppercase tracking-wide" style={{ background: PINK }}>
           {ctaText || "PURCHASE"}
         </button>
       </div>
@@ -386,7 +386,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 placeholder="e.g. The Ultimate Content Playbook"
                 className={inp} style={inpStyle} />
               {!isEdit && (
-                <div className="mt-3 flex items-center rounded-xl overflow-hidden border border-gray-200 bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-400 focus-within:border-transparent">
+                <div className="mt-3 flex items-center rounded-xl overflow-hidden border border-gray-200 bg-gray-50 focus-within:ring-2 focus-within:ring-pink-400 focus-within:border-transparent">
                   <span className="px-3 py-3 text-sm text-gray-400 shrink-0 border-r border-gray-200">/p/</span>
                   <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)}
                     placeholder="my-product" className="flex-1 px-3 py-3 text-sm focus:outline-none text-gray-800 placeholder-gray-400 bg-transparent" />
@@ -398,14 +398,14 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             <div className="mb-10">
               <Label n={2} text="Select image" />
               <div
-                className="border border-dashed border-gray-200 rounded-2xl cursor-pointer hover:border-indigo-300 transition-colors"
+                className="border border-dashed border-gray-200 rounded-2xl cursor-pointer hover:border-pink-300 transition-colors"
                 onClick={() => !thumbUploading && thumbInputRef.current?.click()}
               >
                 <div className="flex flex-col items-center gap-5 py-10 px-6">
                   <div className="w-16 h-16 rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center">
                     {thumbUploading
-                      ? <svg className="animate-spin w-6 h-6" style={{ color: INDIGO }} fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                      : <Upload size={22} className="text-indigo-400" />
+                      ? <svg className="animate-spin w-6 h-6" style={{ color: PINK }} fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                      : <Upload size={22} className="text-pink-400" />
                     }
                   </div>
                   <div className="text-center">
@@ -477,7 +477,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                     <label className="text-xs text-gray-500">Discount Price (₦)</label>
                     <button onClick={() => setDiscountEnabled(!discountEnabled)}
                       className="relative w-9 h-5 rounded-full transition-colors"
-                      style={{ background: discountEnabled ? INDIGO : "#d1d5db" }}>
+                      style={{ background: discountEnabled ? PINK : "#d1d5db" }}>
                       <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${discountEnabled ? "translate-x-4" : ""}`} />
                     </button>
                   </div>
@@ -504,7 +504,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                           <span className="text-xs text-gray-400">Required</span>
                           <button onClick={() => setCollectFields(collectFields.map((x) => x.id === f.id ? { ...x, required: !x.required } : x))}
                             className="relative w-8 h-4 rounded-full transition-colors shrink-0"
-                            style={{ background: f.required ? INDIGO : "#d1d5db" }}>
+                            style={{ background: f.required ? PINK : "#d1d5db" }}>
                             <span className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${f.required ? "translate-x-4" : ""}`} />
                           </button>
                           <button onClick={() => setCollectFields(collectFields.map((x) => x.id === f.id ? { ...x, hidden: !x.hidden } : x))}
@@ -533,12 +533,12 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   <button onClick={() => {
                     if (newFieldLabel.trim()) setCollectFields([...collectFields, { id: crypto.randomUUID(), label: newFieldLabel.trim(), icon: "✏", required: false, hidden: false }]);
                     setNewFieldLabel(""); setAddingField(false);
-                  }} className="text-white text-sm px-4 rounded-xl shrink-0" style={{ background: INDIGO }}>Add</button>
+                  }} className="text-white text-sm px-4 rounded-xl shrink-0" style={{ background: PINK }}>Add</button>
                   <button onClick={() => setAddingField(false)} className="text-gray-400 text-sm px-2">Cancel</button>
                 </div>
               ) : (
                 <button onClick={() => setAddingField(true)}
-                  className="w-full py-3 rounded-xl text-sm font-medium border border-indigo-300 text-indigo-500 transition-colors hover:bg-indigo-50">
+                  className="w-full py-3 rounded-xl text-sm font-medium border border-pink-300 text-pink-500 transition-colors hover:bg-pink-50">
                   + Add Field
                 </button>
               )}
@@ -551,11 +551,11 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 <p className="text-xs text-gray-400">Files are sent to the customer automatically after purchase</p>
                 <div className="flex rounded-xl overflow-hidden border border-gray-200 shrink-0 ml-4">
                   <button onClick={() => setDeliverMode("file")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "file" ? "bg-indigo-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "file" ? "bg-pink-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
                     <Upload size={12} /> Upload File
                   </button>
                   <button onClick={() => setDeliverMode("url")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "url" ? "bg-indigo-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "url" ? "bg-pink-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
                     <Link2 size={12} /> Redirect to URL
                   </button>
                 </div>
@@ -565,11 +565,11 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   placeholder="https://your-platform.com/your-product" className={inp} style={inpStyle} />
               ) : (
                 <div>
-                  <div className="border border-dashed border-gray-200 rounded-2xl p-8 text-center cursor-pointer hover:border-indigo-300 transition-colors"
+                  <div className="border border-dashed border-gray-200 rounded-2xl p-8 text-center cursor-pointer hover:border-pink-300 transition-colors"
                     onClick={() => !fileUploading && fileInputRef.current?.click()}>
                     {fileUploading ? (
                       <div className="flex flex-col items-center gap-2">
-                        <svg className="animate-spin w-6 h-6" style={{ color: INDIGO }} fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin w-6 h-6" style={{ color: PINK }} fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                         </svg>
@@ -622,7 +622,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   <p className="text-xs text-gray-400 mt-0.5">Visible and purchasable by buyers</p>
                 </div>
                 <button onClick={() => setActive(!active)} className="relative w-11 h-6 rounded-full transition-colors"
-                  style={{ background: active ? INDIGO : "#d1d5db" }}>
+                  style={{ background: active ? PINK : "#d1d5db" }}>
                   <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${active ? "translate-x-5" : ""}`} />
                 </button>
               </div>
@@ -698,13 +698,13 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             {isLastStep ? (
               <button onClick={() => handleSave("publish")} disabled={!!saving}
                 className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors"
-                style={{ background: INDIGO }}>
+                style={{ background: PINK }}>
                 {saving === "publish" ? "Publishing…" : isEdit ? "Save Changes" : "Publish"}
               </button>
             ) : (
               <button onClick={advanceStep}
                 className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
-                style={{ background: INDIGO }}>
+                style={{ background: PINK }}>
                 Next →
               </button>
             )}
