@@ -44,7 +44,7 @@ export default async function ProductsPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">My Store</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Assets</h1>
 
       {/* Product cards */}
       {list.length === 0 ? (
