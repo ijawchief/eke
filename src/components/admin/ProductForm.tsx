@@ -43,11 +43,11 @@ function StepTabs({ current, unlocked, onSelect }: {
             key={id}
             onClick={() => accessible && onSelect(id)}
             disabled={!accessible}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all border
               ${accessible ? "cursor-pointer" : "cursor-not-allowed opacity-40"}`}
             style={active
               ? { background: c.bg, color: c.text, borderColor: c.border }
-              : { background: "transparent", color: "#9ca3af", borderColor: "transparent" }
+              : { background: "transparent", color: "#374151", borderColor: "transparent" }
             }
           >
             <Icon size={14} />
