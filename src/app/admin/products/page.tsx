@@ -1,13 +1,10 @@
 import { getServiceClient } from "@/lib/supabase";
+import { getCurrencyFromCookie, getRates, formatCurrency } from "@/lib/currency";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { Plus, ExternalLink, Pencil, GripVertical, Download, MoreHorizontal, TrendingUp } from "lucide-react";
 
-
 const PINK = "#e91e8c";
-
-function fmt(kobo: number) {
-  return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
-}
 
 function getThumbnail(blocks: { type: string; data: Record<string, unknown> }[]): string | null {
   const img = blocks?.find((b) => b.type === "image");
@@ -16,6 +13,10 @@ function getThumbnail(blocks: { type: string; data: Record<string, unknown> }[])
 
 export default async function ProductsPage() {
   const db = getServiceClient();
+  const h = await headers();
+  const currency = getCurrencyFromCookie(h.get("cookie") ?? "");
+  const rates = await getRates();
+  const fmt = (kobo: number) => formatCurrency(kobo, currency, rates);
 
   const [{ data: products }, { data: revenueRows }] = await Promise.all([
     db.from("product")
