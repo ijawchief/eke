@@ -8,7 +8,16 @@ import { Block } from "@/types";
 /* ─── tokens ─────────────────────────────────────────────────── */
 const PINK = "#e91e8c";
 
-const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent bg-gray-50`;
+// Per-step accent colours: Thumbnail=violet, Checkout=pink, Options=cyan
+const STEP_COLORS = [
+  { bg: "#f3f0ff", text: "#7c3aed", border: "#ddd6fe", pill: "#7c3aed" },   // violet
+  { bg: "#fff0f8", text: "#e91e8c", border: "#fce7f3", pill: "#e91e8c" },   // pink
+  { bg: "#ecfeff", text: "#0891b2", border: "#cffafe", pill: "#0891b2" },   // cyan
+];
+
+const SECTION_ACCENT = ["#7c3aed", "#7c3aed", "#e91e8c", "#e91e8c", "#e91e8c", "#e91e8c", "#0891b2", "#0891b2", "#0891b2"];
+
+const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent bg-white`;
 const inpStyle = {};
 
 /* ─── step tab bar ───────────────────────────────────────────── */
@@ -28,18 +37,18 @@ function StepTabs({ current, unlocked, onSelect }: {
       {STEPS.map(({ id, label, Icon }) => {
         const active = current === id;
         const accessible = id <= unlocked;
+        const c = STEP_COLORS[id];
         return (
           <button
             key={id}
             onClick={() => accessible && onSelect(id)}
             disabled={!accessible}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border
-              ${active
-                ? "border-gray-200 bg-white text-gray-800 shadow-sm"
-                : accessible
-                  ? "border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                  : "border-transparent text-gray-300 cursor-not-allowed"
-              }`}
+              ${accessible ? "cursor-pointer" : "cursor-not-allowed opacity-40"}`}
+            style={active
+              ? { background: c.bg, color: c.text, borderColor: c.border }
+              : { background: "transparent", color: "#9ca3af", borderColor: "transparent" }
+            }
           >
             <Icon size={14} />
             {label}
@@ -52,9 +61,11 @@ function StepTabs({ current, unlocked, onSelect }: {
 
 /* ─── section label ──────────────────────────────────────────── */
 function Label({ n, text }: { n: number; text: string }) {
+  const accent = SECTION_ACCENT[n - 1] ?? PINK;
   return (
     <div className="flex items-center gap-3 mb-5">
-      <div className="w-7 h-7 rounded-full border border-gray-200 bg-white flex items-center justify-center text-xs font-semibold text-gray-400 shrink-0">
+      <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+        style={{ background: accent }}>
         {n}
       </div>
       <h2 className="text-sm font-semibold text-gray-800">{text}</h2>
@@ -398,25 +409,27 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             <div className="mb-10">
               <Label n={2} text="Select image" />
               <div
-                className="border border-dashed border-gray-200 rounded-2xl cursor-pointer hover:border-pink-300 transition-colors"
+                className="rounded-2xl cursor-pointer transition-all overflow-hidden border-2 border-dashed border-violet-200 hover:border-violet-400"
                 onClick={() => !thumbUploading && thumbInputRef.current?.click()}
+                style={{ background: "linear-gradient(135deg, #f3f0ff 0%, #fff0f8 100%)" }}
               >
-                <div className="flex flex-col items-center gap-5 py-10 px-6">
-                  <div className="w-16 h-16 rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-5 py-12 px-6">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm"
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
                     {thumbUploading
-                      ? <svg className="animate-spin w-6 h-6" style={{ color: PINK }} fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                      : <Upload size={22} className="text-pink-400" />
+                      ? <svg className="animate-spin w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                      : <Upload size={22} className="text-white" />
                     }
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-gray-500 font-medium mb-1">
+                    <p className="text-sm font-semibold mb-1" style={{ color: "#7c3aed" }}>
                       {thumbUploading ? "Uploading image…" : "Drop your thumbnail here"}
                     </p>
                     <p className="text-xs text-gray-400">PNG, JPG, WEBP · Recommended 400×400</p>
                   </div>
-                  <button
-                    type="button"
-                    className="px-5 py-2 rounded-xl text-sm font-medium text-gray-700 border border-gray-200 hover:bg-gray-50 pointer-events-none">
+                  <button type="button"
+                    className="px-5 py-2 rounded-xl text-sm font-semibold text-white pointer-events-none shadow-sm"
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
                     Choose Image
                   </button>
                 </div>
@@ -494,7 +507,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <p className="text-xs text-gray-400 mb-3">Fields shown at checkout</p>
               <div className="space-y-2 mb-3">
                 {collectFields.map((f) => (
-                  <div key={f.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 ${f.hidden ? "opacity-40" : ""}`}>
+                  <div key={f.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 bg-white shadow-sm ${f.hidden ? "opacity-40" : ""}`}
+                    style={{ borderLeftColor: PINK, borderTop: "1px solid #fce7f3", borderRight: "1px solid #fce7f3", borderBottom: "1px solid #fce7f3" }}>
                     <span className="w-4 text-center text-xs text-gray-400 shrink-0">{f.icon}</span>
                     <span className="flex-1 text-sm text-gray-700">{f.label}</span>
                     {f.locked
@@ -565,7 +579,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   placeholder="https://your-platform.com/your-product" className={inp} style={inpStyle} />
               ) : (
                 <div>
-                  <div className="border border-dashed border-gray-200 rounded-2xl p-8 text-center cursor-pointer hover:border-pink-300 transition-colors"
+                  <div className="rounded-2xl p-8 text-center cursor-pointer transition-all border-2 border-dashed border-pink-200 hover:border-pink-400"
+                    style={{ background: "linear-gradient(135deg, #fff0f8 0%, #ecfeff 100%)" }}
                     onClick={() => !fileUploading && fileInputRef.current?.click()}>
                     {fileUploading ? (
                       <div className="flex flex-col items-center gap-2">
@@ -616,7 +631,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             {/* Active toggle */}
             <div className="mb-8">
               <Label n={7} text="Visibility" />
-              <div className="flex items-center justify-between rounded-xl px-4 py-4 border border-gray-100 bg-gray-50">
+              <div className="flex items-center justify-between rounded-xl px-4 py-4 border border-cyan-100"
+                style={{ background: "linear-gradient(135deg, #ecfeff 0%, #f0fdfa 100%)" }}>
                 <div>
                   <p className="text-sm font-medium text-gray-700">Product active</p>
                   <p className="text-xs text-gray-400 mt-0.5">Visible and purchasable by buyers</p>
@@ -697,14 +713,14 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
             {isLastStep ? (
               <button onClick={() => handleSave("publish")} disabled={!!saving}
-                className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors"
-                style={{ background: PINK }}>
-                {saving === "publish" ? "Publishing…" : isEdit ? "Save Changes" : "Publish"}
+                className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-all shadow-md"
+                style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)", boxShadow: "0 4px 16px #e91e8c44" }}>
+                {saving === "publish" ? "Publishing…" : isEdit ? "Save Changes" : "🚀 Publish"}
               </button>
             ) : (
               <button onClick={advanceStep}
-                className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
-                style={{ background: PINK }}>
+                className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all shadow-md"
+                style={{ background: STEP_COLORS[step].pill, boxShadow: `0 4px 14px ${STEP_COLORS[step].pill}44` }}>
                 Next →
               </button>
             )}
