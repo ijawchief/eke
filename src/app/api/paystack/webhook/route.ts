@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
   // Get customer
   const { data: customer } = await db
     .from("customer")
-    .select("email, phone")
+    .select("email, name, phone")
     .eq("id", order.customer_id)
     .single();
 
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
   const productIds = (items ?? []).map((i: { product_id: string }) => i.product_id);
   const { data: products } = await db
     .from("product")
-    .select("id, name, external_url, delivery_type, file_ref")
+    .select("id, name, external_url, delivery_type, file_ref, meta_pixel_id, meta_capi_token, webhook_url")
     .in("id", productIds);
 
   const fulfillments = (products ?? []).map((p: { id: string; delivery_type: string; external_url: string | null; file_ref: string | null }) => ({
@@ -91,8 +91,13 @@ export async function POST(req: NextRequest) {
 
   if (fulfillments.length) await db.from("fulfillment").insert(fulfillments);
 
-  // CAPI + email (fire and forget — errors must not affect 200 response)
+  // CAPI + email + marketing webhooks (fire and forget)
   const attribution = order.attribution as Record<string, string | null>;
+  const primaryProduct = (products ?? [])[0] as {
+    id: string; name: string; delivery_type: string; external_url: string | null; file_ref: string | null;
+    meta_pixel_id?: string | null; meta_capi_token?: string | null; webhook_url?: string | null;
+  } | undefined;
+
   Promise.allSettled([
     sendCapiPurchase({
       eventId: order.event_id,
@@ -103,6 +108,28 @@ export async function POST(req: NextRequest) {
       fbp: attribution?.fbp ?? undefined,
       fbc: attribution?.fbc ?? undefined,
       sourceUrl: attribution?.landing_url ?? undefined,
+      pixelId: primaryProduct?.meta_pixel_id,
+      accessToken: primaryProduct?.meta_capi_token,
+    }),
+    // Fire email marketing webhook for each product that has one
+    ...(products ?? []).map(async (p: { id: string; name: string; delivery_type: string; external_url: string | null; file_ref: string | null; webhook_url?: string | null }) => {
+      if (p.webhook_url && customer?.email) {
+        fetch(p.webhook_url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event: "purchase",
+            email: customer.email,
+            name: customer.name,
+            phone: customer.phone,
+            product_id: p.id,
+            product_name: p.name,
+            amount_kobo: order.total_kobo,
+            currency: order.currency,
+            order_ref: reference,
+          }),
+        }).catch(() => {});
+      }
     }),
     ...(products ?? []).map(async (p: { id: string; name: string; delivery_type: string; external_url: string | null; file_ref: string | null }) => {
       if (customer?.email) {

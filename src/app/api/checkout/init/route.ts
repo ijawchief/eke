@@ -5,7 +5,9 @@ import { randomUUID } from "crypto";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { product_id, email, phone, bump_product_id, attribution } = body;
+  const { product_id, email, name, phone, bump_product_id, attribution } = body;
+  const country = req.headers.get("x-vercel-ip-country") ?? null;
+  const city = req.headers.get("x-vercel-ip-city") ?? null;
 
   if (!product_id || !email) {
     return NextResponse.json({ error: "product_id and email are required" }, { status: 400 });
@@ -42,7 +44,7 @@ export async function POST(req: NextRequest) {
   // Upsert customer
   const { data: customer, error: custErr } = await db
     .from("customer")
-    .upsert({ email: email.toLowerCase().trim(), phone: phone || null }, { onConflict: "email" })
+    .upsert({ email: email.toLowerCase().trim(), name: name || null, phone: phone || null }, { onConflict: "email" })
     .select("id")
     .single();
 
@@ -65,6 +67,8 @@ export async function POST(req: NextRequest) {
       paystack_reference: paystackReference,
       attribution: attribution ?? {},
       event_id: eventId,
+      country,
+      city,
     })
     .select("id")
     .single();

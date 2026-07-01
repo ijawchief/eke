@@ -19,9 +19,11 @@ export async function sendCapiPurchase(params: {
   clientIp?: string;
   clientUserAgent?: string;
   sourceUrl?: string;
+  pixelId?: string | null;
+  accessToken?: string | null;
 }) {
-  const pixelId = process.env.META_PIXEL_ID;
-  const token = process.env.META_CAPI_ACCESS_TOKEN;
+  const pixelId = params.pixelId ?? process.env.META_PIXEL_ID;
+  const token = params.accessToken ?? process.env.META_CAPI_ACCESS_TOKEN;
   if (!pixelId || !token) return;
 
   const userData: Record<string, string> = {
