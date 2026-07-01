@@ -31,13 +31,16 @@ function Section({ n, title, children }: { n: number; title: string; children: R
 /* ─── simple rich text editor ────────────────────────────────── */
 function RichEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const imgInputRef = useRef<HTMLInputElement>(null);
+  const [htmlMode, setHtmlMode] = useState(false);
+  const [imgUploading, setImgUploading] = useState(false);
 
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
+    if (!htmlMode && editorRef.current && editorRef.current.innerHTML !== value) {
       editorRef.current.innerHTML = value;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [htmlMode]);
 
   const exec = (cmd: string, val?: string) => {
     editorRef.current?.focus();
@@ -45,12 +48,22 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
     if (editorRef.current) onChange(editorRef.current.innerHTML);
   };
 
-  const ToolBtn = ({ onClick, children, title }: { onClick: () => void; children: React.ReactNode; title: string }) => (
+  const handleImgUpload = async (file: File) => {
+    setImgUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+    const data = await res.json();
+    if (data.url) exec("insertImage", data.url);
+    setImgUploading(false);
+  };
+
+  const ToolBtn = ({ onClick, children, title, active }: { onClick: () => void; children: React.ReactNode; title: string; active?: boolean }) => (
     <button
       type="button"
       title={title}
       onClick={onClick}
-      className="w-7 h-7 flex items-center justify-center rounded hover:bg-indigo-100 text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium"
+      className={`w-7 h-7 flex items-center justify-center rounded transition-colors text-sm font-medium ${active ? "bg-indigo-100 text-indigo-600" : "hover:bg-indigo-100 text-gray-500 hover:text-indigo-600"}`}
     >
       {children}
     </button>
@@ -60,34 +73,64 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
     <div className="rounded-xl overflow-hidden" style={{ background: LAVENDER }}>
       {/* toolbar */}
       <div className="flex items-center gap-0.5 px-3 py-2 border-b border-indigo-100">
-        <ToolBtn onClick={() => exec("formatBlock", "p")} title="Normal text">
-          <span className="text-xs font-bold border border-gray-400 px-0.5 rounded">A</span>
-        </ToolBtn>
-        <ToolBtn onClick={() => exec("bold")} title="Bold"><b>B</b></ToolBtn>
-        <ToolBtn onClick={() => exec("italic")} title="Italic"><i>I</i></ToolBtn>
-        <ToolBtn onClick={() => exec("insertUnorderedList")} title="Bullet list">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="2" cy="3.5" r="1.5" fill="currentColor"/><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="7" r="1.5" fill="currentColor"/><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="10.5" r="1.5" fill="currentColor"/><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
-        </ToolBtn>
-        <div className="w-px h-4 bg-gray-200 mx-1" />
-        <ToolBtn onClick={() => exec("insertImage", prompt("Image URL") ?? "")} title="Image">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/><circle cx="4.5" cy="4.5" r="1" fill="currentColor"/><path d="M1 10l3-3 2 2 3-4 4 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        </ToolBtn>
-        <ToolBtn onClick={() => { const u = prompt("Video URL"); if (u) exec("insertHTML", `<br/><a href="${u}">${u}</a><br/>`); }} title="Video">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="9" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M10 5.5l3-2v7l-3-2V5.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>
-        </ToolBtn>
-        <ToolBtn onClick={() => { const u = prompt("URL"); if (u) exec("createLink", u); }} title="Link">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 8.5a3 3 0 004.243 0l1.414-1.414a3 3 0 00-4.243-4.243L5.5 4.257" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M8.5 5.5a3 3 0 00-4.243 0L2.843 6.914a3 3 0 004.243 4.243L8.5 9.743" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        {!htmlMode && (
+          <>
+            <ToolBtn onClick={() => exec("formatBlock", "p")} title="Normal text">
+              <span className="text-xs font-bold border border-gray-400 px-0.5 rounded">A</span>
+            </ToolBtn>
+            <ToolBtn onClick={() => exec("bold")} title="Bold"><b>B</b></ToolBtn>
+            <ToolBtn onClick={() => exec("italic")} title="Italic"><i>I</i></ToolBtn>
+            <ToolBtn onClick={() => exec("insertUnorderedList")} title="Bullet list">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="2" cy="3.5" r="1.5" fill="currentColor"/><rect x="5" y="2.5" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="7" r="1.5" fill="currentColor"/><rect x="5" y="6" width="8" height="2" rx="1" fill="currentColor"/><circle cx="2" cy="10.5" r="1.5" fill="currentColor"/><rect x="5" y="9.5" width="8" height="2" rx="1" fill="currentColor"/></svg>
+            </ToolBtn>
+            <div className="w-px h-4 bg-gray-200 mx-1" />
+            <ToolBtn onClick={() => imgInputRef.current?.click()} title={imgUploading ? "Uploading…" : "Upload image"}>
+              {imgUploading
+                ? <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                : <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/><circle cx="4.5" cy="4.5" r="1" fill="currentColor"/><path d="M1 10l3-3 2 2 3-4 4 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              }
+            </ToolBtn>
+            <input ref={imgInputRef} type="file" accept="image/*" className="hidden"
+              onChange={async (e) => { const f = e.target.files?.[0]; if (f) await handleImgUpload(f); e.target.value = ""; }} />
+            <ToolBtn onClick={() => { const u = prompt("Video URL"); if (u) exec("insertHTML", `<br/><a href="${u}">${u}</a><br/>`); }} title="Video">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="9" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M10 5.5l3-2v7l-3-2V5.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>
+            </ToolBtn>
+            <ToolBtn onClick={() => { const u = prompt("URL"); if (u) exec("createLink", u); }} title="Link">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 8.5a3 3 0 004.243 0l1.414-1.414a3 3 0 00-4.243-4.243L5.5 4.257" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M8.5 5.5a3 3 0 00-4.243 0L2.843 6.914a3 3 0 004.243 4.243L8.5 9.743" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            </ToolBtn>
+          </>
+        )}
+        <div className="flex-1" />
+        <ToolBtn
+          onClick={() => {
+            if (!htmlMode && editorRef.current) onChange(editorRef.current.innerHTML);
+            setHtmlMode(!htmlMode);
+          }}
+          title={htmlMode ? "Switch to visual editor" : "Edit raw HTML"}
+          active={htmlMode}
+        >
+          <span className="text-[10px] font-bold tracking-tight">&lt;/&gt;</span>
         </ToolBtn>
       </div>
       {/* editable area */}
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={() => { if (editorRef.current) onChange(editorRef.current.innerHTML); }}
-        className="min-h-[160px] px-4 py-3 text-sm text-gray-700 focus:outline-none prose prose-sm max-w-none"
-        style={{ lineHeight: 1.6 }}
-      />
+      {htmlMode ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full min-h-[200px] px-4 py-3 text-xs text-gray-700 focus:outline-none font-mono resize-y bg-transparent"
+          placeholder="<p>Enter HTML here…</p>"
+          spellCheck={false}
+        />
+      ) : (
+        <div
+          ref={editorRef}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={() => { if (editorRef.current) onChange(editorRef.current.innerHTML); }}
+          className="min-h-[160px] px-4 py-3 text-sm text-gray-700 focus:outline-none prose prose-sm max-w-none"
+          style={{ lineHeight: 1.6 }}
+        />
+      )}
     </div>
   );
 }
