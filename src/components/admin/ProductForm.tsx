@@ -2,214 +2,104 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, GripVertical } from "lucide-react";
-import { Block, BlockType } from "@/types";
+import { Check, Trash2, Plus, ChevronRight, ChevronLeft } from "lucide-react";
+import { Block } from "@/types";
 
-const BLOCK_TYPES: { type: BlockType; label: string }[] = [
-  { type: "hero", label: "Hero" },
-  { type: "text", label: "Text" },
-  { type: "image", label: "Image" },
-  { type: "video", label: "Video" },
-  { type: "bullet_list", label: "Bullet List" },
-  { type: "testimonial", label: "Testimonial" },
-  { type: "faq", label: "FAQ" },
-  { type: "countdown", label: "Countdown" },
-  { type: "divider", label: "Divider" },
+/* ─── helpers ─────────────────────────────────────────────── */
+const PRODUCT_TYPES = [
+  {
+    id: "digital",
+    label: "Digital Product",
+    icon: "📦",
+    desc: "File, link, or access delivered automatically after purchase.",
+  },
+  {
+    id: "external",
+    label: "External Link",
+    icon: "🔗",
+    desc: "Redirect buyer to an external platform (Teachable, Notion, etc.).",
+  },
+] as const;
+
+type ProductType = (typeof PRODUCT_TYPES)[number]["id"];
+
+interface CollectField {
+  key: string;
+  label: string;
+  required: boolean;
+  enabled: boolean;
+}
+
+const DEFAULT_FIELDS: CollectField[] = [
+  { key: "name", label: "Full Name", required: false, enabled: true },
+  { key: "email", label: "Email Address", required: true, enabled: true },
+  { key: "phone", label: "Phone Number", required: false, enabled: true },
 ];
 
-function defaultData(type: BlockType): Record<string, unknown> {
-  switch (type) {
-    case "hero": return { headline: "", subheadline: "", badge: "" };
-    case "text": return { content: "" };
-    case "image": return { url: "", alt: "", caption: "" };
-    case "video": return { url: "" };
-    case "bullet_list": return { heading: "", items: [""] };
-    case "testimonial": return { quote: "", name: "", title: "", avatar: "" };
-    case "faq": return { heading: "FAQ", items: [{ q: "", a: "" }] };
-    case "countdown": return { deadline: "", label: "" };
-    case "divider": return {};
-    default: return {};
-  }
-}
+/* ─── step indicator ───────────────────────────────────────── */
+const STEPS = ["Type", "Display", "Pricing", "Content", "Collect Info"];
 
-function BlockEditor({ block, onChange, onRemove }: {
-  block: Block;
-  onChange: (data: Record<string, unknown>) => void;
-  onRemove: () => void;
-}) {
-  const { type, data } = block;
-  const str = (key: string) => (data[key] as string) ?? "";
-  const arr = <T,>(key: string) => (data[key] as T[]) ?? [];
-
-  const field = (key: string, label: string, multiline = false) => (
-    <div key={key}>
-      <label className="block text-xs text-white/50 mb-1">{label}</label>
-      {multiline ? (
-        <textarea
-          value={str(key)}
-          onChange={(e) => onChange({ ...data, [key]: e.target.value })}
-          rows={3}
-          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-        />
-      ) : (
-        <input
-          type="text"
-          value={str(key)}
-          onChange={(e) => onChange({ ...data, [key]: e.target.value })}
-          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-        />
-      )}
-    </div>
-  );
-
+function StepIndicator({ current }: { current: number }) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <GripVertical size={14} className="text-white/20" />
-          <span className="text-xs font-semibold uppercase tracking-wide text-white/60">
-            {BLOCK_TYPES.find((b) => b.type === type)?.label ?? type}
-          </span>
+    <div className="flex items-center gap-0 mb-10">
+      {STEPS.map((label, i) => (
+        <div key={i} className="flex items-center">
+          <div className="flex flex-col items-center">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                i < current
+                  ? "bg-indigo-500 text-white"
+                  : i === current
+                  ? "bg-indigo-500 text-white ring-4 ring-indigo-100"
+                  : "bg-gray-100 text-gray-400"
+              }`}
+            >
+              {i < current ? <Check size={14} strokeWidth={3} /> : i + 1}
+            </div>
+            <span
+              className={`text-xs mt-1.5 font-medium whitespace-nowrap ${
+                i === current ? "text-indigo-600" : "text-gray-400"
+              }`}
+            >
+              {label}
+            </span>
+          </div>
+          {i < STEPS.length - 1 && (
+            <div
+              className={`h-px w-12 mx-1 mb-5 transition-colors ${
+                i < current ? "bg-indigo-400" : "bg-gray-200"
+              }`}
+            />
+          )}
         </div>
-        <button onClick={onRemove} className="text-white/30 hover:text-red-400 transition-colors">
-          <Trash2 size={14} />
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {type === "hero" && (
-          <>
-            {field("headline", "Headline")}
-            {field("subheadline", "Subheadline")}
-            {field("badge", "Badge (optional)")}
-          </>
-        )}
-        {type === "text" && field("content", "Content", true)}
-        {type === "image" && (
-          <>
-            {field("url", "Image URL")}
-            {field("alt", "Alt text")}
-            {field("caption", "Caption (optional)")}
-          </>
-        )}
-        {type === "video" && field("url", "Video URL (YouTube / Vimeo / direct)")}
-        {type === "bullet_list" && (
-          <>
-            {field("heading", "Heading (optional)")}
-            <div>
-              <label className="block text-xs text-white/50 mb-2">Items</label>
-              <div className="space-y-2">
-                {arr<string>("items").map((item, i) => (
-                  <div key={i} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={item}
-                      onChange={(e) => {
-                        const items = [...arr<string>("items")];
-                        items[i] = e.target.value;
-                        onChange({ ...data, items });
-                      }}
-                      className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                    />
-                    <button
-                      onClick={() => {
-                        const items = arr<string>("items").filter((_, j) => j !== i);
-                        onChange({ ...data, items });
-                      }}
-                      className="text-white/30 hover:text-red-400"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() => onChange({ ...data, items: [...arr<string>("items"), ""] })}
-                  className="text-xs text-blue-400 hover:underline"
-                >
-                  + Add item
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-        {type === "testimonial" && (
-          <>
-            {field("quote", "Quote", true)}
-            {field("name", "Name")}
-            {field("title", "Title / Role")}
-            {field("avatar", "Avatar URL (optional)")}
-          </>
-        )}
-        {type === "faq" && (
-          <>
-            {field("heading", "Section heading")}
-            <div>
-              <label className="block text-xs text-white/50 mb-2">Questions</label>
-              <div className="space-y-3">
-                {arr<{ q: string; a: string }>("items").map((item, i) => (
-                  <div key={i} className="bg-white/5 rounded-lg p-3 space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Question"
-                      value={item.q}
-                      onChange={(e) => {
-                        const items = [...arr<{ q: string; a: string }>("items")];
-                        items[i] = { ...items[i], q: e.target.value };
-                        onChange({ ...data, items });
-                      }}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                    />
-                    <textarea
-                      placeholder="Answer"
-                      value={item.a}
-                      rows={2}
-                      onChange={(e) => {
-                        const items = [...arr<{ q: string; a: string }>("items")];
-                        items[i] = { ...items[i], a: e.target.value };
-                        onChange({ ...data, items });
-                      }}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                    />
-                    <button
-                      onClick={() => {
-                        const items = arr<{ q: string; a: string }>("items").filter((_, j) => j !== i);
-                        onChange({ ...data, items });
-                      }}
-                      className="text-xs text-red-400 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() => onChange({ ...data, items: [...arr<{ q: string; a: string }>("items"), { q: "", a: "" }] })}
-                  className="text-xs text-blue-400 hover:underline"
-                >
-                  + Add question
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-        {type === "countdown" && (
-          <>
-            <div>
-              <label className="block text-xs text-white/50 mb-1">Deadline</label>
-              <input
-                type="datetime-local"
-                value={str("deadline")}
-                onChange={(e) => onChange({ ...data, deadline: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            {field("label", "Label (e.g. Offer ends in)")}
-          </>
-        )}
-      </div>
+      ))}
     </div>
   );
 }
 
+/* ─── reusable field components ────────────────────────────── */
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+      {children}
+      {hint && <p className="text-xs text-gray-400 mt-1.5">{hint}</p>}
+    </div>
+  );
+}
+
+const inputCls =
+  "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white";
+
+/* ─── main form ────────────────────────────────────────────── */
 interface ProductFormProps {
   initialData?: {
     id: string;
@@ -227,64 +117,176 @@ interface ProductFormProps {
     from_email?: string | null;
     webhook_url?: string | null;
   };
+  defaultTab?: "page" | "tracking" | "email";
 }
 
-export function ProductForm({ initialData, defaultTab = "page" }: ProductFormProps & { defaultTab?: "page" | "tracking" | "email" }) {
+export function ProductForm({ initialData, defaultTab = "page" }: ProductFormProps) {
   const router = useRouter();
   const isEdit = !!initialData;
 
+  /* wizard step */
+  const [step, setStep] = useState(isEdit ? -1 : 0);
+
+  /* step 1 – type */
+  const [productType, setProductType] = useState<ProductType>("digital");
+
+  /* step 2 – display */
   const [name, setName] = useState(initialData?.name ?? "");
   const [slug, setSlug] = useState(initialData?.slug ?? "");
+  const [thumbnail, setThumbnail] = useState<string>(() => {
+    const imgBlock = (initialData?.page_blocks ?? []).find((b) => b.type === "image");
+    return imgBlock ? (imgBlock.data.url as string) ?? "" : "";
+  });
+  const [subtitle, setSubtitle] = useState<string>(() => {
+    const heroBlock = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
+    return heroBlock ? (heroBlock.data.subheadline as string) ?? "" : "";
+  });
+  const [ctaText, setCtaText] = useState("Get Instant Access");
+
+  /* step 3 – pricing */
   const [price, setPrice] = useState(initialData ? String(initialData.price_kobo / 100) : "");
-  const [compareAt, setCompareAt] = useState(initialData?.compare_at_kobo ? String(initialData.compare_at_kobo / 100) : "");
-  const [externalUrl, setExternalUrl] = useState(initialData?.external_url ?? "");
+  const [discountEnabled, setDiscountEnabled] = useState(!!initialData?.compare_at_kobo);
+  const [compareAt, setCompareAt] = useState(
+    initialData?.compare_at_kobo ? String(initialData.compare_at_kobo / 100) : ""
+  );
+  const [deliveryLink, setDeliveryLink] = useState(initialData?.external_url ?? "");
+
+  /* step 4 – content */
+  const [description, setDescription] = useState<string>(() => {
+    const textBlock = (initialData?.page_blocks ?? []).find((b) => b.type === "text");
+    return textBlock ? (textBlock.data.content as string) ?? "" : "";
+  });
+  const [bullets, setBullets] = useState<string[]>(() => {
+    const bulletBlock = (initialData?.page_blocks ?? []).find((b) => b.type === "bullet_list");
+    return bulletBlock ? (bulletBlock.data.items as string[]) ?? [""] : [""];
+  });
+  const [bulletsHeading, setBulletsHeading] = useState<string>(() => {
+    const bulletBlock = (initialData?.page_blocks ?? []).find((b) => b.type === "bullet_list");
+    return bulletBlock ? (bulletBlock.data.heading as string) ?? "" : "";
+  });
+
+  /* step 5 – collect info */
+  const [collectFields, setCollectFields] = useState<CollectField[]>(DEFAULT_FIELDS);
+
+  /* settings (edit mode) */
   const [active, setActive] = useState(initialData?.active ?? true);
-  const [blocks, setBlocks] = useState<Block[]>(initialData?.page_blocks ?? []);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [addingBlock, setAddingBlock] = useState(false);
-  const [activeTab, setActiveTab] = useState<"page" | "tracking" | "email">(defaultTab);
-  // Tracking
   const [metaPixelId, setMetaPixelId] = useState(initialData?.meta_pixel_id ?? "");
   const [metaCapiToken, setMetaCapiToken] = useState(initialData?.meta_capi_token ?? "");
   const [tiktokPixelId, setTiktokPixelId] = useState(initialData?.tiktok_pixel_id ?? "");
-  // Email / abandonment
   const [fromName, setFromName] = useState(initialData?.from_name ?? "");
   const [fromEmail, setFromEmail] = useState(initialData?.from_email ?? "");
   const [webhookUrl, setWebhookUrl] = useState(initialData?.webhook_url ?? "");
 
+  /* edit-mode tabs */
+  const EDIT_TABS = ["Display", "Pricing", "Content", "Collect Info", "Pixels", "Email & Webhooks"] as const;
+  type EditTab = (typeof EDIT_TABS)[number];
+  const defaultEditTab: EditTab =
+    defaultTab === "tracking" ? "Pixels" : defaultTab === "email" ? "Email & Webhooks" : "Display";
+  const [editTab, setEditTab] = useState<EditTab>(defaultEditTab);
+
+  /* save */
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
   const handleNameChange = (v: string) => {
     setName(v);
-    if (!isEdit) setSlug(v.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
+    if (!isEdit)
+      setSlug(
+        v
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")
+      );
   };
 
-  const addBlock = (type: BlockType) => {
-    const block: Block = { id: crypto.randomUUID(), type, data: defaultData(type) };
-    setBlocks((prev) => [...prev, block]);
-    setAddingBlock(false);
-  };
+  function buildBlocks(): Block[] {
+    const blocks: Block[] = [];
+    if (name) {
+      blocks.push({
+        id: crypto.randomUUID(),
+        type: "hero",
+        data: { headline: name, subheadline: subtitle, badge: "" },
+      });
+    }
+    if (description) {
+      blocks.push({ id: crypto.randomUUID(), type: "text", data: { content: description } });
+    }
+    const filledBullets = bullets.filter(Boolean);
+    if (filledBullets.length) {
+      blocks.push({
+        id: crypto.randomUUID(),
+        type: "bullet_list",
+        data: { heading: bulletsHeading, items: filledBullets },
+      });
+    }
+    if (thumbnail) {
+      blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
+    }
+    return blocks;
+  }
 
-  const updateBlock = (id: string, data: Record<string, unknown>) => {
-    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, data } : b)));
-  };
+  function buildBlocksForEdit(): Block[] {
+    const existing = initialData?.page_blocks ?? [];
+    const otherBlocks = existing.filter(
+      (b) => !["hero", "text", "bullet_list", "image"].includes(b.type)
+    );
 
-  const removeBlock = (id: string) => {
-    setBlocks((prev) => prev.filter((b) => b.id !== id));
-  };
+    const blocks: Block[] = [];
+    if (name) {
+      const existing_hero = existing.find((b) => b.type === "hero");
+      blocks.push({
+        id: existing_hero?.id ?? crypto.randomUUID(),
+        type: "hero",
+        data: { headline: name, subheadline: subtitle, badge: existing_hero?.data.badge ?? "" },
+      });
+    }
+    if (description) {
+      const existing_text = existing.find((b) => b.type === "text");
+      blocks.push({
+        id: existing_text?.id ?? crypto.randomUUID(),
+        type: "text",
+        data: { content: description },
+      });
+    }
+    const filledBullets = bullets.filter(Boolean);
+    if (filledBullets.length) {
+      const existing_bullet = existing.find((b) => b.type === "bullet_list");
+      blocks.push({
+        id: existing_bullet?.id ?? crypto.randomUUID(),
+        type: "bullet_list",
+        data: { heading: bulletsHeading, items: filledBullets },
+      });
+    }
+    if (thumbnail) {
+      const existing_img = existing.find((b) => b.type === "image");
+      blocks.push({
+        id: existing_img?.id ?? crypto.randomUUID(),
+        type: "image",
+        data: { url: thumbnail, alt: name },
+      });
+    }
+    return [...blocks, ...otherBlocks];
+  }
 
   const handleSave = async () => {
-    if (!name || !slug || !price) { setError("Name, slug, and price are required"); return; }
+    if (!name || !slug || !price) {
+      setError("Name, slug, and price are required");
+      return;
+    }
     setError("");
     setSaving(true);
+
+    const page_blocks = isEdit ? buildBlocksForEdit() : buildBlocks();
 
     const payload = {
       name,
       slug,
       price_kobo: Math.round(parseFloat(price) * 100),
-      compare_at_kobo: compareAt ? Math.round(parseFloat(compareAt) * 100) : null,
-      external_url: externalUrl || null,
+      compare_at_kobo:
+        discountEnabled && compareAt ? Math.round(parseFloat(compareAt) * 100) : null,
+      external_url: deliveryLink || null,
       active,
-      page_blocks: blocks,
+      page_blocks,
       meta_pixel_id: metaPixelId || null,
       meta_capi_token: metaCapiToken || null,
       tiktok_pixel_id: tiktokPixelId || null,
@@ -293,7 +295,9 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
       webhook_url: webhookUrl || null,
     };
 
-    const url = isEdit ? `/api/admin/products/${initialData!.id}` : "/api/admin/products";
+    const url = isEdit
+      ? `/api/admin/products/${initialData!.id}`
+      : "/api/admin/products";
     const method = isEdit ? "PATCH" : "POST";
 
     const res = await fetch(url, {
@@ -312,256 +316,541 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     }
   };
 
-  return (
-    <div className="max-w-3xl">
-      {/* Basic info */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6">
-        <h2 className="text-sm font-semibold text-white/60 mb-4">Basic Info</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-xs text-white/50 mb-1">Product Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-              placeholder="e.g. Digital Marketing Masterclass"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-white/50 mb-1">Slug (URL)</label>
-            <div className="flex items-center gap-2">
-              <span className="text-white/30 text-sm">/p/</span>
-              <input
-                type="text"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                placeholder="my-product"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-white/50 mb-1">Price (₦)</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                placeholder="19999"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-white/50 mb-1">Compare-at Price (₦)</label>
-              <input
-                type="number"
-                value={compareAt}
-                onChange={(e) => setCompareAt(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                placeholder="29999 (optional)"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs text-white/50 mb-1">Course / Delivery Link</label>
-            <input
-              type="url"
-              value={externalUrl}
-              onChange={(e) => setExternalUrl(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-              placeholder="https://your-course-platform.com/your-course"
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActive(!active)}
-              className={`relative w-10 h-5 rounded-full transition-colors ${active ? "bg-blue-600" : "bg-white/20"}`}
-            >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${active ? "translate-x-5" : ""}`} />
-            </button>
-            <span className="text-sm text-white/60">{active ? "Active (visible to buyers)" : "Inactive (hidden)"}</span>
-          </div>
-        </div>
-      </div>
+  /* ── WIZARD (new product) ─────────────────────────────────── */
+  if (!isEdit) {
+    return (
+      <div className="max-w-2xl">
+        <StepIndicator current={step} />
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1">
-        {(["page", "tracking", "email"] as const).map((t) => (
+        {/* Step 0 – Type */}
+        {step === 0 && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">Choose product type</h2>
+            <p className="text-sm text-gray-500 mb-6">What are you selling?</p>
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {PRODUCT_TYPES.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setProductType(t.id)}
+                  className={`text-left p-5 rounded-2xl border-2 transition-all ${
+                    productType === t.id
+                      ? "border-indigo-500 bg-indigo-50"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <div className="text-3xl mb-3">{t.icon}</div>
+                  <p className="font-semibold text-gray-900 text-sm mb-1">{t.label}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">{t.desc}</p>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setStep(1)}
+              className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
+            >
+              Continue <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* Step 1 – Display */}
+        {step === 1 && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">Customize display</h2>
+            <p className="text-sm text-gray-500 mb-6">How your product appears to buyers.</p>
+            <div className="space-y-5 mb-8">
+              <Field label="Product title" hint="This is the headline buyers see first.">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder="e.g. Ultimate Marketing Playbook"
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="URL slug">
+                <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400 bg-white">
+                  <span className="px-3 py-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 shrink-0">/p/</span>
+                  <input
+                    type="text"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    placeholder="my-product"
+                    className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white text-gray-800 placeholder-gray-400"
+                  />
+                </div>
+              </Field>
+              <Field label="Thumbnail image URL" hint="Shown at the top of your product page. Paste an image link.">
+                <input type="url" value={thumbnail} onChange={(e) => setThumbnail(e.target.value)} placeholder="https://…/image.jpg" className={inputCls} />
+                {thumbnail && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={thumbnail} alt="" className="mt-2 h-24 w-full object-cover rounded-xl" />
+                )}
+              </Field>
+              <Field label="Subtitle" hint="One-line tagline shown below the title.">
+                <input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="e.g. The fastest path to results — backed by 500+ students" className={inputCls} />
+              </Field>
+              <Field label="Button text">
+                <input type="text" value={ctaText} onChange={(e) => setCtaText(e.target.value)} placeholder="Get Instant Access" className={inputCls} />
+              </Field>
+            </div>
+            <NavButtons onBack={() => setStep(0)} onNext={() => setStep(2)} nextDisabled={!name} />
+          </div>
+        )}
+
+        {/* Step 2 – Pricing */}
+        {step === 2 && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">Set your price</h2>
+            <p className="text-sm text-gray-500 mb-6">How much does this product cost?</p>
+            <div className="space-y-5 mb-8">
+              <Field label="Price (₦)">
+                <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400 bg-white">
+                  <span className="px-3 py-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200">₦</span>
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="5000"
+                    className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white text-gray-800 placeholder-gray-400"
+                  />
+                </div>
+              </Field>
+
+              <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Discount price</p>
+                  <p className="text-xs text-gray-400">Show a strikethrough original price</p>
+                </div>
+                <button
+                  onClick={() => setDiscountEnabled(!discountEnabled)}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${discountEnabled ? "bg-indigo-500" : "bg-gray-200"}`}
+                >
+                  <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${discountEnabled ? "translate-x-5" : ""}`} />
+                </button>
+              </div>
+
+              {discountEnabled && (
+                <Field label="Original price (₦)" hint="This shows as a strikethrough above the sale price.">
+                  <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400 bg-white">
+                    <span className="px-3 py-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200">₦</span>
+                    <input
+                      type="number"
+                      value={compareAt}
+                      onChange={(e) => setCompareAt(e.target.value)}
+                      placeholder="9000"
+                      className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white text-gray-800 placeholder-gray-400"
+                    />
+                  </div>
+                </Field>
+              )}
+
+              <Field
+                label={productType === "external" ? "Redirect URL" : "Delivery link"}
+                hint={productType === "external" ? "Buyers are sent here after purchase." : "Link, file URL, or course access sent to buyers after purchase."}
+              >
+                <input type="url" value={deliveryLink} onChange={(e) => setDeliveryLink(e.target.value)} placeholder="https://…" className={inputCls} />
+              </Field>
+            </div>
+            <NavButtons onBack={() => setStep(1)} onNext={() => setStep(3)} nextDisabled={!price} />
+          </div>
+        )}
+
+        {/* Step 3 – Content */}
+        {step === 3 && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">Add content</h2>
+            <p className="text-sm text-gray-500 mb-6">Describe what buyers are getting.</p>
+            <div className="space-y-5 mb-8">
+              <Field label="Description" hint="A few sentences about what this product includes.">
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  placeholder="This template includes the following sections…"
+                  className={inputCls}
+                />
+              </Field>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Bullet points</label>
+                <Field label="" hint="List the key benefits or features.">
+                  <input
+                    type="text"
+                    value={bulletsHeading}
+                    onChange={(e) => setBulletsHeading(e.target.value)}
+                    placeholder="This is for you if you want to:"
+                    className={`${inputCls} mb-3`}
+                  />
+                  <div className="space-y-2">
+                    {bullets.map((item, i) => (
+                      <div key={i} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={item}
+                          onChange={(e) => {
+                            const next = [...bullets];
+                            next[i] = e.target.value;
+                            setBullets(next);
+                          }}
+                          placeholder={`Benefit ${i + 1}`}
+                          className={inputCls}
+                        />
+                        {bullets.length > 1 && (
+                          <button
+                            onClick={() => setBullets(bullets.filter((_, j) => j !== i))}
+                            className="text-gray-300 hover:text-red-400 shrink-0"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => setBullets([...bullets, ""])}
+                      className="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium mt-1"
+                    >
+                      <Plus size={13} /> Add bullet
+                    </button>
+                  </div>
+                </Field>
+              </div>
+            </div>
+            <NavButtons onBack={() => setStep(2)} onNext={() => setStep(4)} />
+          </div>
+        )}
+
+        {/* Step 4 – Collect Info */}
+        {step === 4 && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">Collect info</h2>
+            <p className="text-sm text-gray-500 mb-6">Which fields should buyers fill in at checkout?</p>
+            <div className="space-y-3 mb-8">
+              {collectFields.map((f) => (
+                <div
+                  key={f.key}
+                  className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3.5"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{f.label}</p>
+                    {f.required && (
+                      <p className="text-xs text-gray-400">Always required</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (f.required) return;
+                      setCollectFields(
+                        collectFields.map((x) =>
+                          x.key === f.key ? { ...x, enabled: !x.enabled } : x
+                        )
+                      );
+                    }}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${
+                      f.enabled ? "bg-indigo-500" : "bg-gray-200"
+                    } ${f.required ? "opacity-50 cursor-not-allowed" : ""}`}
+                  >
+                    <span
+                      className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                        f.enabled ? "translate-x-5" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-xl mb-4">{error}</p>
+            )}
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setStep(3)}
+                className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 font-medium px-4 py-3 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                <ChevronLeft size={16} /> Back
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
+              >
+                {saving ? "Saving…" : "Save Product"}
+                {!saving && <Check size={16} strokeWidth={3} />}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  /* ── EDIT MODE ───────────────────────────────────────────── */
+  return (
+    <div className="max-w-2xl">
+      {/* Tab bar */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-8 overflow-x-auto">
+        {EDIT_TABS.map((t) => (
           <button
             key={t}
-            onClick={() => setActiveTab(t)}
-            className={`flex-1 py-2 text-sm font-semibold rounded-lg capitalize transition-colors ${
-              activeTab === t ? "bg-blue-600 text-white" : "text-white/40 hover:text-white"
+            onClick={() => setEditTab(t)}
+            className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              editTab === t
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            {t === "page" ? "Page Builder" : t === "tracking" ? "Pixel & CAPI" : "Email & Webhooks"}
+            {t}
           </button>
         ))}
       </div>
 
-      {/* Tracking tab */}
-      {activeTab === "tracking" && (
-        <div className="space-y-6 mb-6">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-white mb-1">Meta (Facebook) Pixel</h2>
-            <p className="text-xs text-white/40 mb-4">These override any global Meta pixel for this product specifically.</p>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs text-white/50 mb-1">Pixel ID</label>
-                <input
-                  type="text"
-                  value={metaPixelId}
-                  onChange={(e) => setMetaPixelId(e.target.value)}
-                  placeholder="e.g. 123456789012345"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-white/50 mb-1">Conversions API Access Token</label>
-                <input
-                  type="password"
-                  value={metaCapiToken}
-                  onChange={(e) => setMetaCapiToken(e.target.value)}
-                  placeholder="EAAG… (from Events Manager → Settings)"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                />
-              </div>
+      {/* Display tab */}
+      {editTab === "Display" && (
+        <div className="space-y-5">
+          <Field label="Product title">
+            <input type="text" value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Product title" className={inputCls} />
+          </Field>
+          <Field label="URL slug">
+            <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400 bg-white">
+              <span className="px-3 py-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 shrink-0">/p/</span>
+              <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white text-gray-800 placeholder-gray-400" />
             </div>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-white mb-1">TikTok Pixel</h2>
-            <p className="text-xs text-white/40 mb-4">PageView + ViewContent fires on load. InitiateCheckout fires when buyer opens the form. Purchase fires via TikTok Events API on payment (coming soon).</p>
+          </Field>
+          <Field label="Thumbnail image URL">
+            <input type="url" value={thumbnail} onChange={(e) => setThumbnail(e.target.value)} placeholder="https://…/image.jpg" className={inputCls} />
+            {thumbnail && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={thumbnail} alt="" className="mt-2 h-24 w-full object-cover rounded-xl" />
+            )}
+          </Field>
+          <Field label="Subtitle">
+            <input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="One-line tagline" className={inputCls} />
+          </Field>
+          <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
             <div>
-              <label className="block text-xs text-white/50 mb-1">Pixel ID</label>
-              <input
-                type="text"
-                value={tiktokPixelId}
-                onChange={(e) => setTiktokPixelId(e.target.value)}
-                placeholder="e.g. C9ABC1234567890"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-              />
+              <p className="text-sm font-medium text-gray-700">Active</p>
+              <p className="text-xs text-gray-400">Visible to buyers when on</p>
+            </div>
+            <button
+              onClick={() => setActive(!active)}
+              className={`relative w-11 h-6 rounded-full transition-colors ${active ? "bg-indigo-500" : "bg-gray-200"}`}
+            >
+              <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${active ? "translate-x-5" : ""}`} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Pricing tab */}
+      {editTab === "Pricing" && (
+        <div className="space-y-5">
+          <Field label="Price (₦)">
+            <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400 bg-white">
+              <span className="px-3 py-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200">₦</span>
+              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="5000" className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white text-gray-800 placeholder-gray-400" />
+            </div>
+          </Field>
+          <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Discount price</p>
+              <p className="text-xs text-gray-400">Show a strikethrough original price</p>
+            </div>
+            <button
+              onClick={() => setDiscountEnabled(!discountEnabled)}
+              className={`relative w-11 h-6 rounded-full transition-colors ${discountEnabled ? "bg-indigo-500" : "bg-gray-200"}`}
+            >
+              <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${discountEnabled ? "translate-x-5" : ""}`} />
+            </button>
+          </div>
+          {discountEnabled && (
+            <Field label="Original price (₦)">
+              <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-400 bg-white">
+                <span className="px-3 py-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200">₦</span>
+                <input type="number" value={compareAt} onChange={(e) => setCompareAt(e.target.value)} placeholder="9000" className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white text-gray-800 placeholder-gray-400" />
+              </div>
+            </Field>
+          )}
+          <Field label="Delivery link" hint="URL or file link sent to buyers after purchase.">
+            <input type="url" value={deliveryLink} onChange={(e) => setDeliveryLink(e.target.value)} placeholder="https://…" className={inputCls} />
+          </Field>
+        </div>
+      )}
+
+      {/* Content tab */}
+      {editTab === "Content" && (
+        <div className="space-y-5">
+          <Field label="Description">
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} placeholder="Describe what buyers get…" className={inputCls} />
+          </Field>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Bullet points</label>
+            <input
+              type="text"
+              value={bulletsHeading}
+              onChange={(e) => setBulletsHeading(e.target.value)}
+              placeholder="This is for you if you want to:"
+              className={`${inputCls} mb-3`}
+            />
+            <div className="space-y-2">
+              {bullets.map((item, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => {
+                      const next = [...bullets];
+                      next[i] = e.target.value;
+                      setBullets(next);
+                    }}
+                    placeholder={`Benefit ${i + 1}`}
+                    className={inputCls}
+                  />
+                  {bullets.length > 1 && (
+                    <button onClick={() => setBullets(bullets.filter((_, j) => j !== i))} className="text-gray-300 hover:text-red-400 shrink-0">
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() => setBullets([...bullets, ""])}
+                className="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium mt-1"
+              >
+                <Plus size={13} /> Add bullet
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Email & Webhooks tab */}
-      {activeTab === "email" && (
-        <div className="space-y-6 mb-6">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-white mb-1">Cart Abandonment Sender</h2>
-            <p className="text-xs text-white/40 mb-4">Recovery emails will appear to come from this name and email address. Leave blank to use the system default.</p>
+      {/* Collect Info tab */}
+      {editTab === "Collect Info" && (
+        <div className="space-y-3">
+          {collectFields.map((f) => (
+            <div key={f.key} className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3.5">
+              <div>
+                <p className="text-sm font-medium text-gray-800">{f.label}</p>
+                {f.required && <p className="text-xs text-gray-400">Always required</p>}
+              </div>
+              <button
+                onClick={() => {
+                  if (f.required) return;
+                  setCollectFields(collectFields.map((x) => x.key === f.key ? { ...x, enabled: !x.enabled } : x));
+                }}
+                className={`relative w-11 h-6 rounded-full transition-colors ${f.enabled ? "bg-indigo-500" : "bg-gray-200"} ${f.required ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${f.enabled ? "translate-x-5" : ""}`} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Pixels tab */}
+      {editTab === "Pixels" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <h3 className="font-semibold text-gray-800 mb-0.5">Meta (Facebook) Pixel</h3>
+            <p className="text-xs text-gray-400 mb-4">Per-product pixel — overrides any global setting.</p>
             <div className="space-y-3">
-              <div>
-                <label className="block text-xs text-white/50 mb-1">From Name</label>
-                <input
-                  type="text"
-                  value={fromName}
-                  onChange={(e) => setFromName(e.target.value)}
-                  placeholder="e.g. Tunde from DigitalCourse"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-white/50 mb-1">From Email</label>
-                <input
-                  type="email"
-                  value={fromEmail}
-                  onChange={(e) => setFromEmail(e.target.value)}
-                  placeholder="tunde@yourdomain.com"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                />
-              </div>
+              <Field label="Pixel ID">
+                <input type="text" value={metaPixelId} onChange={(e) => setMetaPixelId(e.target.value)} placeholder="123456789012345" className={inputCls} />
+              </Field>
+              <Field label="Conversions API Access Token">
+                <input type="password" value={metaCapiToken} onChange={(e) => setMetaCapiToken(e.target.value)} placeholder="EAAG… (from Events Manager → Settings)" className={inputCls} />
+              </Field>
             </div>
           </div>
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <h3 className="font-semibold text-gray-800 mb-0.5">TikTok Pixel</h3>
+            <p className="text-xs text-gray-400 mb-4">PageView + ViewContent fires on load. Purchase fires on payment.</p>
+            <Field label="Pixel ID">
+              <input type="text" value={tiktokPixelId} onChange={(e) => setTiktokPixelId(e.target.value)} placeholder="C9ABC1234567890" className={inputCls} />
+            </Field>
+          </div>
+        </div>
+      )}
 
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-white mb-1">Email Marketing Webhook</h2>
-            <p className="text-xs text-white/40 mb-4">
-              When a purchase completes or a cart is abandoned, we POST a JSON payload to this URL — works with Mailchimp, ConvertKit, Klaviyo, ActiveCampaign, Zapier, Make, and any tool that accepts webhooks.
-            </p>
-            <div>
-              <label className="block text-xs text-white/50 mb-1">Webhook URL</label>
-              <input
-                type="url"
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                placeholder="https://hooks.zapier.com/hooks/catch/…"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-              />
+      {/* Email & Webhooks tab */}
+      {editTab === "Email & Webhooks" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <h3 className="font-semibold text-gray-800 mb-0.5">Cart abandonment sender</h3>
+            <p className="text-xs text-gray-400 mb-4">Recovery emails appear to come from this name and address.</p>
+            <div className="space-y-3">
+              <Field label="From name">
+                <input type="text" value={fromName} onChange={(e) => setFromName(e.target.value)} placeholder="Tunde from DigitalCourse" className={inputCls} />
+              </Field>
+              <Field label="From email">
+                <input type="email" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} placeholder="tunde@yourdomain.com" className={inputCls} />
+              </Field>
             </div>
-            <div className="mt-4 bg-black/20 rounded-lg p-3 text-xs text-white/40 font-mono leading-relaxed">
-              <p className="text-white/60 font-semibold not-italic mb-1">Payload shape (purchase):</p>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <h3 className="font-semibold text-gray-800 mb-0.5">Email marketing webhook</h3>
+            <p className="text-xs text-gray-400 mb-4">
+              We POST a JSON payload here on purchase and cart abandonment — works with Zapier, Make, Klaviyo, ConvertKit, and more.
+            </p>
+            <Field label="Webhook URL">
+              <input type="url" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://hooks.zapier.com/hooks/catch/…" className={inputCls} />
+            </Field>
+            <div className="mt-3 bg-gray-900 rounded-xl p-3 text-xs text-green-400 font-mono leading-relaxed">
               {`{ event: "purchase" | "cart_abandoned", email, name, phone, product_id, product_name, amount_kobo, currency, order_ref }`}
             </div>
           </div>
         </div>
       )}
 
-      {/* Page blocks */}
-      {activeTab === "page" && (
-      <div className="mb-6">
-        <h2 className="text-sm font-semibold text-white/60 mb-4">Page Blocks</h2>
-        <div className="space-y-3">
-          {blocks.map((block) => (
-            <BlockEditor
-              key={block.id}
-              block={block}
-              onChange={(data) => updateBlock(block.id, data)}
-              onRemove={() => removeBlock(block.id)}
-            />
-          ))}
-        </div>
-
-        {addingBlock ? (
-          <div className="mt-3 bg-white/5 border border-white/10 rounded-xl p-4">
-            <p className="text-xs text-white/50 mb-3">Choose a block type:</p>
-            <div className="flex flex-wrap gap-2">
-              {BLOCK_TYPES.map(({ type, label }) => (
-                <button
-                  key={type}
-                  onClick={() => addBlock(type)}
-                  className="px-3 py-1.5 bg-white/10 hover:bg-blue-600 text-sm rounded-lg transition-colors"
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <button onClick={() => setAddingBlock(false)} className="text-xs text-white/30 mt-3 hover:text-white">
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setAddingBlock(true)}
-            className="mt-3 w-full flex items-center justify-center gap-2 border border-dashed border-white/20 hover:border-blue-500 text-white/40 hover:text-blue-400 rounded-xl py-3 text-sm transition-colors"
-          >
-            <Plus size={16} />
-            Add Block
-          </button>
-        )}
-      </div>
+      {error && (
+        <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-xl mt-6">{error}</p>
       )}
 
-      {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
-
-      <div className="flex gap-3">
+      <div className="flex gap-3 mt-8">
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors"
+          className="bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
         >
-          {saving ? "Saving…" : isEdit ? "Save Changes" : "Create Product"}
+          {saving ? "Saving…" : "Save Changes"}
         </button>
         <button
           onClick={() => router.push("/admin/products")}
-          className="text-white/40 hover:text-white text-sm px-4 py-2.5 rounded-lg hover:bg-white/10 transition-colors"
+          className="text-gray-500 hover:text-gray-700 text-sm px-4 py-3 rounded-xl hover:bg-gray-100 transition-colors"
         >
           Cancel
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ─── nav buttons ──────────────────────────────────────────── */
+function NavButtons({
+  onBack,
+  onNext,
+  nextDisabled,
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  nextDisabled?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 font-medium px-4 py-3 rounded-xl hover:bg-gray-100 transition-colors"
+      >
+        <ChevronLeft size={16} /> Back
+      </button>
+      <button
+        onClick={onNext}
+        disabled={nextDisabled}
+        className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
+      >
+        Continue <ChevronRight size={16} />
+      </button>
     </div>
   );
 }
