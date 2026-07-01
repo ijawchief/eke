@@ -108,6 +108,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   const router = useRouter();
   const isEdit = !!initialData;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const thumbInputRef = useRef<HTMLInputElement>(null);
+  const [thumbUploading, setThumbUploading] = useState(false);
 
   /* section 1 – image */
   const [thumbnail, setThumbnail] = useState<string>(() => {
@@ -256,13 +258,16 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
         {/* Section 1 – Select image */}
         <Section n={1} title="Select image">
-          <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex items-center gap-6">
+          <div
+            className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex items-center gap-6 cursor-pointer hover:border-indigo-300 transition-colors"
+            onClick={() => !thumbUploading && thumbInputRef.current?.click()}
+          >
             {thumbnail ? (
               <div className="relative shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={thumbnail} alt="" className="w-20 h-20 object-cover rounded-xl" />
                 <button
-                  onClick={() => setThumbnail("")}
+                  onClick={(e) => { e.stopPropagation(); setThumbnail(""); }}
                   className="absolute -top-2 -right-2 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center"
                 >
                   <X size={10} />
@@ -270,19 +275,41 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               </div>
             ) : (
               <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                <Upload size={20} className="text-gray-400" />
+                {thumbUploading
+                  ? <svg className="animate-spin w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                  : <Upload size={20} className="text-gray-400" />
+                }
               </div>
             )}
             <div>
-              <p className="text-sm text-gray-400 mb-2">Thumbnail · 400×400</p>
-              <input
-                type="url"
-                value={thumbnail}
-                onChange={(e) => setThumbnail(e.target.value)}
-                placeholder="Paste image URL…"
-                className={inp}
-              />
+              <p className="text-sm font-medium text-gray-700 mb-1">
+                {thumbUploading ? "Uploading…" : thumbnail ? "Click to change image" : "Drag your image here"}
+              </p>
+              <p className="text-xs text-gray-400">PNG, JPG, WEBP · Recommended 400×400</p>
+              {!thumbUploading && !thumbnail && (
+                <button className="mt-3 px-4 py-1.5 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 pointer-events-none">
+                  Choose Image
+                </button>
+              )}
             </div>
+            <input
+              ref={thumbInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setThumbUploading(true);
+                const form = new FormData();
+                form.append("file", file);
+                const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+                const data = await res.json();
+                if (data.url) setThumbnail(data.url);
+                setThumbUploading(false);
+                e.target.value = "";
+              }}
+            />
           </div>
         </Section>
 
