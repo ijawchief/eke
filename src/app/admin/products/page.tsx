@@ -71,7 +71,7 @@ export default async function ProductsPage() {
                 <GripVertical size={16} className="text-gray-300 shrink-0 cursor-grab" />
 
                 {/* Thumbnail */}
-                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-gray-100">
+                <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-gray-100">
                   {thumb
                     // eslint-disable-next-line @next/next/no-img-element
                     ? <img src={thumb} alt="" className="w-full h-full object-cover" />
