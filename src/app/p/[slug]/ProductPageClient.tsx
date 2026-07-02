@@ -64,16 +64,16 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section style={{ background: "#f5f5f7" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "1.1fr 0.9fr" : "1fr", gap: "2.5rem", alignItems: "start" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "360px 1fr" : "1fr", gap: "2.5rem", alignItems: "start" }}>
 
           {/* Left – product image */}
           {imageBlock && (
-            <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.13)" }}>
+            <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.13)", height: 360 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageBlock.data.url as string}
                 alt={(imageBlock.data.alt as string) ?? product.name}
-                style={{ width: "100%", display: "block", objectFit: "cover" }}
+                style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
               />
             </div>
           )}
