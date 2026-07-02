@@ -29,8 +29,12 @@ export function ProductPageClient({ product }: Props) {
   const reviewBlocks = allBlocks.filter((b: Block) => b.type === "testimonial");
 
   const subheadline = (heroBlock?.data?.subheadline as string) ?? "";
-  const headline = heroBlock?.data?.headline as string | undefined;
-  const showHeadline = headline && headline !== product.name;
+  const rawHeadline = heroBlock?.data?.headline as string | undefined;
+  // strip product name if it was accidentally prepended (old bug)
+  const headline = rawHeadline?.startsWith(product.name)
+    ? rawHeadline.slice(product.name.length).trim()
+    : rawHeadline;
+  const showHeadline = !!headline && headline !== product.name;
 
   // Preserve UTM params on checkout link
   const checkoutUrl = (() => {
