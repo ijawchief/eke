@@ -235,6 +235,10 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     if (!html && hero) html = `<p>${(hero.data.subheadline as string) ?? ""}</p>`;
     return html;
   });
+  const [headline, setHeadline] = useState<string>(() => {
+    const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
+    return b ? (b.data.headline as string) ?? "" : "";
+  });
   const [subtitle, setSubtitle] = useState<string>(() => {
     const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
     return b ? (b.data.subheadline as string) ?? "" : "";
@@ -256,6 +260,10 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   const [fileUploading, setFileUploading] = useState(false);
 
   /* step 2 – options */
+  const [themeColor, setThemeColor] = useState<string>(() => {
+    const b = (initialData?.page_blocks ?? []).find((b) => b.type === "theme");
+    return b ? (b.data.color as string) ?? PINK : PINK;
+  });
   const [active, setActive] = useState(initialData?.active ?? true);
   const [metaPixelId, setMetaPixelId] = useState(initialData?.meta_pixel_id ?? "");
   const [metaCapiToken, setMetaCapiToken] = useState(initialData?.meta_capi_token ?? "");
@@ -280,20 +288,21 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
   const buildBlocks = useCallback((): Block[] => {
     const blocks: Block[] = [];
-    if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: name, subheadline: subtitle, badge: "" } });
+    if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline || name, subheadline: subtitle, badge: "" } });
     const text = stripHtml(descBody);
     if (text) blocks.push({ id: crypto.randomUUID(), type: "text", data: { content: text } });
     if (thumbnail) blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
+    blocks.push({ id: crypto.randomUUID(), type: "theme", data: { color: themeColor } });
     return blocks;
-  }, [name, subtitle, descBody, thumbnail]);
+  }, [name, headline, subtitle, descBody, thumbnail, themeColor]);
 
   const buildBlocksEdit = useCallback((): Block[] => {
     const existing = initialData?.page_blocks ?? [];
-    const others = existing.filter((b) => !["hero", "text", "image"].includes(b.type));
+    const others = existing.filter((b) => !["hero", "text", "image", "theme"].includes(b.type));
     const blocks: Block[] = [];
     if (name) {
       const h = existing.find((b) => b.type === "hero");
-      blocks.push({ id: h?.id ?? crypto.randomUUID(), type: "hero", data: { headline: name, subheadline: subtitle, badge: h?.data.badge ?? "" } });
+      blocks.push({ id: h?.id ?? crypto.randomUUID(), type: "hero", data: { headline: headline || name, subheadline: subtitle, badge: h?.data.badge ?? "" } });
     }
     const text = stripHtml(descBody);
     if (text) {
@@ -304,8 +313,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
       const img = existing.find((b) => b.type === "image");
       blocks.push({ id: img?.id ?? crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
     }
-    return [...blocks, ...others];
-  }, [initialData, name, subtitle, descBody, thumbnail]);
+    return [...blocks, ...others, { id: crypto.randomUUID(), type: "theme", data: { color: themeColor } }];
+  }, [initialData, name, headline, subtitle, descBody, thumbnail, themeColor]);
 
   const handleSave = async (mode: "draft" | "publish") => {
     if (!name) { setStepError("Product title is required"); return; }
@@ -453,6 +462,14 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             <div className="mb-10">
               <Label n={3} text="Write Description" />
               <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-1.5">
+                    <label className="text-xs text-gray-500">Headline</label>
+                    <span className="text-xs text-gray-400">{headline.length}/100</span>
+                  </div>
+                  <input type="text" value={headline} onChange={(e) => setHeadline(e.target.value.slice(0, 100))}
+                    placeholder={name || "Enter a compelling headline…"} className={inp} style={inpStyle} />
+                </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">Description Body</label>
                   <RichEditor value={descBody} onChange={setDescBody} />
@@ -628,9 +645,32 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
         {/* ── STEP 2: Options ───────────────────────────────────── */}
         {step === 2 && (
           <div>
+            {/* Theme colour */}
+            <div className="mb-8">
+              <Label n={7} text="Page colour" />
+              <p className="text-xs text-gray-400 mb-3">Pick an accent colour for your product page</p>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { label: "Pink",   color: "#e91e8c" },
+                  { label: "Violet", color: "#7c3aed" },
+                  { label: "Blue",   color: "#2563eb" },
+                  { label: "Cyan",   color: "#0891b2" },
+                  { label: "Green",  color: "#16a34a" },
+                  { label: "Orange", color: "#ea580c" },
+                  { label: "Red",    color: "#dc2626" },
+                  { label: "Black",  color: "#111827" },
+                ].map(({ label, color }) => (
+                  <button key={color} onClick={() => setThemeColor(color)}
+                    title={label}
+                    style={{ background: color, width: 36, height: 36, borderRadius: "50%", border: themeColor === color ? `3px solid ${color}` : "3px solid transparent", outline: themeColor === color ? "2px solid #fff" : "none", outlineOffset: 2, boxShadow: themeColor === color ? `0 0 0 3px ${color}55` : "none", transition: "all 0.15s", flexShrink: 0 }}
+                  />
+                ))}
+              </div>
+            </div>
+
             {/* Active toggle */}
             <div className="mb-8">
-              <Label n={7} text="Visibility" />
+              <Label n={8} text="Visibility" />
               <div className="flex items-center justify-between rounded-xl px-4 py-4 border border-cyan-100"
                 style={{ background: "linear-gradient(135deg, #ecfeff 0%, #f0fdfa 100%)" }}>
                 <div>
@@ -646,7 +686,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
             {/* Pixels */}
             <div className="mb-8">
-              <Label n={8} text="Tracking pixels" />
+              <Label n={9} text="Tracking pixels" />
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">Meta Pixel ID</label>
@@ -665,7 +705,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
             {/* Email & Webhooks */}
             <div className="mb-8">
-              <Label n={9} text="Email & Webhooks" />
+              <Label n={10} text="Email & Webhooks" />
               <div className="flex gap-1 p-1 rounded-xl mb-4 border border-gray-200 bg-gray-50">
                 {(["Pixels", "Email & Webhooks"] as const).map((t) => (
                   <button key={t} onClick={() => setOptionsTab(t)}

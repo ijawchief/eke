@@ -8,7 +8,8 @@ export type BlockType =
   | "countdown"
   | "divider"
   | "bullet_list"
-  | "order_bump";
+  | "order_bump"
+  | "theme";
 
 export interface Block {
   id: string;

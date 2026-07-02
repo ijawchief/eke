@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const PINK = "#e91e8c";
+const DEFAULT_COLOR = "#e91e8c";
 
 interface BumpProduct {
   id: string;
@@ -114,7 +114,8 @@ export function ProductPageClient({ product, bumpProduct }: Props) {
 
   const total = product.price_kobo + (bumpSelected && bumpProduct ? bumpProduct.price_kobo : 0);
 
-  const allBlocks = product.page_blocks.filter((b: Block) => b.type !== "order_bump");
+  const PINK = (product.page_blocks.find((b: Block) => b.type === "theme")?.data?.color as string) ?? DEFAULT_COLOR;
+  const allBlocks = product.page_blocks.filter((b: Block) => b.type !== "order_bump" && b.type !== "theme");
   const firstImage = allBlocks.find((b: Block) => b.type === "image");
   const contentBlocks = allBlocks.filter((b: Block) => b !== firstImage);
 
