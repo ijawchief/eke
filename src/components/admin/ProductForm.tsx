@@ -237,7 +237,9 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   });
   const [headline, setHeadline] = useState<string>(() => {
     const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
-    return b ? (b.data.headline as string) ?? "" : "";
+    const stored = b ? (b.data.headline as string) ?? "" : "";
+    // treat as unset if it was auto-filled with the product name
+    return stored === (initialData?.name ?? "") ? "" : stored;
   });
   const [subtitle, setSubtitle] = useState<string>(() => {
     const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");

@@ -24,7 +24,9 @@ export function ProductPageClient({ product }: Props) {
   const allBlocks = product.page_blocks.filter((b: Block) => b.type !== "order_bump" && b.type !== "theme");
   const heroBlock = allBlocks.find((b: Block) => b.type === "hero");
   const imageBlock = allBlocks.find((b: Block) => b.type === "image");
-  const contentBlocks = allBlocks.filter((b: Block) => b.type !== "image" && b.type !== "hero");
+  const descBlocks = allBlocks.filter((b: Block) => !["image","hero","faq","testimonial"].includes(b.type));
+  const faqBlocks = allBlocks.filter((b: Block) => b.type === "faq");
+  const reviewBlocks = allBlocks.filter((b: Block) => b.type === "testimonial");
 
   const subheadline = (heroBlock?.data?.subheadline as string) ?? "";
   const headline = heroBlock?.data?.headline as string | undefined;
@@ -109,9 +111,9 @@ export function ProductPageClient({ product }: Props) {
             </h2>
           )}
 
-          {contentBlocks.length > 0 && (
+          {descBlocks.length > 0 && (
             <div className="mb-8 space-y-1">
-              {contentBlocks.map((block: Block) => (
+              {descBlocks.map((block: Block) => (
                 <BlockRenderer key={block.id} block={block} />
               ))}
             </div>
@@ -133,6 +135,34 @@ export function ProductPageClient({ product }: Props) {
           >
             Get Instant Access
           </Link>
+
+          {/* FAQ */}
+          {faqBlocks.length > 0 && (
+            <div style={{ marginTop: "3rem" }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#111827", marginBottom: "1rem" }}>
+                Frequently Asked Questions
+              </h3>
+              <div className="space-y-2">
+                {faqBlocks.map((block: Block) => (
+                  <BlockRenderer key={block.id} block={block} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Reviews */}
+          {reviewBlocks.length > 0 && (
+            <div style={{ marginTop: "3rem" }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#111827", marginBottom: "1rem" }}>
+                What people are saying
+              </h3>
+              <div className="space-y-3">
+                {reviewBlocks.map((block: Block) => (
+                  <BlockRenderer key={block.id} block={block} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </main>
