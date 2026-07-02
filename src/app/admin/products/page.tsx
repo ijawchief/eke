@@ -63,7 +63,7 @@ export default async function ProductsPage() {
               slug={p.slug}
               price={fmt(p.price_kobo)}
               active={p.active}
-              hasFile={p.external_url !== null}
+
               earned={fmt(revenueMap[p.id] ?? 0)}
               sales={salesMap[p.id] ?? 0}
               thumb={getThumbnail(p.page_blocks ?? [])}
