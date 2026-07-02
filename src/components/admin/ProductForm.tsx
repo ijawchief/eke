@@ -480,14 +480,6 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 </div>
                 <div>
                   <div className="flex justify-between mb-1.5">
-                    <label className="text-xs text-gray-500">Bottom Title</label>
-                    <span className="text-xs text-gray-400">{subtitle.length}/100</span>
-                  </div>
-                  <input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value.slice(0, 100))}
-                    placeholder="Get My Guide" className={inp} style={inpStyle} />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1.5">
                     <label className="text-xs text-gray-500">Call-to-Action Button</label>
                     <span className="text-xs text-gray-400">{ctaText.length}/30</span>
                   </div>
