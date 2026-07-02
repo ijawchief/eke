@@ -29,6 +29,11 @@ function HeroBlock({ data }: { data: D }) {
 }
 
 function TextBlock({ data }: { data: D }) {
+  if (data.html) {
+    return (
+      <div className="py-3 px-1 eke-prose" dangerouslySetInnerHTML={{ __html: str(data.html) }} />
+    );
+  }
   return (
     <div className="py-3 px-1">
       <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{str(data.content)}</p>

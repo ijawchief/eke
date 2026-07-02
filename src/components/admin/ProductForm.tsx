@@ -289,8 +289,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   const buildBlocks = useCallback((): Block[] => {
     const blocks: Block[] = [];
     if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline || name, subheadline: subtitle, badge: "" } });
-    const text = stripHtml(descBody);
-    if (text) blocks.push({ id: crypto.randomUUID(), type: "text", data: { content: text } });
+    if (descBody.trim()) blocks.push({ id: crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
     if (thumbnail) blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
     blocks.push({ id: crypto.randomUUID(), type: "theme", data: { color: themeColor } });
     return blocks;
@@ -304,10 +303,9 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
       const h = existing.find((b) => b.type === "hero");
       blocks.push({ id: h?.id ?? crypto.randomUUID(), type: "hero", data: { headline: headline || name, subheadline: subtitle, badge: h?.data.badge ?? "" } });
     }
-    const text = stripHtml(descBody);
-    if (text) {
+    if (descBody.trim()) {
       const t = existing.find((b) => b.type === "text");
-      blocks.push({ id: t?.id ?? crypto.randomUUID(), type: "text", data: { content: text } });
+      blocks.push({ id: t?.id ?? crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
     }
     if (thumbnail) {
       const img = existing.find((b) => b.type === "image");
