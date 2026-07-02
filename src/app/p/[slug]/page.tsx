@@ -49,6 +49,7 @@ export default async function ProductPage({ params }: Props) {
     <>
       {/* Meta Pixel */}
       {metaPixelId && (
+
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -80,7 +81,7 @@ fbq('track', 'ViewContent', {content_name: '${p.name.replace(/'/g, "\\'")}', cur
         />
       )}
 
-      <ProductPageClient product={p} bumpProduct={bumpProduct} />
+      <ProductPageClient product={p} />
     </>
   );
 }
