@@ -9,6 +9,15 @@ import Link from "next/link";
 
 const DEFAULT_COLOR = "#e91e8c";
 
+function heroGradient(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const dark1 = `rgb(${Math.round(r * 0.10)}, ${Math.round(g * 0.10)}, ${Math.round(b * 0.10)})`;
+  const dark2 = `rgb(${Math.round(r * 0.18)}, ${Math.round(g * 0.18)}, ${Math.round(b * 0.18)})`;
+  return `linear-gradient(135deg, ${dark1} 0%, ${dark2} 100%)`;
+}
+
 interface Props {
   product: Product;
 }
@@ -63,7 +72,7 @@ export function ProductPageClient({ product }: Props) {
     <main className="min-h-screen bg-white">
 
       {/* ── HERO ───────────────────────────────────────────────── */}
-      <section style={{ background: "linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)" }}>
+      <section style={{ background: heroGradient(PINK) }}>
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "360px 1fr" : "1fr", gap: "2.5rem", alignItems: "start" }}>
 
           {/* Left – product image */}
@@ -151,7 +160,7 @@ export function ProductPageClient({ product }: Props) {
           {/* ── Offer box ── */}
           <div style={{
             marginTop: "2.5rem",
-            background: "linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)",
+            background: heroGradient(PINK),
             borderRadius: 20,
             padding: "2.5rem 2rem",
             textAlign: "center",
