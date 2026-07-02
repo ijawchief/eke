@@ -2,27 +2,27 @@
 
 /* Rich text description rendering */
 .eke-prose {
-  color: #111827;
+  color: #1e293b;
   font-size: 18px;
-  line-height: 1.7;
+  line-height: 1.8;
   font-family: inherit;
 }
-/* strip any inline font/color styles injected by contentEditable */
+/* strip inline font/color styles injected by contentEditable */
 .eke-prose * {
   font-size: inherit !important;
   font-family: inherit !important;
   color: inherit !important;
 }
-.eke-prose strong, .eke-prose b { font-weight: 700; color: #111827 !important; }
+.eke-prose strong, .eke-prose b { font-weight: 700; color: #0f172a !important; }
 .eke-prose em, .eke-prose i { font-style: italic; }
-.eke-prose p { margin-bottom: 0.6em; }
+.eke-prose p { margin-bottom: 1.6em; }
 .eke-prose p:last-child { margin-bottom: 0; }
-.eke-prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25em; }
-.eke-prose ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.25em; }
+.eke-prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.4em; }
+.eke-prose ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.4em; }
 .eke-prose li { margin-bottom: 0.5em; }
-.eke-prose h1, .eke-prose h2, .eke-prose h3 { font-weight: 700; color: #111827 !important; margin-top: 1.5em; margin-bottom: 0.6em; }
+.eke-prose h1, .eke-prose h2, .eke-prose h3 { font-weight: 700; color: #0f172a !important; margin-top: 1.5em; margin-bottom: 0.6em; }
 .eke-prose h1 { font-size: 1.4rem !important; }
 .eke-prose h2 { font-size: 1.2rem !important; }
 .eke-prose h3 { font-size: 1.05rem !important; }
 .eke-prose a { color: inherit; text-decoration: underline; }
-.eke-prose br { display: block; margin-bottom: 0.5em; content: ""; }
+.eke-prose br { display: block; margin-bottom: 0.4em; content: ""; }
