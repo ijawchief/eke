@@ -23,7 +23,9 @@ export function serverCleanHtml(html: string): string {
     // remove empty <span> tags
     .replace(/<span[^>]*>\s*<\/span>/gi, "")
     // collapse 3+ consecutive <br> into 2
-    .replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>");
+    .replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>")
+    // convert bare <div>text</div> blocks to <p> for consistent spacing
+    .replace(/<div>([^<]*(?:<(?!\/div>)[^<]*)*)<\/div>/gi, "<p>$1</p>");
 }
 
 export function cleanHtml(html: string): string {

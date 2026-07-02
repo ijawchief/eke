@@ -409,9 +409,9 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
           <div>
             {/* Uploaded image hero — sits above everything */}
             {thumbnail && (
-              <div className="relative mb-8 rounded-2xl overflow-hidden">
+              <div className="relative mb-8 rounded-2xl overflow-hidden" style={{ width: 200, height: 200 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={thumbnail} alt="" className="w-full object-cover" style={{ maxHeight: 260 }} />
+                <img src={thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", background: "#f3f4f6" }} />
                 <button
                   onClick={() => setThumbnail("")}
                   className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors">
