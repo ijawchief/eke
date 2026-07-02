@@ -23,7 +23,7 @@ const inpStyle = {};
 /* ─── step tab bar ───────────────────────────────────────────── */
 const STEPS = [
   { id: 0, label: "Thumbnail",     Icon: ImageIcon },
-  { id: 1, label: "Checkout Page", Icon: ShoppingCart },
+  { id: 1, label: "Product Details", Icon: ShoppingCart },
   { id: 2, label: "Options",       Icon: Settings2 },
 ] as const;
 
@@ -228,12 +228,10 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   /* step 1 – checkout page */
   const [descBody, setDescBody] = useState<string>(() => {
     const t = (initialData?.page_blocks ?? []).find((b) => b.type === "text");
-    const bl = (initialData?.page_blocks ?? []).find((b) => b.type === "bullet_list");
-    const hero = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
-    let html = t ? `<p>${t.data.content as string}</p>` : "";
-    if (bl) html += `<ul>${(bl.data.items as string[]).map((i) => `<li>${i}</li>`).join("")}</ul>`;
-    if (!html && hero) html = `<p>${(hero.data.subheadline as string) ?? ""}</p>`;
-    return html;
+    // prefer saved HTML; fall back to legacy plain-text wrapping
+    if (t?.data?.html) return t.data.html as string;
+    if (t?.data?.content) return `<p>${t.data.content as string}</p>`;
+    return "";
   });
   const [headline, setHeadline] = useState<string>(() => {
     const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
@@ -260,6 +258,10 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   const [deliveryUrl, setDeliveryUrl] = useState(initialData?.external_url ?? "");
   const [uploadedFile, setUploadedFile] = useState<{ name: string; url: string } | null>(null);
   const [fileUploading, setFileUploading] = useState(false);
+  const [faqItems, setFaqItems] = useState<{ id: string; q: string; a: string }[]>(() => {
+    const b = (initialData?.page_blocks ?? []).find((b) => b.type === "faq");
+    return b ? (b.data.items as { id: string; q: string; a: string }[]) ?? [] : [];
+  });
 
   /* step 2 – options */
   const [themeColor, setThemeColor] = useState<string>(() => {
@@ -293,13 +295,14 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline, subheadline: subtitle, badge: "" } });
     if (descBody.trim()) blocks.push({ id: crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
     if (thumbnail) blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
+    if (faqItems.length) blocks.push({ id: crypto.randomUUID(), type: "faq", data: { items: faqItems } });
     blocks.push({ id: crypto.randomUUID(), type: "theme", data: { color: themeColor } });
     return blocks;
-  }, [name, headline, subtitle, descBody, thumbnail, themeColor]);
+  }, [name, headline, subtitle, descBody, thumbnail, faqItems, themeColor]);
 
   const buildBlocksEdit = useCallback((): Block[] => {
     const existing = initialData?.page_blocks ?? [];
-    const others = existing.filter((b) => !["hero", "text", "image", "theme"].includes(b.type));
+    const others = existing.filter((b) => !["hero", "text", "image", "faq", "theme"].includes(b.type));
     const blocks: Block[] = [];
     if (name) {
       const h = existing.find((b) => b.type === "hero");
@@ -313,8 +316,9 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
       const img = existing.find((b) => b.type === "image");
       blocks.push({ id: img?.id ?? crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
     }
+    if (faqItems.length) blocks.push({ id: crypto.randomUUID(), type: "faq", data: { items: faqItems } });
     return [...blocks, ...others, { id: crypto.randomUUID(), type: "theme", data: { color: themeColor } }];
-  }, [initialData, name, headline, subtitle, descBody, thumbnail, themeColor]);
+  }, [initialData, name, headline, subtitle, descBody, thumbnail, faqItems, themeColor]);
 
   const handleSave = async (mode: "draft" | "publish") => {
     if (!name) { setStepError("Product title is required"); return; }
@@ -638,6 +642,42 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   )}
                 </div>
               )}
+            </div>
+            {/* FAQ */}
+            <div className="mb-10">
+              <Label n={7} text="FAQ (optional)" />
+              <p className="text-xs text-gray-400 mb-3">Add questions and answers shown on the product page</p>
+              <div className="space-y-3 mb-3">
+                {faqItems.map((item, i) => (
+                  <div key={item.id} className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={item.q}
+                        onChange={(e) => setFaqItems(faqItems.map((x, j) => j === i ? { ...x, q: e.target.value } : x))}
+                        placeholder="Question"
+                        className={`${inp} text-sm font-medium`}
+                        style={inpStyle}
+                      />
+                      <button onClick={() => setFaqItems(faqItems.filter((_, j) => j !== i))}
+                        className="text-gray-300 hover:text-red-400 shrink-0"><X size={14} /></button>
+                    </div>
+                    <textarea
+                      value={item.a}
+                      onChange={(e) => setFaqItems(faqItems.map((x, j) => j === i ? { ...x, a: e.target.value } : x))}
+                      placeholder="Answer"
+                      rows={2}
+                      className={`${inp} resize-none text-sm`}
+                      style={inpStyle}
+                    />
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setFaqItems([...faqItems, { id: crypto.randomUUID(), q: "", a: "" }])}
+                className="w-full py-3 rounded-xl text-sm font-medium border border-pink-300 text-pink-500 transition-colors hover:bg-pink-50">
+                + Add FAQ
+              </button>
             </div>
           </div>
         )}
