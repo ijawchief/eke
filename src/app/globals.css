@@ -1,17 +1,28 @@
 @import "tailwindcss";
 
 /* Rich text description rendering */
-.eke-prose { color: #4b5563; font-size: 0.875rem; line-height: 1.7; }
-.eke-prose p { margin-bottom: 0.75em; }
-.eke-prose p:last-child { margin-bottom: 0; }
-.eke-prose strong, .eke-prose b { font-weight: 700; color: #111827; }
+.eke-prose {
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.85;
+  font-family: inherit;
+}
+/* strip any inline font/color styles injected by contentEditable */
+.eke-prose * {
+  font-size: inherit !important;
+  font-family: inherit !important;
+  color: inherit !important;
+}
+.eke-prose strong, .eke-prose b { font-weight: 700; color: #111827 !important; }
 .eke-prose em, .eke-prose i { font-style: italic; }
-.eke-prose ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75em; }
-.eke-prose ol { list-style: decimal; padding-left: 1.25rem; margin-bottom: 0.75em; }
-.eke-prose li { margin-bottom: 0.25em; }
-.eke-prose h1, .eke-prose h2, .eke-prose h3 { font-weight: 700; color: #111827; margin-bottom: 0.5em; }
-.eke-prose h1 { font-size: 1.25rem; }
-.eke-prose h2 { font-size: 1.125rem; }
-.eke-prose h3 { font-size: 1rem; }
+.eke-prose p { margin-bottom: 1.25em; }
+.eke-prose p:last-child { margin-bottom: 0; }
+.eke-prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25em; }
+.eke-prose ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.25em; }
+.eke-prose li { margin-bottom: 0.5em; }
+.eke-prose h1, .eke-prose h2, .eke-prose h3 { font-weight: 700; color: #111827 !important; margin-top: 1.5em; margin-bottom: 0.6em; }
+.eke-prose h1 { font-size: 1.4rem !important; }
+.eke-prose h2 { font-size: 1.2rem !important; }
+.eke-prose h3 { font-size: 1.05rem !important; }
 .eke-prose a { color: inherit; text-decoration: underline; }
-.eke-prose br + br { display: none; }
+.eke-prose br { display: block; margin-bottom: 0.5em; content: ""; }

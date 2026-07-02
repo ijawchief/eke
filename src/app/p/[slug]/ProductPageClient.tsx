@@ -107,16 +107,16 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── CONTENT SECTION ──────────────────────────────────────── */}
       <section className="bg-white">
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "4rem 2rem" }}>
 
           {showHeadline && (
-            <h2 className="text-2xl font-extrabold text-gray-900 leading-snug mb-6">
+            <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#111827", lineHeight: 1.3, marginBottom: "2rem" }}>
               {headline}
             </h2>
           )}
 
           {descBlocks.length > 0 && (
-            <div className="mb-8 space-y-1">
+            <div style={{ marginBottom: "1rem" }}>
               {descBlocks.map((block: Block) => (
                 <BlockRenderer key={block.id} block={block} />
               ))}
