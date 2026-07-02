@@ -28,10 +28,20 @@ function HeroBlock({ data }: { data: D }) {
   );
 }
 
+function cleanHtml(html: string): string {
+  return html
+    .replace(/\s+style="[^"]*"/gi, "")
+    .replace(/\s+style='[^']*'/gi, "")
+    .replace(/\s+(color|face|size)="[^"]*"/gi, "")
+    .replace(/<font\b[^>]*>([\s\S]*?)<\/font>/gi, "$1")
+    .replace(/<span[^>]*>\s*<\/span>/gi, "")
+    .replace(/<span>([\s\S]*?)<\/span>/gi, "$1");
+}
+
 function TextBlock({ data }: { data: D }) {
   if (data.html) {
     return (
-      <div className="py-3 px-1 eke-prose" dangerouslySetInnerHTML={{ __html: str(data.html) }} />
+      <div className="py-3 px-1 eke-prose" dangerouslySetInnerHTML={{ __html: cleanHtml(str(data.html)) }} />
     );
   }
   return (

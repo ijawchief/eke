@@ -325,11 +325,25 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   };
 
   const stripHtml = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const cleanHtml = (html: string) => html
+    // remove all inline style attributes
+    .replace(/\s+style="[^"]*"/gi, "")
+    .replace(/\s+style='[^']*'/gi, "")
+    // remove color/face/size attributes from any element
+    .replace(/\s+(color|face|size)="[^"]*"/gi, "")
+    // unwrap <font> tags but keep inner content
+    .replace(/<font\b[^>]*>([\s\S]*?)<\/font>/gi, "$1")
+    // remove empty spans
+    .replace(/<span[^>]*>\s*<\/span>/gi, "")
+    // unwrap bare <span> with no attributes left
+    .replace(/<span>([\s\S]*?)<\/span>/gi, "$1")
+    // collapse excessive blank lines
+    .replace(/(<br\s*\/?>){3,}/gi, "<br><br>");
 
   const buildBlocks = useCallback((): Block[] => {
     const blocks: Block[] = [];
     if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline, subheadline: subtitle, badge: "", rating, author } });
-    if (descBody.trim()) blocks.push({ id: crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
+    if (descBody.trim()) blocks.push({ id: crypto.randomUUID(), type: "text", data: { html: cleanHtml(descBody), content: stripHtml(descBody) } });
     if (thumbnail) blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
     if (faqItems.length) blocks.push({ id: crypto.randomUUID(), type: "faq", data: { items: faqItems } });
     blocks.push({ id: crypto.randomUUID(), type: "theme", data: { color: themeColor } });
@@ -346,7 +360,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     }
     if (descBody.trim()) {
       const t = existing.find((b) => b.type === "text");
-      blocks.push({ id: t?.id ?? crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
+      blocks.push({ id: t?.id ?? crypto.randomUUID(), type: "text", data: { html: cleanHtml(descBody), content: stripHtml(descBody) } });
     }
     if (thumbnail) {
       const img = existing.find((b) => b.type === "image");
