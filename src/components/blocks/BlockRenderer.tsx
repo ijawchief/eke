@@ -3,6 +3,7 @@
 import { Block } from "@/types";
 import { useState, useEffect } from "react";
 import { Check, ChevronDown } from "lucide-react";
+import { cleanHtml } from "@/lib/cleanHtml";
 
 type D = Record<string, unknown>;
 const str = (v: unknown) => (v as string) ?? "";
@@ -28,15 +29,6 @@ function HeroBlock({ data }: { data: D }) {
   );
 }
 
-function cleanHtml(html: string): string {
-  return html
-    .replace(/\s+style="[^"]*"/gi, "")
-    .replace(/\s+style='[^']*'/gi, "")
-    .replace(/\s+(color|face|size)="[^"]*"/gi, "")
-    .replace(/<font\b[^>]*>([\s\S]*?)<\/font>/gi, "$1")
-    .replace(/<span[^>]*>\s*<\/span>/gi, "")
-    .replace(/<span>([\s\S]*?)<\/span>/gi, "$1");
-}
 
 function TextBlock({ data }: { data: D }) {
   if (data.html) {

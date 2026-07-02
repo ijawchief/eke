@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trash2, Eye, EyeOff, Upload, Link2, FileText, X, Download, Image as ImageIcon, ShoppingCart, Settings2 } from "lucide-react";
 import { Block } from "@/types";
 import { CURRENCIES } from "@/lib/currency";
+import { cleanHtml } from "@/lib/cleanHtml";
 
 /* ─── tokens ─────────────────────────────────────────────────── */
 const PINK = "#e91e8c";
@@ -325,20 +326,6 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   };
 
   const stripHtml = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  const cleanHtml = (html: string) => html
-    // remove all inline style attributes
-    .replace(/\s+style="[^"]*"/gi, "")
-    .replace(/\s+style='[^']*'/gi, "")
-    // remove color/face/size attributes from any element
-    .replace(/\s+(color|face|size)="[^"]*"/gi, "")
-    // unwrap <font> tags but keep inner content
-    .replace(/<font\b[^>]*>([\s\S]*?)<\/font>/gi, "$1")
-    // remove empty spans
-    .replace(/<span[^>]*>\s*<\/span>/gi, "")
-    // unwrap bare <span> with no attributes left
-    .replace(/<span>([\s\S]*?)<\/span>/gi, "$1")
-    // collapse excessive blank lines
-    .replace(/(<br\s*\/?>){3,}/gi, "<br><br>");
 
   const buildBlocks = useCallback((): Block[] => {
     const blocks: Block[] = [];
