@@ -6,7 +6,8 @@ import { CurrencySwitcher } from "@/components/admin/CurrencySwitcher";
 import { getCurrencyFromCookie } from "@/lib/currency";
 
 async function requireAdmin(cookie: string) {
-  const token = cookie.match(/admin_token=([^;]+)/)?.[1];
+  const raw = cookie.match(/admin_token=([^;]+)/)?.[1];
+  const token = raw ? decodeURIComponent(raw) : undefined;
   if (token !== process.env.ADMIN_SECRET) redirect("/login");
 }
 
