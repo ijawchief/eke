@@ -53,6 +53,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
     const res = await fetch("/api/admin/users", {
       method: editId ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ id: editId, ...form, is_admin: form.is_admin }),
     });
     const data = await res.json();
@@ -64,7 +65,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
 
   const handleDelete = async (id: string) => {
     setLoading(true);
-    await fetch(`/api/admin/users?id=${id}`, { method: "DELETE" });
+    await fetch(`/api/admin/users?id=${id}`, { method: "DELETE", credentials: "include" });
     setLoading(false);
     setDeleteConfirm(null);
     router.refresh();

@@ -47,6 +47,7 @@ export function PayoutsClient({
     await fetch("/api/admin/payouts", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ id, status, note: note[id] ?? null }),
     });
     setLoading(null);
