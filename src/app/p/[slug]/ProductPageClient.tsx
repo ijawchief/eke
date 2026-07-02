@@ -63,7 +63,7 @@ export function ProductPageClient({ product }: Props) {
     <main className="min-h-screen bg-white">
 
       {/* ── HERO ───────────────────────────────────────────────── */}
-      <section style={{ background: "#f5f5f7" }}>
+      <section style={{ background: "linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "360px 1fr" : "1fr", gap: "2.5rem", alignItems: "start" }}>
 
           {/* Left – product image */}
@@ -87,27 +87,27 @@ export function ProductPageClient({ product }: Props) {
                 <span style={{ color: "#f59e0b", fontSize: "1.2rem", letterSpacing: "-1px" }}>
                   {"★".repeat(rating)}{"☆".repeat(5 - rating)}
                 </span>
-                <span style={{ fontSize: "0.8rem", color: "#6b7280", fontWeight: 600 }}>{rating}.0 / 5</span>
+                <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>{rating}.0 / 5</span>
               </div>
             )}
 
             {/* Title */}
-            <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#0f0f0f", lineHeight: 1.2, marginBottom: "0.75rem" }}>
+            <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: "0.75rem" }}>
               {product.name}
             </h1>
 
             {/* Subheadline */}
             {subheadline && (
-              <p style={{ fontSize: "1rem", color: "#6b7280", lineHeight: 1.65, marginBottom: "1.5rem" }}>{subheadline}</p>
+              <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.65, marginBottom: "1.5rem" }}>{subheadline}</p>
             )}
 
             {/* Divider */}
-            <div style={{ height: 1, background: "#e5e7eb", marginBottom: "1.5rem" }} />
+            <div style={{ height: 1, background: "rgba(255,255,255,0.1)", marginBottom: "1.5rem" }} />
 
             {/* Price */}
             <div style={{ marginBottom: "1.5rem" }}>
               {product.compare_at_kobo && (
-                <p style={{ fontSize: "0.9rem", color: "#9ca3af", textDecoration: "line-through", marginBottom: "0.15rem" }}>
+                <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.35)", textDecoration: "line-through", marginBottom: "0.15rem" }}>
                   {fmt(product.compare_at_kobo)}
                 </p>
               )}
@@ -123,7 +123,7 @@ export function ProductPageClient({ product }: Props) {
             >
               Buy Now →
             </Link>
-            <p style={{ textAlign: "center", fontSize: "0.75rem", color: "#9ca3af" }}>
+            <p style={{ textAlign: "center", fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>
               🔒 Secure checkout · Instant access after payment
             </p>
           </div>
