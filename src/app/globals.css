@@ -7,24 +7,24 @@
   line-height: 1.85;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
-/* aggressively strip ALL inline styles injected by contentEditable / paste */
+/* strip inline font/color/background injected by contentEditable or paste */
 .eke-prose * {
-  all: revert;
   font-size: 17px !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
   color: #111827 !important;
   line-height: 1.85 !important;
-  background: none !important;
+  background-color: transparent !important;
   letter-spacing: normal !important;
   text-transform: none !important;
+  word-spacing: normal !important;
 }
 .eke-prose strong, .eke-prose b { font-weight: 700 !important; }
 .eke-prose em, .eke-prose i { font-style: italic !important; }
-.eke-prose p { display: block; margin-bottom: 1.5em !important; margin-top: 0 !important; }
+.eke-prose p { margin-bottom: 1.5em !important; margin-top: 0 !important; }
 .eke-prose p:last-child { margin-bottom: 0 !important; }
-.eke-prose ul { display: block; list-style: disc !important; padding-left: 1.5rem !important; margin-bottom: 1.4em !important; }
-.eke-prose ol { display: block; list-style: decimal !important; padding-left: 1.5rem !important; margin-bottom: 1.4em !important; }
-.eke-prose li { display: list-item; margin-bottom: 0.5em !important; }
-.eke-prose h1, .eke-prose h2, .eke-prose h3 { display: block; font-weight: 700 !important; font-size: 1.2rem !important; margin-top: 1.5em !important; margin-bottom: 0.5em !important; }
+.eke-prose ul { list-style: disc !important; padding-left: 1.5rem !important; margin-bottom: 1.4em !important; }
+.eke-prose ol { list-style: decimal !important; padding-left: 1.5rem !important; margin-bottom: 1.4em !important; }
+.eke-prose li { margin-bottom: 0.5em !important; }
+.eke-prose h1, .eke-prose h2, .eke-prose h3 { font-weight: 700 !important; font-size: 1.2rem !important; margin-top: 1.5em !important; margin-bottom: 0.5em !important; }
 .eke-prose a { color: #111827 !important; text-decoration: underline; }
-.eke-prose br { display: block; }
+.eke-prose span { display: inline !important; }

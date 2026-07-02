@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { Product, Block } from "@/types";
