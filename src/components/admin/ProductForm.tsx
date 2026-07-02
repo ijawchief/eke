@@ -99,7 +99,7 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
     setImgUploading(true);
     const form = new FormData();
     form.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+    const res = await fetch("/api/admin/upload", { method: "POST", body: form, credentials: "include" });
     const data = await res.json();
     if (data.url) exec("insertImage", data.url);
     setImgUploading(false);
@@ -364,7 +364,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
     const res = await fetch(
       isEdit ? `/api/admin/products/${initialData!.id}` : "/api/admin/products",
-      { method: isEdit ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }
+      { method: isEdit ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(payload) }
     );
 
     if (res.ok) { router.push("/admin/products"); router.refresh(); }
@@ -374,7 +374,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
   const uploadFile = async (file: File, onDone: (url: string) => void) => {
     const form = new FormData();
     form.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+    const res = await fetch("/api/admin/upload", { method: "POST", body: form, credentials: "include" });
     const data = await res.json();
     if (data.url) onDone(data.url);
   };

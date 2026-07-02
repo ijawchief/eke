@@ -44,7 +44,7 @@ export function SalesMap() {
   const [tooltip, setTooltip] = useState<{ country: string; count: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
-    fetch(`/api/admin/globe-data?period=${period}`)
+    fetch(`/api/admin/globe-data?period=${period}`, { credentials: "include" })
       .then((r) => r.json())
       .then(setData)
       .catch(() => {});
