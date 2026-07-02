@@ -56,8 +56,8 @@ export function ProductPageClient({ product }: Props) {
     <main className="min-h-screen bg-white">
 
       {/* ── HERO ───────────────────────────────────────────────── */}
-      <section className="bg-white">
-        <div className="max-w-5xl mx-auto px-5 py-10" style={{ display: "grid", gridTemplateColumns: imageBlock ? "1fr 1fr" : "1fr", gap: "3rem", alignItems: "center" }}>
+      <section style={{ background: "#f5f5f7" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "1fr 1fr" : "1fr", gap: "3rem", alignItems: "center" }}>
 
           {/* Left – product image */}
           {imageBlock && (
@@ -99,12 +99,9 @@ export function ProductPageClient({ product }: Props) {
         </div>
       </section>
 
-      {/* ── DIVIDER ──────────────────────────────────────────────── */}
-      <div className="border-t border-gray-100" />
-
       {/* ── CONTENT SECTION ──────────────────────────────────────── */}
-      <section style={{ background: "#f5f5f7" }}>
-        <div className="max-w-2xl mx-auto px-5 py-12">
+      <section className="bg-white">
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem" }}>
 
           {showHeadline && (
             <h2 className="text-2xl font-extrabold text-gray-900 leading-snug mb-6">
