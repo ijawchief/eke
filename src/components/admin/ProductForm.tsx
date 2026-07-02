@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Eye, EyeOff, Upload, Link2, FileText, X, Download, Image as ImageIcon, ShoppingCart, Settings2 } from "lucide-react";
+import { Trash2, Eye, EyeOff, Upload, Link2, X, Download, Image as ImageIcon, ShoppingCart, Settings2 } from "lucide-react";
 import { Block } from "@/types";
 import { CURRENCIES } from "@/lib/currency";
 import { cleanHtml } from "@/lib/cleanHtml";
@@ -163,34 +163,6 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
   );
 }
 
-/* ─── preview card ───────────────────────────────────────────── */
-function PreviewCard({ name, subtitle, price, compareAt, thumbnail, ctaText }: {
-  name: string; subtitle: string; price: string; compareAt: string; thumbnail: string; ctaText: string;
-}) {
-  const fmt = (v: string) => v
-    ? new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(parseFloat(v))
-    : "";
-  return (
-    <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #e5e7eb", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.07)", width: 200 }}>
-      {thumbnail
-        // eslint-disable-next-line @next/next/no-img-element
-        ? <img src={thumbnail} alt="" style={{ width: "100%", height: 112, objectFit: "cover", display: "block" }} />
-        : <div style={{ width: "100%", height: 112, background: "#f9fafb", display: "flex", alignItems: "center", justifyContent: "center" }}><FileText size={28} className="text-gray-300" /></div>
-      }
-      <div style={{ padding: "10px 12px" }}>
-        <p style={{ fontWeight: 700, color: "#111827", fontSize: 13, lineHeight: 1.35, marginBottom: 4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{name || "Product title"}</p>
-        {subtitle && <p style={{ fontSize: 11, color: "#6b7280", marginBottom: 8, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{subtitle}</p>}
-        <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 10 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: PINK }}>{fmt(price) || "₦0"}</span>
-          {compareAt && <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through" }}>{fmt(compareAt)}</span>}
-        </div>
-        <button style={{ width: "100%", background: PINK, color: "#fff", fontSize: 11, fontWeight: 700, padding: "7px 0", borderRadius: 10, border: "none", textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer" }}>
-          {ctaText || "PURCHASE"}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 /* ─── types ──────────────────────────────────────────────────── */
 interface CField { id: string; label: string; icon: string; required: boolean; hidden: boolean; locked?: boolean; }
@@ -427,8 +399,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
   /* ── render ──────────────────────────────────────────────────── */
   return (
-    <div style={{ display: "flex", gap: "3rem", alignItems: "flex-start" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 672 }}>
+    <div>
+      <div>
 
         <StepTabs current={step} unlocked={unlocked} onSelect={setStep} />
 
@@ -865,12 +837,6 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
         </div>
       </div>
 
-      {/* ── right: preview ───────────────────────────────────────── */}
-      <div style={{ width: 220, flexShrink: 0, position: "sticky", top: 32 }} className="hidden lg:block">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Preview</p>
-        <PreviewCard name={name} subtitle={subtitle} price={price}
-          compareAt={discountEnabled ? compareAt : ""} thumbnail={thumbnail} ctaText={ctaText} />
-      </div>
     </div>
   );
 }
