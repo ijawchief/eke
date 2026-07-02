@@ -123,22 +123,50 @@ export function ProductPageClient({ product }: Props) {
             </div>
           )}
 
-          <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1.25rem" }}>
-            <span style={{ fontSize: "1.75rem", fontWeight: 800, color: PINK }}>
-              {fmt(product.price_kobo)}
-            </span>
+          {/* ── Offer box ── */}
+          <div style={{
+            marginTop: "2.5rem",
+            background: "linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)",
+            borderRadius: 20,
+            padding: "2.5rem 2rem",
+            textAlign: "center",
+            border: "1px solid rgba(255,255,255,0.07)",
+          }}>
             {product.compare_at_kobo && (
-              <span style={{ fontSize: "1rem", color: "#9ca3af", textDecoration: "line-through" }}>{fmt(product.compare_at_kobo)}</span>
+              <p style={{ color: "#9ca3af", fontSize: "0.9rem", marginBottom: "0.25rem", textDecoration: "line-through" }}>
+                {fmt(product.compare_at_kobo)}
+              </p>
             )}
+            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.85rem", marginBottom: "0.5rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+              {product.compare_at_kobo ? "Today only" : "Get instant access for"}
+            </p>
+            <p style={{ fontSize: "3rem", fontWeight: 900, color: "#fff", lineHeight: 1, marginBottom: "1.75rem" }}>
+              {fmt(product.price_kobo)}
+            </p>
+            <Link
+              href={checkoutUrl}
+              style={{
+                display: "block",
+                background: PINK,
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: "1.05rem",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                padding: "1.1rem 2rem",
+                borderRadius: 14,
+                textDecoration: "none",
+                boxShadow: `0 8px 32px ${PINK}55`,
+                transition: "opacity 0.15s",
+                marginBottom: "0.75rem",
+              }}
+            >
+              Yes, I Want Instant Access →
+            </Link>
+            <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.78rem" }}>
+              🔒 Secure checkout · Instant delivery
+            </p>
           </div>
-
-          <Link
-            href={checkoutUrl}
-            className="block w-full text-center py-4 rounded-2xl text-base font-bold text-white tracking-wide uppercase transition-all hover:opacity-90 active:scale-[0.99]"
-            style={{ background: PINK, boxShadow: `0 8px 24px ${PINK}33` }}
-          >
-            Get Instant Access
-          </Link>
 
           {/* FAQ */}
           {faqBlocks.length > 0 && (
