@@ -229,7 +229,7 @@ export default async function SalesPage({
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">Revenue by Product</h2>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
               <th className="px-6 py-3">Product</th>
@@ -263,7 +263,7 @@ export default async function SalesPage({
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       {/* All paid orders in period */}
@@ -272,7 +272,7 @@ export default async function SalesPage({
           <h2 className="font-semibold text-gray-800">All Sales This Period</h2>
           <Link href="/admin/buyers" className="text-sm text-pink-500 hover:underline">View all buyers →</Link>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
               <th className="px-6 py-3">Buyer</th>
@@ -308,7 +308,7 @@ export default async function SalesPage({
               );
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

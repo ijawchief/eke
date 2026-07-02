@@ -18,7 +18,7 @@ export default async function CustomersPage() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wide">
               <th className="text-left px-6 py-4">Email</th>
@@ -40,7 +40,7 @@ export default async function CustomersPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

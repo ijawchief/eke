@@ -80,7 +80,7 @@ export default async function BuyersPage({
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
               <th className="px-6 py-3">Buyer</th>
@@ -131,7 +131,7 @@ export default async function BuyersPage({
               );
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

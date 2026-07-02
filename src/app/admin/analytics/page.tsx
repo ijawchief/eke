@@ -149,7 +149,7 @@ export default async function AnalyticsPage() {
         {/* Product performance */}
         <div className="bg-white rounded-2xl p-6 shadow-sm lg:col-span-2">
           <h2 className="font-semibold text-gray-800 mb-4">Product Performance</h2>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100">
                 <th className="text-left pb-3">Product</th>
@@ -172,7 +172,7 @@ export default async function AnalyticsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>

@@ -62,7 +62,7 @@ export function PayoutsClient({
       </div>
 
       {/* Summary cards — always 3 columns */}
-      <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
+      <div className="grid gap-4 mb-6 grid-cols-1 sm:grid-cols-3">
         <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-5 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <Clock size={15} className="text-yellow-500 flex-shrink-0" />
@@ -113,7 +113,7 @@ export function PayoutsClient({
 
       {/* Table */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
               <th className="px-6 py-3">Creator</th>
@@ -199,7 +199,7 @@ export function PayoutsClient({
               );
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

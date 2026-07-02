@@ -120,7 +120,7 @@ export default async function AdminDashboard({
       </div>
 
       {/* Funnel cards — screenshot style */}
-      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
 
         {/* Gross Revenue */}
         <Link href="/admin/sales" className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col">
@@ -241,7 +241,7 @@ export default async function AdminDashboard({
         {topProducts.length === 0 ? (
           <div className="px-6 py-10 text-center text-gray-400 text-sm">No sales in this period</div>
         ) : (
-          <div className="grid divide-x divide-gray-50" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-50">
             {topProducts.map((p, i) => {
               const pct = Math.round((p.revenue / maxProductRevenue) * 100);
               const colors = ["bg-pink-500", "bg-blue-500", "bg-yellow-500", "bg-green-500"];
@@ -266,7 +266,7 @@ export default async function AdminDashboard({
       </div>
 
       {/* Recent sales + Globe */}
-      <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+      <div className="grid gap-6 grid-cols-1 xl:grid-cols-2">
         {/* Recent sales */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">

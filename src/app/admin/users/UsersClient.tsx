@@ -103,7 +103,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">Creator Accounts ({creators.length})</h2>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
               <th className="px-6 py-3">Creator</th>
@@ -181,7 +181,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       {/* Create/Edit modal */}
