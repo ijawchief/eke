@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { Product, Block } from "@/types";
-import { ArrowDown } from "lucide-react";
+
 import Link from "next/link";
 
 const DEFAULT_COLOR = "#e91e8c";
@@ -29,6 +29,7 @@ export function ProductPageClient({ product }: Props) {
   const reviewBlocks = allBlocks.filter((b: Block) => b.type === "testimonial");
 
   const subheadline = (heroBlock?.data?.subheadline as string) ?? "";
+  const rating = (heroBlock?.data?.rating as number) ?? 0;
   const rawHeadline = heroBlock?.data?.headline as string | undefined;
   // strip product name if it was accidentally prepended (old bug)
   const headline = rawHeadline?.startsWith(product.name)
@@ -63,44 +64,68 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section style={{ background: "#f5f5f7" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "1fr 1fr" : "1fr", gap: "3rem", alignItems: "center" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "1.1fr 0.9fr" : "1fr", gap: "2.5rem", alignItems: "start" }}>
 
           {/* Left – product image */}
           {imageBlock && (
-            <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.10)" }}>
+            <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.13)" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageBlock.data.url as string}
                 alt={(imageBlock.data.alt as string) ?? product.name}
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", maxHeight: 520 }}
+                style={{ width: "100%", display: "block", objectFit: "cover" }}
               />
             </div>
           )}
 
-          {/* Right – title, price, CTA */}
-          <div>
-            <h1 style={{ fontSize: "clamp(1.6rem, 3vw, 2.5rem)", fontWeight: 800, color: "#111827", lineHeight: 1.2, marginBottom: "0.75rem" }}>
+          {/* Right – sales copy */}
+          <div style={{ paddingTop: "0.5rem" }}>
+
+            {/* Stars */}
+            {rating > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.9rem" }}>
+                <span style={{ color: "#f59e0b", fontSize: "1.2rem", letterSpacing: "-1px" }}>
+                  {"★".repeat(rating)}{"☆".repeat(5 - rating)}
+                </span>
+                <span style={{ fontSize: "0.8rem", color: "#6b7280", fontWeight: 600 }}>{rating}.0 / 5</span>
+              </div>
+            )}
+
+            {/* Title */}
+            <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#0f0f0f", lineHeight: 1.2, marginBottom: "0.75rem" }}>
               {product.name}
             </h1>
+
+            {/* Subheadline */}
             {subheadline && (
-              <p style={{ fontSize: "1rem", color: "#6b7280", marginBottom: "1.5rem", lineHeight: 1.6 }}>{subheadline}</p>
+              <p style={{ fontSize: "1rem", color: "#6b7280", lineHeight: 1.65, marginBottom: "1.5rem" }}>{subheadline}</p>
             )}
-            <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1.75rem" }}>
-              <span style={{ fontSize: "2rem", fontWeight: 800, color: PINK }}>
+
+            {/* Divider */}
+            <div style={{ height: 1, background: "#e5e7eb", marginBottom: "1.5rem" }} />
+
+            {/* Price */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              {product.compare_at_kobo && (
+                <p style={{ fontSize: "0.9rem", color: "#9ca3af", textDecoration: "line-through", marginBottom: "0.15rem" }}>
+                  {fmt(product.compare_at_kobo)}
+                </p>
+              )}
+              <span style={{ fontSize: "2.4rem", fontWeight: 900, color: PINK, lineHeight: 1 }}>
                 {fmt(product.price_kobo)}
               </span>
-              {product.compare_at_kobo && (
-                <span style={{ fontSize: "1.1rem", color: "#9ca3af", textDecoration: "line-through" }}>{fmt(product.compare_at_kobo)}</span>
-              )}
             </div>
 
+            {/* CTA */}
             <Link
               href={checkoutUrl}
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "1rem 2rem", borderRadius: 16, fontSize: "1rem", fontWeight: 700, color: "#fff", background: PINK, boxShadow: `0 8px 24px ${PINK}33`, textDecoration: "none", transition: "opacity 0.15s" }}
+              style={{ display: "block", textAlign: "center", padding: "1rem 1.5rem", borderRadius: 14, fontSize: "1.05rem", fontWeight: 800, color: "#fff", background: PINK, boxShadow: `0 6px 20px ${PINK}44`, textDecoration: "none", marginBottom: "0.75rem", letterSpacing: "0.02em" }}
             >
-              Get it now
-              <ArrowDown size={16} />
+              Buy Now →
             </Link>
+            <p style={{ textAlign: "center", fontSize: "0.75rem", color: "#9ca3af" }}>
+              🔒 Secure checkout · Instant access after payment
+            </p>
           </div>
         </div>
       </section>

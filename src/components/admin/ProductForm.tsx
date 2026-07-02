@@ -243,6 +243,10 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
     return b ? (b.data.subheadline as string) ?? "" : "";
   });
+  const [rating, setRating] = useState<number>(() => {
+    const b = (initialData?.page_blocks ?? []).find((b) => b.type === "hero");
+    return b ? (b.data.rating as number) ?? 0 : 0;
+  });
   const [ctaText, setCtaText] = useState("PURCHASE");
   const [price, setPrice] = useState(initialData ? String(initialData.price_kobo / 100) : "");
   const [discountEnabled, setDiscountEnabled] = useState(!!initialData?.compare_at_kobo);
@@ -292,13 +296,13 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
   const buildBlocks = useCallback((): Block[] => {
     const blocks: Block[] = [];
-    if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline, subheadline: subtitle, badge: "" } });
+    if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline, subheadline: subtitle, badge: "", rating } });
     if (descBody.trim()) blocks.push({ id: crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
     if (thumbnail) blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
     if (faqItems.length) blocks.push({ id: crypto.randomUUID(), type: "faq", data: { items: faqItems } });
     blocks.push({ id: crypto.randomUUID(), type: "theme", data: { color: themeColor } });
     return blocks;
-  }, [name, headline, subtitle, descBody, thumbnail, faqItems, themeColor]);
+  }, [name, headline, subtitle, rating, descBody, thumbnail, faqItems, themeColor]);
 
   const buildBlocksEdit = useCallback((): Block[] => {
     const existing = initialData?.page_blocks ?? [];
@@ -318,7 +322,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     }
     if (faqItems.length) blocks.push({ id: crypto.randomUUID(), type: "faq", data: { items: faqItems } });
     return [...blocks, ...others, { id: crypto.randomUUID(), type: "theme", data: { color: themeColor } }];
-  }, [initialData, name, headline, subtitle, descBody, thumbnail, faqItems, themeColor]);
+  }, [initialData, name, headline, subtitle, rating, descBody, thumbnail, faqItems, themeColor]);
 
   const handleSave = async (mode: "draft" | "publish") => {
     if (!name) { setStepError("Product title is required"); return; }
@@ -473,6 +477,18 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   </div>
                   <input type="text" value={headline} onChange={(e) => setHeadline(e.target.value.slice(0, 150))}
                     placeholder={name || "Enter a compelling headline…"} className={inp} style={inpStyle} />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">Star Rating (shown on product page)</label>
+                  <div className="flex items-center gap-1">
+                    {[1,2,3,4,5].map((star) => (
+                      <button key={star} type="button" onClick={() => setRating(rating === star ? 0 : star)}
+                        style={{ fontSize: 28, color: star <= rating ? "#f59e0b" : "#d1d5db", lineHeight: 1, background: "none", border: "none", cursor: "pointer", padding: "0 2px" }}>
+                        ★
+                      </button>
+                    ))}
+                    {rating > 0 && <span className="text-xs text-gray-400 ml-2">{rating}.0 stars</span>}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">Description Body</label>
