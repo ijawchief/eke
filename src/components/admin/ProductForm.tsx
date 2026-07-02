@@ -171,20 +171,20 @@ function PreviewCard({ name, subtitle, price, compareAt, thumbnail, ctaText }: {
     ? new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(parseFloat(v))
     : "";
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm w-[200px]">
+    <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #e5e7eb", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.07)", width: 200 }}>
       {thumbnail
         // eslint-disable-next-line @next/next/no-img-element
-        ? <img src={thumbnail} alt="" className="w-full h-28 object-cover" />
-        : <div className="w-full h-28 bg-gray-50 flex items-center justify-center"><FileText size={28} className="text-gray-300" /></div>
+        ? <img src={thumbnail} alt="" style={{ width: "100%", height: 112, objectFit: "cover", display: "block" }} />
+        : <div style={{ width: "100%", height: 112, background: "#f9fafb", display: "flex", alignItems: "center", justifyContent: "center" }}><FileText size={28} className="text-gray-300" /></div>
       }
-      <div className="p-3">
-        <p className="font-bold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">{name || "Product title"}</p>
-        {subtitle && <p className="text-xs text-gray-500 mb-2 leading-snug line-clamp-2">{subtitle}</p>}
-        <div className="flex items-baseline gap-1.5 mb-3">
-          <span className="text-sm font-bold" style={{ color: PINK }}>{fmt(price) || "₦0"}</span>
-          {compareAt && <span className="text-xs text-gray-400 line-through">{fmt(compareAt)}</span>}
+      <div style={{ padding: "10px 12px" }}>
+        <p style={{ fontWeight: 700, color: "#111827", fontSize: 13, lineHeight: 1.35, marginBottom: 4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{name || "Product title"}</p>
+        {subtitle && <p style={{ fontSize: 11, color: "#6b7280", marginBottom: 8, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{subtitle}</p>}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 10 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: PINK }}>{fmt(price) || "₦0"}</span>
+          {compareAt && <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through" }}>{fmt(compareAt)}</span>}
         </div>
-        <button className="w-full text-white text-xs font-bold py-2 rounded-xl uppercase tracking-wide" style={{ background: PINK }}>
+        <button style={{ width: "100%", background: PINK, color: "#fff", fontSize: 11, fontWeight: 700, padding: "7px 0", borderRadius: 10, border: "none", textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer" }}>
           {ctaText || "PURCHASE"}
         </button>
       </div>
@@ -427,8 +427,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
   /* ── render ──────────────────────────────────────────────────── */
   return (
-    <div className="flex gap-12 items-start">
-      <div className="flex-1 max-w-2xl">
+    <div style={{ display: "flex", gap: "3rem", alignItems: "flex-start" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: 672 }}>
 
         <StepTabs current={step} unlocked={unlocked} onSelect={setStep} />
 
@@ -866,7 +866,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
       </div>
 
       {/* ── right: preview ───────────────────────────────────────── */}
-      <div className="hidden lg:block sticky top-8">
+      <div style={{ width: 220, flexShrink: 0, position: "sticky", top: 32 }} className="hidden lg:block">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Preview</p>
         <PreviewCard name={name} subtitle={subtitle} price={price}
           compareAt={discountEnabled ? compareAt : ""} thumbnail={thumbnail} ctaText={ctaText} />
