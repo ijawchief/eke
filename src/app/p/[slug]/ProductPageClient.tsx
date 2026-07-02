@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { Product, Block } from "@/types";
@@ -39,6 +39,7 @@ export function ProductPageClient({ product }: Props) {
 
   const subheadline = (heroBlock?.data?.subheadline as string) ?? "";
   const rating = (heroBlock?.data?.rating as number) ?? 0;
+  const author = (heroBlock?.data?.author as string) ?? "";
   const rawHeadline = heroBlock?.data?.headline as string | undefined;
   // strip product name if it was accidentally prepended (old bug)
   const headline = rawHeadline?.startsWith(product.name)
@@ -57,9 +58,6 @@ export function ProductPageClient({ product }: Props) {
     const qs = params.toString();
     return qs ? `${base}?${qs}` : base;
   })();
-
-  const [expanded, setExpanded] = useState(false);
-  const COLLAPSE_HEIGHT = 520; // px — show toggle beyond this
 
   useEffect(() => {
     const sessionId = sessionStorage.getItem("eke_sid") ?? crypto.randomUUID();
@@ -104,9 +102,14 @@ export function ProductPageClient({ product }: Props) {
             )}
 
             {/* Title */}
-            <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: "0.75rem" }}>
+            <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: author ? "0.5rem" : "0.75rem" }}>
               {product.name}
             </h1>
+            {author && (
+              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.55)", marginBottom: "0.9rem", fontWeight: 500 }}>
+                by {author}
+              </p>
+            )}
 
             {/* Subheadline */}
             {subheadline && (
@@ -154,33 +157,9 @@ export function ProductPageClient({ product }: Props) {
 
           {descBlocks.length > 0 && (
             <div style={{ marginBottom: "1rem" }}>
-              <div style={{
-                maxHeight: expanded ? "none" : COLLAPSE_HEIGHT,
-                overflow: "hidden",
-                position: "relative",
-              }}>
-                {descBlocks.map((block: Block) => (
-                  <BlockRenderer key={block.id} block={block} />
-                ))}
-                {!expanded && (
-                  <div style={{
-                    position: "absolute", bottom: 0, left: 0, right: 0, height: 100,
-                    background: "linear-gradient(to bottom, transparent, white)",
-                  }} />
-                )}
-              </div>
-              <button
-                onClick={() => setExpanded(!expanded)}
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: "0.4rem",
-                  marginTop: "1rem", padding: "0.5rem 1.25rem",
-                  border: "1px solid #e2e8f0", borderRadius: 999,
-                  fontSize: "0.9rem", fontWeight: 600, color: "#374151",
-                  background: "white", cursor: "pointer",
-                }}
-              >
-                {expanded ? "Show Less ∧" : "Show More ∨"}
-              </button>
+              {descBlocks.map((block: Block) => (
+                <BlockRenderer key={block.id} block={block} />
+              ))}
             </div>
           )}
 
