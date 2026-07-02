@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Eye, EyeOff, Upload, Link2, FileText, X, Download, Image as ImageIcon, ShoppingCart, Settings2 } from "lucide-react";
 import { Block } from "@/types";
+import { CURRENCIES } from "@/lib/currency";
 
 /* ─── tokens ─────────────────────────────────────────────────── */
 const PINK = "#e91e8c";
@@ -252,9 +253,36 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     return b ? (b.data.author as string) ?? "" : "";
   });
   const [ctaText, setCtaText] = useState("PURCHASE");
+  const [adminCurrency, setAdminCurrency] = useState("NGN");
+  const [fxRates, setFxRates] = useState<Record<string, number>>({ NGN: 1650, USD: 1 });
   const [price, setPrice] = useState(initialData ? String(initialData.price_kobo / 100) : "");
   const [discountEnabled, setDiscountEnabled] = useState(!!initialData?.compare_at_kobo);
   const [compareAt, setCompareAt] = useState(initialData?.compare_at_kobo ? String(initialData.compare_at_kobo / 100) : "");
+
+  // Load admin currency from cookie and fetch exchange rates
+  useEffect(() => {
+    const match = document.cookie.match(/admin_currency=([^;]+)/);
+    const cur = match?.[1] ?? "NGN";
+    setAdminCurrency(cur);
+    if (cur === "NGN") return;
+    fetch("https://open.er-api.com/v6/latest/USD")
+      .then((r) => r.json())
+      .then(({ rates }) => {
+        if (!rates) return;
+        setFxRates(rates);
+        // Convert stored NGN price to display currency
+        const ngnRate = rates.NGN ?? 1650;
+        const toDisplay = (kobo: number) => {
+          const ngn = kobo / 100;
+          const usd = ngn / ngnRate;
+          return parseFloat((usd * (rates[cur] ?? 1)).toFixed(2));
+        };
+        if (initialData?.price_kobo) setPrice(String(toDisplay(initialData.price_kobo)));
+        if (initialData?.compare_at_kobo) setCompareAt(String(toDisplay(initialData.compare_at_kobo)));
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [collectFields, setCollectFields] = useState<CField[]>([
     { id: "name",  label: "Name",         icon: "A", required: false, hidden: false, locked: false },
     { id: "email", label: "Email",         icon: "✉", required: true,  hidden: false, locked: true  },
@@ -314,7 +342,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     const blocks: Block[] = [];
     if (name) {
       const h = existing.find((b) => b.type === "hero");
-      blocks.push({ id: h?.id ?? crypto.randomUUID(), type: "hero", data: { headline: headline || name, subheadline: subtitle, badge: h?.data.badge ?? "" } });
+      blocks.push({ id: h?.id ?? crypto.randomUUID(), type: "hero", data: { headline: headline, subheadline: subtitle, badge: h?.data.badge ?? "", rating, author } });
     }
     if (descBody.trim()) {
       const t = existing.find((b) => b.type === "text");
@@ -337,8 +365,19 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     const payload = {
       name,
       slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-      price_kobo: Math.round(parseFloat(price) * 100),
-      compare_at_kobo: discountEnabled && compareAt ? Math.round(parseFloat(compareAt) * 100) : null,
+      price_kobo: (() => {
+        const v = parseFloat(price);
+        if (adminCurrency === "NGN") return Math.round(v * 100);
+        const usd = v / (fxRates[adminCurrency] ?? 1);
+        return Math.round(usd * (fxRates.NGN ?? 1650) * 100);
+      })(),
+      compare_at_kobo: (() => {
+        if (!discountEnabled || !compareAt) return null;
+        const v = parseFloat(compareAt);
+        if (adminCurrency === "NGN") return Math.round(v * 100);
+        const usd = v / (fxRates[adminCurrency] ?? 1);
+        return Math.round(usd * (fxRates.NGN ?? 1650) * 100);
+      })(),
       external_url: deliverMode === "url" ? (deliveryUrl || null) : (uploadedFile?.url || null),
       active: isEdit ? active : mode === "publish",
       page_blocks: isEdit ? buildBlocksEdit() : buildBlocks(),
@@ -519,13 +558,13 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <Label n={4} text="Set price" />
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Price (₦) <span className="text-red-400">*</span></label>
+                  <label className="block text-xs text-gray-500 mb-1.5">Price ({CURRENCIES.find((c) => c.code === adminCurrency)?.symbol ?? adminCurrency}) <span className="text-red-400">*</span></label>
                   <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
                     placeholder="0.00" className={inp} style={inpStyle} />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs text-gray-500">Discount Price (₦)</label>
+                    <label className="text-xs text-gray-500">Discount Price ({CURRENCIES.find((c) => c.code === adminCurrency)?.symbol ?? adminCurrency})</label>
                     <button onClick={() => setDiscountEnabled(!discountEnabled)}
                       className="relative w-9 h-5 rounded-full transition-colors"
                       style={{ background: discountEnabled ? PINK : "#d1d5db" }}>

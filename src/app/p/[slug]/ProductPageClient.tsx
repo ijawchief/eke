@@ -9,6 +9,19 @@ import Link from "next/link";
 
 const DEFAULT_COLOR = "#e91e8c";
 
+// country code → ISO currency code
+const COUNTRY_CURRENCY: Record<string, string> = {
+  NG: "NGN", GH: "GHS", KE: "KES", ZA: "ZAR", UG: "UGX", TZ: "TZS", RW: "RWF",
+  ET: "ETB", EG: "EGP", MA: "MAD", CI: "XOF", SN: "XOF", CM: "XAF",
+  US: "USD", CA: "CAD", GB: "GBP", AU: "AUD", NZ: "NZD",
+  DE: "EUR", FR: "EUR", IT: "EUR", ES: "EUR", NL: "EUR", BE: "EUR", PT: "EUR", AT: "EUR", IE: "EUR",
+  JP: "JPY", CN: "CNY", IN: "INR", SG: "SGD", HK: "HKD", MY: "MYR", TH: "THB", PH: "PHP", ID: "IDR",
+  AE: "AED", SA: "SAR", QA: "QAR", KW: "KWD",
+  BR: "BRL", MX: "MXN", AR: "ARS", CO: "COP", CL: "CLP",
+  CH: "CHF", SE: "SEK", NO: "NOK", DK: "DKK", PL: "PLN",
+  TR: "TRY", IL: "ILS", PK: "PKR", BD: "BDT",
+};
+
 function heroGradient(hex: string): string {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -28,6 +41,8 @@ function fmt(kobo: number) {
 
 export function ProductPageClient({ product }: Props) {
   const searchParams = useSearchParams();
+  const [geoPrice, setGeoPrice] = useState<string | null>(null);
+  const [geoCompare, setGeoCompare] = useState<string | null>(null);
 
   const PINK = (product.page_blocks.find((b: Block) => b.type === "theme")?.data?.color as string) ?? DEFAULT_COLOR;
   const allBlocks = product.page_blocks.filter((b: Block) => b.type !== "order_bump" && b.type !== "theme");
@@ -68,6 +83,30 @@ export function ProductPageClient({ product }: Props) {
       body: JSON.stringify({ product_id: product.id, session_id: sessionId }),
     }).catch(() => {});
   }, [product.id]);
+
+  useEffect(() => {
+    async function detectGeoCurrency() {
+      try {
+        const geoRes = await fetch("https://api.country.is/");
+        const { country } = await geoRes.json();
+        const currency = COUNTRY_CURRENCY[country] ?? "USD";
+        if (currency === "NGN") return; // already shown in NGN
+        const ratesRes = await fetch("https://open.er-api.com/v6/latest/USD");
+        const { rates } = await ratesRes.json();
+        if (!rates) return;
+        const ngnRate = rates.NGN ?? 1650;
+        const convert = (kobo: number) => {
+          const usd = (kobo / 100) / ngnRate;
+          return usd * (rates[currency] ?? 1);
+        };
+        const fmtGeo = (amount: number) =>
+          new Intl.NumberFormat(undefined, { style: "currency", currency, maximumFractionDigits: 2 }).format(amount);
+        setGeoPrice(fmtGeo(convert(product.price_kobo)));
+        if (product.compare_at_kobo) setGeoCompare(fmtGeo(convert(product.compare_at_kobo)));
+      } catch { /* fall back to NGN */ }
+    }
+    detectGeoCurrency();
+  }, [product.price_kobo, product.compare_at_kobo]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -237,6 +276,12 @@ export function ProductPageClient({ product }: Props) {
           )}
         </div>
       </section>
+      {/* Powered by Eke */}
+      <div style={{ textAlign: "center", padding: "1.5rem 1rem", borderTop: "1px solid #f0f0f0" }}>
+        <a href="/" style={{ fontSize: "0.75rem", color: "#9ca3af", textDecoration: "none" }}>
+          Powered by <strong style={{ color: "#6b7280" }}>Eke</strong>
+        </a>
+      </div>
     </main>
   );
 }
