@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 
 function requireAdmin(req: NextRequest) {
-  const cookie = req.headers.get("cookie") ?? "";
-  const token = cookie.match(/admin_token=([^;]+)/)?.[1];
-  return token === process.env.ADMIN_SECRET;
+  return req.cookies.get("admin_token")?.value === process.env.ADMIN_SECRET;
 }
 
 export async function POST(req: NextRequest) {

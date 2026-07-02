@@ -3,10 +3,8 @@ import { getServiceClient } from "@/lib/supabase";
 import crypto from "crypto";
 
 function requireAdmin(req: NextRequest) {
-  const cookie = req.headers.get("cookie") ?? "";
-  const token = cookie.match(/admin_token=([^;]+)/)?.[1];
-  if (token !== process.env.ADMIN_SECRET) return false;
-  return true;
+  const token = req.cookies.get("admin_token")?.value;
+  return token === process.env.ADMIN_SECRET;
 }
 
 export async function POST(req: NextRequest) {
