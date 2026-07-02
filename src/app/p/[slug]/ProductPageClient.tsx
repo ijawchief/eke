@@ -57,42 +57,40 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section className="bg-white">
-        <div className="max-w-5xl mx-auto px-4 py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+        <div className="max-w-5xl mx-auto px-5 py-10" style={{ display: "grid", gridTemplateColumns: imageBlock ? "1fr 1fr" : "1fr", gap: "3rem", alignItems: "center" }}>
 
           {/* Left – product image */}
           {imageBlock && (
-            <div className="w-full md:w-[55%] shrink-0">
+            <div style={{ borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.10)" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageBlock.data.url as string}
                 alt={(imageBlock.data.alt as string) ?? product.name}
-                className="w-full rounded-2xl object-cover shadow-md"
-                style={{ maxHeight: 480 }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", maxHeight: 520 }}
               />
             </div>
           )}
 
           {/* Right – title, price, CTA */}
-          <div className="flex-1 min-w-0">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
+          <div>
+            <h1 style={{ fontSize: "clamp(1.6rem, 3vw, 2.5rem)", fontWeight: 800, color: "#111827", lineHeight: 1.2, marginBottom: "0.75rem" }}>
               {product.name}
             </h1>
             {subheadline && (
-              <p className="text-base text-gray-500 mb-5 leading-relaxed">{subheadline}</p>
+              <p style={{ fontSize: "1rem", color: "#6b7280", marginBottom: "1.5rem", lineHeight: 1.6 }}>{subheadline}</p>
             )}
-            <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-3xl font-extrabold" style={{ color: PINK }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1.75rem" }}>
+              <span style={{ fontSize: "2rem", fontWeight: 800, color: PINK }}>
                 {fmt(product.price_kobo)}
               </span>
               {product.compare_at_kobo && (
-                <span className="text-lg text-gray-400 line-through">{fmt(product.compare_at_kobo)}</span>
+                <span style={{ fontSize: "1.1rem", color: "#9ca3af", textDecoration: "line-through" }}>{fmt(product.compare_at_kobo)}</span>
               )}
             </div>
 
             <Link
               href={checkoutUrl}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{ background: PINK, boxShadow: `0 8px 24px ${PINK}33` }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "1rem 2rem", borderRadius: 16, fontSize: "1rem", fontWeight: 700, color: "#fff", background: PINK, boxShadow: `0 8px 24px ${PINK}33`, textDecoration: "none", transition: "opacity 0.15s" }}
             >
               Get it now
               <ArrowDown size={16} />
@@ -106,40 +104,38 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── CONTENT SECTION ──────────────────────────────────────── */}
       <section style={{ background: "#f5f5f7" }}>
-        <div className="max-w-2xl mx-auto px-4 py-12">
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-10">
+        <div className="max-w-2xl mx-auto px-5 py-12">
 
-            {showHeadline && (
-              <h2 className="text-2xl font-extrabold text-gray-900 leading-snug mb-6">
-                {headline}
-              </h2>
-            )}
+          {showHeadline && (
+            <h2 className="text-2xl font-extrabold text-gray-900 leading-snug mb-6">
+              {headline}
+            </h2>
+          )}
 
-            {contentBlocks.length > 0 && (
-              <div className="mb-8 space-y-1">
-                {contentBlocks.map((block: Block) => (
-                  <BlockRenderer key={block.id} block={block} />
-                ))}
-              </div>
-            )}
-
-            <div className="flex items-baseline gap-3 mb-5">
-              <span className="text-2xl font-extrabold" style={{ color: PINK }}>
-                {fmt(product.price_kobo)}
-              </span>
-              {product.compare_at_kobo && (
-                <span className="text-base text-gray-400 line-through">{fmt(product.compare_at_kobo)}</span>
-              )}
+          {contentBlocks.length > 0 && (
+            <div className="mb-8 space-y-1">
+              {contentBlocks.map((block: Block) => (
+                <BlockRenderer key={block.id} block={block} />
+              ))}
             </div>
+          )}
 
-            <Link
-              href={checkoutUrl}
-              className="block w-full text-center py-4 rounded-2xl text-base font-bold text-white tracking-wide uppercase transition-all hover:opacity-90 active:scale-[0.99]"
-              style={{ background: PINK, boxShadow: `0 8px 24px ${PINK}33` }}
-            >
-              Get Instant Access
-            </Link>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1.25rem" }}>
+            <span style={{ fontSize: "1.75rem", fontWeight: 800, color: PINK }}>
+              {fmt(product.price_kobo)}
+            </span>
+            {product.compare_at_kobo && (
+              <span style={{ fontSize: "1rem", color: "#9ca3af", textDecoration: "line-through" }}>{fmt(product.compare_at_kobo)}</span>
+            )}
           </div>
+
+          <Link
+            href={checkoutUrl}
+            className="block w-full text-center py-4 rounded-2xl text-base font-bold text-white tracking-wide uppercase transition-all hover:opacity-90 active:scale-[0.99]"
+            style={{ background: PINK, boxShadow: `0 8px 24px ${PINK}33` }}
+          >
+            Get Instant Access
+          </Link>
         </div>
       </section>
     </main>
