@@ -15,6 +15,7 @@ interface Creator {
   bank_name: string | null;
   account_number: string | null;
   account_name: string | null;
+  is_admin: boolean | null;
 }
 
 interface FormState {
@@ -22,9 +23,10 @@ interface FormState {
   email: string;
   username: string;
   password: string;
+  is_admin: boolean;
 }
 
-const emptyForm: FormState = { name: "", email: "", username: "", password: "" };
+const emptyForm: FormState = { name: "", email: "", username: "", password: "", is_admin: false };
 
 export function UsersClient({ creators }: { creators: Creator[] }) {
   const router = useRouter();
@@ -38,7 +40,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
   const openCreate = () => { setEditId(null); setForm(emptyForm); setError(""); setShowForm(true); };
   const openEdit = (c: Creator) => {
     setEditId(c.id);
-    setForm({ name: c.name ?? "", email: c.email ?? "", username: c.username ?? "", password: "" });
+    setForm({ name: c.name ?? "", email: c.email ?? "", username: c.username ?? "", password: "", is_admin: !!c.is_admin });
     setError("");
     setShowForm(true);
   };
@@ -51,7 +53,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
     const res = await fetch("/api/admin/users", {
       method: editId ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: editId, ...form }),
+      body: JSON.stringify({ id: editId, ...form, is_admin: form.is_admin }),
     });
     const data = await res.json();
     if (!res.ok) { setError(data.error ?? "Failed"); setLoading(false); return; }
@@ -79,7 +81,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
           onClick={openCreate}
           className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
         >
-          <Plus size={16} /> Add Creator
+          <Plus size={16} /> Add User
         </button>
       </div>
 
@@ -129,11 +131,15 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                 </td>
                 <td className="px-6 py-3.5">
                   <div className="flex flex-col gap-1">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${
-                      c.onboarding_done ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                    }`}>
-                      {c.onboarding_done ? "Onboarded" : "Pending setup"}
-                    </span>
+                    {c.is_admin ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit bg-pink-100 text-pink-700">Admin</span>
+                    ) : (
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${
+                        c.onboarding_done ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {c.onboarding_done ? "Onboarded" : "Pending setup"}
+                      </span>
+                    )}
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${
                       c.email_verified ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"
                     }`}>
@@ -188,6 +194,24 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
               </button>
             </div>
             <div className="p-6 space-y-4">
+              {/* Role toggle */}
+              <div className="flex rounded-xl overflow-hidden border border-gray-200">
+                {(["Creator", "Admin"] as const).map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, is_admin: role === "Admin" }))}
+                    className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                      (role === "Admin") === form.is_admin
+                        ? "bg-pink-500 text-white"
+                        : "bg-white text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    {role}
+                  </button>
+                ))}
+              </div>
+
               {[
                 { key: "name", label: "Full Name", type: "text", placeholder: "Jane Doe" },
                 { key: "email", label: "Email", type: "email", placeholder: "jane@example.com" },
@@ -198,7 +222,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                   <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
                   <input
                     type={type}
-                    value={form[key as keyof FormState]}
+                    value={form[key as keyof Omit<FormState, "is_admin">] as string}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                     placeholder={placeholder}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
@@ -212,7 +236,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                 className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                {loading ? "Saving…" : editId ? "Save Changes" : "Create Creator"}
+                {loading ? "Saving…" : editId ? "Save Changes" : `Create ${form.is_admin ? "Admin" : "Creator"}`}
               </button>
             </div>
           </div>

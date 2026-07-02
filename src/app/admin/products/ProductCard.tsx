@@ -48,7 +48,13 @@ export function ProductCard({ id, name, slug, price, active, earned, sales, thum
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
     setOpen(false);
     setDeleting(true);
-    await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(`Delete failed: ${data.error ?? res.statusText}`);
+      setDeleting(false);
+      return;
+    }
     router.refresh();
   }
 

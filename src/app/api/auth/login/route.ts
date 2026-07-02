@@ -8,20 +8,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Username and password required" }, { status: 400 });
   }
 
-  // Check admin first
+  // Check env-based master admin first
   if (
     username === process.env.ADMIN_USERNAME &&
     password === process.env.ADMIN_SECRET
   ) {
-    const res = NextResponse.json({ role: "admin", redirect: "/admin" });
-    res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    });
-    return res;
+    return setAdminCookie(NextResponse.json({ role: "admin", redirect: "/admin" }));
   }
+
+  // Check DB admin accounts (creator with is_admin=true)
+  const dbAdmin = await (async () => {
+    const db = getServiceClient();
+    const hash = crypto.createHash("sha256").update(password).digest("hex");
+    const normalized = username.toLowerCase().trim();
+    const { data } = await db
+      .from("creator")
+      .select("id")
+      .or(`email.eq.${normalized},username.eq.${normalized}`)
+      .eq("password_hash", hash)
+      .eq("is_admin", true)
+      .maybeSingle();
+    return data;
+  })();
+  if (dbAdmin) return setAdminCookie(NextResponse.json({ role: "admin", redirect: "/admin" }));
 
   // Check creator — match by username or email
   const db = getServiceClient();
@@ -56,4 +65,14 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
+}
+
+function setAdminCookie(res: NextResponse) {
+  res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+  });
+  return res;
 }

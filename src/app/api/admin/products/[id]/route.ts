@@ -31,8 +31,12 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
   const { id } = await params;
   const db = getServiceClient();
-  const { error } = await db.from("product").delete().eq("id", id);
 
+  // Delete dependent rows first to avoid FK constraint errors
+  await db.from("order").delete().eq("product_id", id);
+  await db.from("page_view").delete().eq("product_id", id);
+
+  const { error } = await db.from("product").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }

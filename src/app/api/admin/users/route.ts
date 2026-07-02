@@ -11,24 +11,25 @@ function requireAdmin(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!requireAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { name, email, username, password } = await req.json();
+  const { name, email, username, password, is_admin } = await req.json();
   if (!name || !email || !username || !password) {
     return NextResponse.json({ error: "All fields required" }, { status: 400 });
   }
   const password_hash = crypto.createHash("sha256").update(password).digest("hex");
   const db = getServiceClient();
-  const { error } = await db.from("creator").insert({ name, email, username, password_hash });
+  const { error } = await db.from("creator").insert({ name, email, username, password_hash, is_admin: !!is_admin });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }
 
 export async function PATCH(req: NextRequest) {
   if (!requireAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { id, name, email, username, password } = await req.json();
+  const { id, name, email, username, password, is_admin } = await req.json();
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   const db = getServiceClient();
-  const updates: Record<string, string> = { name, email, username };
+  const updates: Record<string, unknown> = { name, email, username };
   if (password) updates.password_hash = crypto.createHash("sha256").update(password).digest("hex");
+  if (is_admin !== undefined) updates.is_admin = is_admin;
   const { error } = await db.from("creator").update(updates).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
