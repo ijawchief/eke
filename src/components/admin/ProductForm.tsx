@@ -288,7 +288,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
 
   const buildBlocks = useCallback((): Block[] => {
     const blocks: Block[] = [];
-    if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline || name, subheadline: subtitle, badge: "" } });
+    if (name) blocks.push({ id: crypto.randomUUID(), type: "hero", data: { headline: headline, subheadline: subtitle, badge: "" } });
     if (descBody.trim()) blocks.push({ id: crypto.randomUUID(), type: "text", data: { html: descBody, content: stripHtml(descBody) } });
     if (thumbnail) blocks.push({ id: crypto.randomUUID(), type: "image", data: { url: thumbnail, alt: name } });
     blocks.push({ id: crypto.randomUUID(), type: "theme", data: { color: themeColor } });
@@ -463,9 +463,9 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 <div>
                   <div className="flex justify-between mb-1.5">
                     <label className="text-xs text-gray-500">Headline</label>
-                    <span className="text-xs text-gray-400">{headline.length}/100</span>
+                    <span className="text-xs text-gray-400">{headline.length}/150</span>
                   </div>
-                  <input type="text" value={headline} onChange={(e) => setHeadline(e.target.value.slice(0, 100))}
+                  <input type="text" value={headline} onChange={(e) => setHeadline(e.target.value.slice(0, 150))}
                     placeholder={name || "Enter a compelling headline…"} className={inp} style={inpStyle} />
                 </div>
                 <div>

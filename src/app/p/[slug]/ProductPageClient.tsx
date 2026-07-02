@@ -49,8 +49,9 @@ export function ProductPageClient({ product, bumpProduct }: Props) {
   const imageBlock = allBlocks.find((b: Block) => b.type === "image");
   const contentBlocks = allBlocks.filter((b: Block) => b.type !== "image" && b.type !== "hero");
 
-  const headline = (heroBlock?.data?.headline as string) ?? product.name;
+  const headline = heroBlock?.data?.headline as string | undefined;
   const subheadline = (heroBlock?.data?.subheadline as string) ?? "";
+  const showHeadline = headline && headline !== product.name;
 
   const total = product.price_kobo + (bumpSelected && bumpProduct ? bumpProduct.price_kobo : 0);
 
@@ -190,9 +191,11 @@ export function ProductPageClient({ product, bumpProduct }: Props) {
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-10">
 
             {/* Headline */}
-            <h2 className="text-2xl font-extrabold text-gray-900 leading-snug mb-6">
-              {headline}
-            </h2>
+            {showHeadline && (
+              <h2 className="text-2xl font-extrabold text-gray-900 leading-snug mb-6">
+                {headline}
+              </h2>
+            )}
 
             {/* Description + other blocks */}
             {contentBlocks.length > 0 && (
