@@ -31,16 +31,15 @@ function HeroBlock({ data }: { data: D }) {
 
 
 function TextBlock({ data }: { data: D }) {
-  if (data.html) {
-    return (
-      <div className="py-3 px-1 eke-prose" dangerouslySetInnerHTML={{ __html: cleanHtml(str(data.html)) }} />
-    );
-  }
-  return (
-    <div className="py-3 px-1">
-      <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{str(data.content)}</p>
-    </div>
-  );
+  const raw = data.html ? str(data.html) : data.content ? `<p>${str(data.content)}</p>` : "";
+  const [html, setHtml] = useState(raw);
+
+  useEffect(() => {
+    setHtml(cleanHtml(raw));
+  }, [raw]);
+
+  if (!raw) return null;
+  return <div className="py-3 px-1 eke-prose" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 function ImageBlock({ data }: { data: D }) {
