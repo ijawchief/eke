@@ -3,7 +3,6 @@
 import { Block } from "@/types";
 import { useState, useEffect } from "react";
 import { Check, ChevronDown } from "lucide-react";
-import { cleanHtml } from "@/lib/cleanHtml";
 
 type D = Record<string, unknown>;
 const str = (v: unknown) => (v as string) ?? "";
@@ -31,14 +30,8 @@ function HeroBlock({ data }: { data: D }) {
 
 
 function TextBlock({ data }: { data: D }) {
-  const raw = data.html ? str(data.html) : data.content ? `<p>${str(data.content)}</p>` : "";
-  const [html, setHtml] = useState(raw);
-
-  useEffect(() => {
-    setHtml(cleanHtml(raw));
-  }, [raw]);
-
-  if (!raw) return null;
+  const html = data.html ? str(data.html) : data.content ? `<p>${str(data.content)}</p>` : "";
+  if (!html) return null;
   return <div className="py-3 px-1 eke-prose" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { getServiceClient } from "@/lib/supabase";
-import { Product } from "@/types";
+import { Product, Block } from "@/types";
 import { ProductPageClient } from "./ProductPageClient";
+import { serverCleanHtml } from "@/lib/cleanHtml";
 
 export const revalidate = 60;
 
@@ -21,6 +22,13 @@ export default async function ProductPage({ params }: Props) {
     .single();
 
   if (!product) notFound();
+
+  // Clean HTML in text blocks server-side so client receives already-clean content
+  product.page_blocks = (product.page_blocks ?? []).map((b: Block) =>
+    b.type === "text" && b.data?.html
+      ? { ...b, data: { ...b.data, html: serverCleanHtml(b.data.html as string) } }
+      : b
+  );
 
   const p = product as Product & {
     meta_pixel_id?: string | null;

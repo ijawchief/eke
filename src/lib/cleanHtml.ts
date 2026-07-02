@@ -1,18 +1,34 @@
 /**
  * Strip all inline styles, forbidden attributes, font tags, and empty inline
  * wrappers from HTML produced by contentEditable / paste.
- * Uses DOMParser (client-only) for reliable parsing.
+ *
+ * serverCleanHtml  — regex-based, safe in Node/Edge (no DOM)
+ * cleanHtml        — DOMParser-based on client, falls back to server version on SSR
  */
+
+export function serverCleanHtml(html: string): string {
+  if (!html) return "";
+  return html
+    // remove style attribute on any tag
+    .replace(/\s+style\s*=\s*"[^"]*"/gi, "")
+    .replace(/\s+style\s*=\s*'[^']*'/gi, "")
+    // remove common dirty attributes
+    .replace(/\s+(color|face|size|class|id|dir|lang|bgcolor|align|valign|width|height|border|cellpadding|cellspacing)\s*=\s*"[^"]*"/gi, "")
+    .replace(/\s+(color|face|size|class|id|dir|lang|bgcolor|align|valign|width|height|border|cellpadding|cellspacing)\s*=\s*'[^']*'/gi, "")
+    // unwrap <font> tags — keep content
+    .replace(/<font\b[^>]*>([\s\S]*?)<\/font>/gi, "$1")
+    // remove <meta>, <script>, <style> blocks entirely
+    .replace(/<(meta|script|style)\b[^>]*\/>/gi, "")
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
+    // remove empty <span> tags
+    .replace(/<span[^>]*>\s*<\/span>/gi, "")
+    // collapse 3+ consecutive <br> into 2
+    .replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>");
+}
+
 export function cleanHtml(html: string): string {
   if (!html) return "";
-  if (typeof window === "undefined") {
-    // SSR fallback — regex strip of the most common offenders
-    return html
-      .replace(/\s+style="[^"]*"/gi, "")
-      .replace(/\s+style='[^']*'/gi, "")
-      .replace(/\s+(color|face|size|class|id|dir|lang)="[^"]*"/gi, "")
-      .replace(/<font\b[^>]*>([\s\S]*?)<\/font>/gi, "$1");
-  }
+  if (typeof window === "undefined") return serverCleanHtml(html);
 
   const doc = new DOMParser().parseFromString(html, "text/html");
 
@@ -22,7 +38,7 @@ export function cleanHtml(html: string): string {
     IMG: ["src", "alt", "width", "height"],
   };
 
-  // 1. Strip all attributes, then restore whitelisted ones
+  // Strip all attributes, restore only whitelisted
   doc.querySelectorAll("*").forEach((el) => {
     const allowed = KEEP[el.tagName] ?? [];
     const saved: Record<string, string> = {};
@@ -34,22 +50,22 @@ export function cleanHtml(html: string): string {
     Object.entries(saved).forEach(([a, v]) => el.setAttribute(a, v));
   });
 
-  // 2. Unwrap <font> tags — keep inner content
+  // Unwrap <font> tags
   doc.querySelectorAll("font").forEach((el) =>
     el.replaceWith(...Array.from(el.childNodes))
   );
 
-  // 3. Remove empty inline wrappers (no text, no meaningful children)
+  // Remove empty inline wrappers
   doc.querySelectorAll("span, b, i, u, em, strong").forEach((el) => {
     if (!el.textContent?.trim() && !el.querySelector("img, br")) el.remove();
   });
 
-  // 4. Unwrap bare <span> elements that wrap only text (no nested tags)
+  // Unwrap bare <span>s wrapping only text
   doc.querySelectorAll("span").forEach((el) => {
     if (el.children.length === 0) el.replaceWith(...Array.from(el.childNodes));
   });
 
-  // 5. Remove <meta>, <script>, <style> tags entirely
+  // Remove meta/script/style
   doc.querySelectorAll("meta, script, style").forEach((el) => el.remove());
 
   return doc.body.innerHTML;
