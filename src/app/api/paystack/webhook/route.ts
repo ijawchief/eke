@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature } from "@/lib/paystack";
 import { getServiceClient } from "@/lib/supabase";
 import { sendCapiPurchase } from "@/lib/capi";
-import { sendDeliveryEmail } from "@/lib/email";
+import { sendDeliveryEmail, sendSaleNotification } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
   const productIds = (items ?? []).map((i: { product_id: string }) => i.product_id);
   const { data: products } = await db
     .from("product")
-    .select("id, name, external_url, delivery_type, file_ref, meta_pixel_id, meta_capi_token, webhook_url")
+    .select("id, name, external_url, delivery_type, file_ref, meta_pixel_id, meta_capi_token, webhook_url, creator_id")
     .in("id", productIds);
 
   const fulfillments = (products ?? []).map((p: { id: string; delivery_type: string; external_url: string | null; file_ref: string | null }) => ({
@@ -90,6 +90,13 @@ export async function POST(req: NextRequest) {
   }));
 
   if (fulfillments.length) await db.from("fulfillment").insert(fulfillments);
+
+  // Fetch creator emails for sale notifications
+  const creatorIds = [...new Set((products ?? []).map((p: { creator_id?: string | null }) => p.creator_id).filter(Boolean))] as string[];
+  const { data: creators } = creatorIds.length
+    ? await db.from("creator").select("id, email").in("id", creatorIds)
+    : { data: [] };
+  const creatorEmailMap = Object.fromEntries((creators ?? []).map((c: { id: string; email: string }) => [c.id, c.email]));
 
   // CAPI + email + marketing webhooks (fire and forget)
   const attribution = order.attribution as Record<string, string | null>;
@@ -137,6 +144,19 @@ export async function POST(req: NextRequest) {
           to: customer.email,
           productName: p.name,
           accessLink: p.delivery_type === "magic_link" ? (p.external_url ?? "") : (p.file_ref ?? ""),
+          orderRef: reference,
+        });
+      }
+    }),
+    ...(products ?? []).map(async (p: { id: string; name: string; creator_id?: string | null }) => {
+      const creatorEmail = p.creator_id ? creatorEmailMap[p.creator_id] : null;
+      if (creatorEmail && customer?.email) {
+        await sendSaleNotification({
+          to: creatorEmail,
+          productName: p.name,
+          buyerName: customer.name ?? null,
+          buyerEmail: customer.email,
+          amountKobo: order.total_kobo,
           orderRef: reference,
         });
       }
