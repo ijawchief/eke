@@ -11,8 +11,8 @@ import {
 const nav = [
   { href: "/creator/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/creator/products", label: "Products", icon: Package },
-  { href: "/creator/orders", label: "Sales", icon: ShoppingCart },
-  { href: "/creator/analytics", label: "Analytics", icon: BarChart2 },
+  { href: "/creator/orders", label: "Orders", icon: ShoppingCart },
+  { href: "/creator/analytics", label: "Sales", icon: BarChart2 },
   { href: "/creator/wallet", label: "Wallet", icon: Wallet },
   { href: "/creator/settings", label: "Settings", icon: Settings },
 ];

@@ -35,7 +35,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
 
 export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
-  const [storeName, setStoreName] = useState("Oporo System Ltd");
+  const [storeName, setStoreName] = useState("Veelage");
   const [storeUrl, setStoreUrl] = useState("https://eke.store");
   const [supportEmail, setSupportEmail] = useState("support@eke.store");
   const [notifyNewSale, setNotifyNewSale] = useState(true);
@@ -76,7 +76,7 @@ export default function SettingsPage() {
           <Input defaultValue="Admin" placeholder="Your name" />
         </Field>
         <Field label="Business Name">
-          <Input value={storeName} onChange={(e) => setStoreName(e.target.value)} placeholder="Oporo System Ltd" />
+          <Input value={storeName} onChange={(e) => setStoreName(e.target.value)} placeholder="Veelage" />
         </Field>
         <Field label="Support Email">
           <Input type="email" value={supportEmail} onChange={(e) => setSupportEmail(e.target.value)} placeholder="support@yourstore.com" />

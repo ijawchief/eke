@@ -102,7 +102,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
           <div className="w-9 h-9 rounded-full bg-orange-600 flex items-center justify-center text-white text-sm font-bold">A</div>
           <div>
             <p className="font-semibold text-gray-800">Admin</p>
-            <p className="text-xs text-gray-400">Oporo System Ltd · env-managed</p>
+            <p className="text-xs text-gray-400">env-managed</p>
           </div>
         </div>
         <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">Admin</span>

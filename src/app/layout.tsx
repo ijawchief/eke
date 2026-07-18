@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Veelage",
-  description: "Powered by Oporo System Ltd",
+  description: "The home for creator businesses",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

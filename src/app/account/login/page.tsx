@@ -81,7 +81,7 @@ export default function AccountLoginPage() {
             {loading ? "Signing in…" : "Sign In"}
           </button>
         </form>
-        <p className="text-center text-xs text-gray-300 mt-6">Powered by Oporo System Ltd</p>
+        <p className="text-center text-xs text-gray-300 mt-6">Veelage</p>
       </div>
     </main>
   );

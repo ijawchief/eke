@@ -33,7 +33,7 @@ export default async function CreatorAnalyticsPage() {
 
   const [{ data: items }, viewsResult] = await Promise.all([
     db.from("order_item")
-      .select("price_kobo, created_at, product_id, product:product_id(name), order:order_id(status, created_at, paid_at, customer:customer_id(name, email))")
+      .select("price_kobo, created_at, product_id, product:product_id(name), order:order_id(status, created_at, paid_at, attribution, customer:customer_id(name, email))")
       .eq("creator_id", creatorId)
       .gte("created_at", start.toISOString())
       .order("created_at", { ascending: false }),
@@ -73,6 +73,16 @@ export default async function CreatorAnalyticsPage() {
     { label: "Started Checkout", value: started, pct: viewCvr },
     { label: "Paid (Completed)", value: paid.length, pct: checkoutCvr },
   ];
+
+  // Traffic sources
+  const sources: Record<string, number> = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  all.forEach((i: any) => {
+    const o = Array.isArray(i.order) ? i.order[0] : i.order;
+    const src = o?.attribution?.utm_source ?? "direct";
+    sources[src] = (sources[src] ?? 0) + 1;
+  });
+  const sourceEntries = Object.entries(sources).sort((a, b) => b[1] - a[1]);
 
   // Product breakdown
   const productMap: Record<string, { name: string; revenue: number; units: number }> = {};
@@ -115,7 +125,7 @@ export default async function CreatorAnalyticsPage() {
         <RevenueChart data={chartData} currency="NGN" />
       </div>
 
-      {/* Funnel + product */}
+      {/* Funnel + Traffic sources */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
           <h2 className="font-semibold text-gray-800 mb-5">Conversion Funnel</h2>
@@ -140,30 +150,55 @@ export default async function CreatorAnalyticsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-6 py-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-800">Revenue by Product</h2>
-          </div>
-          {productBreakdown.length === 0 ? (
-            <p className="text-center py-10 text-gray-400 text-sm">No sales this period</p>
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
+          <h2 className="font-semibold text-gray-800 mb-5">Traffic Sources</h2>
+          {sourceEntries.length === 0 ? (
+            <p className="text-gray-400 text-sm">No attribution data yet</p>
           ) : (
-            <div className="divide-y divide-gray-50">
-              {productBreakdown.map((p) => (
-                <div key={p.name} className="px-5 sm:px-6 py-3.5 flex items-center justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-gray-800 text-sm truncate">{p.name}</p>
-                    <p className="text-xs text-gray-400">{p.units} sold</p>
-                    <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-orange-600 rounded-full"
-                        style={{ width: `${grossRevenue > 0 ? (p.revenue / grossRevenue) * 100 : 0}%` }} />
+            <div className="space-y-3">
+              {sourceEntries.map(([src, count]) => {
+                const pct = Math.round((count / all.length) * 100);
+                return (
+                  <div key={src}>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="font-medium text-gray-700 capitalize">{src}</span>
+                      <span className="text-gray-400">{count} checkouts · {pct}%</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-orange-600 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
-                  <p className="font-bold text-gray-900 text-sm flex-shrink-0">{formatNaira(p.revenue)}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
+      </div>
+
+      {/* Revenue by product */}
+      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="px-5 sm:px-6 py-4 border-b border-gray-100">
+          <h2 className="font-semibold text-gray-800">Revenue by Product</h2>
+        </div>
+        {productBreakdown.length === 0 ? (
+          <p className="text-center py-10 text-gray-400 text-sm">No sales this period</p>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {productBreakdown.map((p) => (
+              <div key={p.name} className="px-5 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-gray-800 text-sm truncate">{p.name}</p>
+                  <p className="text-xs text-gray-400">{p.units} sold</p>
+                  <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-orange-600 rounded-full"
+                      style={{ width: `${grossRevenue > 0 ? (p.revenue / grossRevenue) * 100 : 0}%` }} />
+                  </div>
+                </div>
+                <p className="font-bold text-gray-900 text-sm flex-shrink-0">{formatNaira(p.revenue)}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* All sales */}

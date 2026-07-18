@@ -390,7 +390,7 @@ export default function Home() {
       {/* ─── FOOTER ─── */}
       <footer style={{ background: "#0a0a0a", borderTop: "1px solid #1a1a1a", padding: "2rem", textAlign: "center" }}>
         <p style={{ margin: "0 0 6px", fontSize: 17, fontWeight: 900, color: O, letterSpacing: "-0.3px" }}>Veelage</p>
-        <p style={{ color: "#333", fontSize: 12, margin: 0 }}>© {new Date().getFullYear()} Veelage · Oporo System Ltd</p>
+        <p style={{ color: "#333", fontSize: 12, margin: 0 }}>© {new Date().getFullYear()} Veelage</p>
       </footer>
     </main>
   );

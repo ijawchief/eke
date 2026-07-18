@@ -60,7 +60,7 @@ export function AdminShell({ children, currencySlot }: { children: React.ReactNo
           <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">A</div>
           <div className="min-w-0">
             <p className="text-white text-xs font-semibold truncate">Admin</p>
-            <p className="text-white/30 text-xs truncate">Oporo System Ltd</p>
+            <p className="text-white/30 text-xs truncate">Veelage</p>
           </div>
         </div>
       </div>
