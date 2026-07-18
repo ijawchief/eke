@@ -86,14 +86,17 @@ export default function Home() {
     <main style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", background: "#fafaf8" }}>
 
       {/* ─── NAV ─── */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.1rem 2.5rem", background: "#fff", borderBottom: "1px solid #f0ece8", position: "sticky", top: 0, zIndex: 100 }}>
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", background: "#fff", borderBottom: "1px solid #f0ece8", position: "sticky", top: 0, zIndex: 100 }}>
         <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.5px", color: "#0a0a0a" }}>Veelage</span>
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <a href="#how-it-works" style={{ fontSize: 13, color: "#666", textDecoration: "none", fontWeight: 500 }}>How it works</a>
-          <a href="#features" style={{ fontSize: 13, color: "#666", textDecoration: "none", fontWeight: 500 }}>Features</a>
-          <a href="/login" style={{ fontSize: 13, color: "#fff", textDecoration: "none", fontWeight: 700, background: O, padding: "8px 18px", borderRadius: 9, letterSpacing: "-0.2px" }}>Get started</a>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <a href="#how-it-works" style={{ fontSize: 13, color: "#666", textDecoration: "none", fontWeight: 500, display: "none" }} className="nav-link">How it works</a>
+          <a href="#features" style={{ fontSize: 13, color: "#666", textDecoration: "none", fontWeight: 500, display: "none" }} className="nav-link">Features</a>
+          <a href="/login" style={{ fontSize: 14, color: "#fff", textDecoration: "none", fontWeight: 700, background: O, padding: "10px 20px", borderRadius: 10, letterSpacing: "-0.2px", whiteSpace: "nowrap" }}>Get started</a>
         </div>
       </nav>
+      <style>{`
+        @media (min-width: 640px) { .nav-link { display: block !important; } }
+      `}</style>
 
       {/* ─── HERO ─── */}
       <section style={{ background: `linear-gradient(160deg, #fff7ed 0%, #ffedd5 40%, #fed7aa 100%)`, padding: "6rem 2rem 5rem", textAlign: "center", position: "relative", overflow: "hidden" }}>
