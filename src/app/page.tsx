@@ -126,7 +126,7 @@ export default function Home() {
 
       {/* Nav */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 2.5rem", borderBottom: "1px solid #ebebeb", background: "#f9f9f7" }}>
-        <span style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-0.5px", color: "#0a0a0a" }}>eke</span>
+        <span style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-0.5px", color: "#0a0a0a" }}>Veelage</span>
         <a href="/admin" style={{ fontSize: 13, color: "#aaa", textDecoration: "none" }}>sign in</a>
       </nav>
 

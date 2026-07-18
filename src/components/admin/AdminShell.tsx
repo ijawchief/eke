@@ -72,7 +72,7 @@ export function AdminShell({ children, currencySlot }: { children: React.ReactNo
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-56 flex-shrink-0 flex-col bg-[#16162a] fixed h-full z-10">
         <div className="px-6 py-6">
-          <span className="text-white text-xl font-bold tracking-tight">Eke</span>
+          <span className="text-white text-xl font-bold tracking-tight">Veelage</span>
         </div>
         <NavLinks />
       </aside>
@@ -87,7 +87,7 @@ export function AdminShell({ children, currencySlot }: { children: React.ReactNo
       {/* Mobile drawer */}
       <aside className={`fixed top-0 left-0 h-full w-64 bg-[#16162a] z-50 flex flex-col transition-transform duration-300 lg:hidden ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="px-6 py-6 flex items-center justify-between">
-          <span className="text-white text-xl font-bold tracking-tight">Eke</span>
+          <span className="text-white text-xl font-bold tracking-tight">Veelage</span>
           <button onClick={() => setOpen(false)} className="text-white/50 hover:text-white p-1">
             <X size={20} />
           </button>
@@ -105,7 +105,7 @@ export function AdminShell({ children, currencySlot }: { children: React.ReactNo
           >
             <Menu size={20} />
           </button>
-          <span className="lg:hidden text-base font-bold text-gray-900">Eke</span>
+          <span className="lg:hidden text-base font-bold text-gray-900">Veelage</span>
           <div className="ml-auto">{currencySlot}</div>
         </div>
         <main className="flex-1 p-4 lg:p-8">{children}</main>

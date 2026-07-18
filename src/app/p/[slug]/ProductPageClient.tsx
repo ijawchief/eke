@@ -279,7 +279,7 @@ export function ProductPageClient({ product }: Props) {
       {/* Powered by Eke */}
       <div style={{ textAlign: "center", padding: "1.5rem 1rem", borderTop: "1px solid #f0f0f0" }}>
         <a href="/" style={{ fontSize: "0.75rem", color: "#9ca3af", textDecoration: "none" }}>
-          Powered by <strong style={{ color: "#6b7280" }}>Eke</strong>
+          Powered by <strong style={{ color: "#6b7280" }}>Veelage</strong>
         </a>
       </div>
     </main>

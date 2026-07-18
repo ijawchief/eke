@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     if (!primaryProduct) continue;
 
-    const fromName = primaryProduct.from_name ?? "Eke Store";
+    const fromName = primaryProduct.from_name ?? "Veelage Store";
     const fromEmail = primaryProduct.from_email ?? "no-reply@eke.ng";
     const productUrl = `${process.env.APP_URL ?? "https://eke.ng"}/p/${primaryProduct.slug}`;
 

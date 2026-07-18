@@ -6,7 +6,7 @@ export function getResend() {
   return _resend;
 }
 
-const FROM = "Eke <no-reply@eke.ng>"; // update domain once verified
+const FROM = "Veelage <no-reply@eke.ng>"; // update domain once verified
 
 export async function sendDeliveryEmail(params: {
   to: string;

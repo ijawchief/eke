@@ -259,7 +259,7 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
       {/* Powered by Eke */}
       <div style={{ textAlign: "center", paddingTop: "1rem", paddingBottom: "2rem" }}>
         <a href="/" style={{ fontSize: "0.75rem", color: "#9ca3af", textDecoration: "none" }}>
-          Powered by <strong style={{ color: "#6b7280" }}>Eke</strong>
+          Powered by <strong style={{ color: "#6b7280" }}>Veelage</strong>
         </a>
       </div>
     </main>

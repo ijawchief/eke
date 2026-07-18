@@ -33,7 +33,7 @@ export default function AccountLoginPage() {
     <main className="min-h-screen flex items-center justify-center bg-[#f5f6fa] px-4">
       <div className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900">Eke</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">Veelage</h1>
           <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
         </div>
         <form onSubmit={handleLogin} className="space-y-4">

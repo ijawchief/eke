@@ -121,7 +121,7 @@ export default async function IntegrationsPage() {
         <h2 className="font-bold text-gray-800 mb-1">How integrations work</h2>
         <p className="text-sm text-gray-500 mb-4">
           Each product has its own tracking and webhook settings. When a buyer purchases or abandons a checkout,
-          Eke fires a JSON payload to the webhook URL you set on that product. Use Zapier or Make to connect that
+          Veelage fires a JSON payload to the webhook URL you set on that product. Use Zapier or Make to connect that
           webhook to any email platform in minutes — no code required.
         </p>
         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
@@ -131,7 +131,7 @@ export default async function IntegrationsPage() {
           </div>
           <div className="bg-gray-50 rounded-xl p-4 text-center">
             <div className="text-2xl mb-2">⚡</div>
-            <p className="text-xs font-semibold text-gray-700">Eke fires webhook to your URL</p>
+            <p className="text-xs font-semibold text-gray-700">Veelage fires webhook to your URL</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4 text-center">
             <div className="text-2xl mb-2">📧</div>

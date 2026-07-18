@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
   const resend = getResend();
   if (resend) {
     await resend.emails.send({
-      from: "Eke <noreply@eke.store>",
+      from: "Veelage <noreply@eke.store>",
       to: creator.email,
-      subject: "Your Eke verification code",
+      subject: "Your Veelage verification code",
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:0 auto;">
           <h2 style="color:#111;">Verify your email</h2>
