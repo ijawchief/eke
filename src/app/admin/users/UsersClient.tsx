@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, X, Check, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Loader2, ShieldCheck, ShieldOff } from "lucide-react";
 
 interface Creator {
   id: string;
@@ -68,6 +68,16 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
     await fetch(`/api/admin/users?id=${id}`, { method: "DELETE", credentials: "include" });
     setLoading(false);
     setDeleteConfirm(null);
+    router.refresh();
+  };
+
+  const toggleVerified = async (id: string, current: boolean) => {
+    await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ id, email_verified: !current }),
+    });
     router.refresh();
   };
 
@@ -153,6 +163,13 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                 </td>
                 <td className="px-6 py-3.5">
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleVerified(c.id, !!c.email_verified)}
+                      title={c.email_verified ? "Deactivate account" : "Activate account"}
+                      className={`p-1.5 rounded-lg transition-colors ${c.email_verified ? "text-green-500 hover:bg-green-50" : "text-gray-300 hover:text-green-500 hover:bg-green-50"}`}
+                    >
+                      {c.email_verified ? <ShieldCheck size={14} /> : <ShieldOff size={14} />}
+                    </button>
                     <button
                       onClick={() => openEdit(c)}
                       className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
