@@ -237,41 +237,17 @@ export default function Home() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {[
-              {
-                icon: "🎯",
-                title: "Direct-Response Sales Pages",
-                desc: "Your product page isn't just a listing — it's a conversion machine. Built with proven copywriting structure: headline, social proof, objection handling, and a clear call to action. No distractions, no navigation leaks.",
-              },
-              {
-                icon: "⬆️",
-                title: "Upsells & Order Bumps",
-                desc: "Increase your average order value without more traffic. Add a one-click order bump at checkout, or present an upsell offer immediately after purchase — while the buyer's card is still warm.",
-              },
-              {
-                icon: "📧",
-                title: "Personalised Cart Abandonment Emails",
-                desc: "Every product can have its own sender name and email — so abandoned cart sequences feel like they're coming from the creator, not a faceless platform. Higher open rates. More recoveries.",
-              },
-              {
-                icon: "🔍",
-                title: "Checkout Funnel Analytics",
-                desc: "See exactly where you're losing buyers. How many hit your page, how many started checkout, how many dropped off before paying. Find the leak, fix it, make more money.",
-              },
-              {
-                icon: "💳",
-                title: "Instant Bank Payouts",
-                desc: "Get paid directly to your Nigerian bank account after every sale. No waiting periods, no hoops. Withdraw anytime from your dashboard.",
-              },
-              {
-                icon: "📱",
-                title: "Mobile-First Checkout",
-                desc: "Most of your buyers are on their phones. Every sales page and checkout is built for mobile — fast, clean, and frictionless from tap to payment.",
-              },
+              { icon: "🛒", title: "Sales pages that sell", desc: "Your product gets a page built to convert — not just look good." },
+              { icon: "⬆️", title: "Sell more per order", desc: "Add upsells and order bumps so every checkout earns you more." },
+              { icon: "📧", title: "Win back lost buyers", desc: "Automated emails chase people who didn't complete payment — using your name, not ours." },
+              { icon: "🔍", title: "See where you're losing sales", desc: "Know exactly how many people viewed, started checkout, and paid. Fix what's broken." },
+              { icon: "💳", title: "Get paid instantly", desc: "Money goes straight to your bank account after every sale." },
+              { icon: "📱", title: "Works on any phone", desc: "Your buyers are on mobile. Your store is ready for them." },
             ].map((f) => (
-              <div key={f.title} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "1.75rem", backdropFilter: "blur(4px)" }}>
-                <p style={{ fontSize: 28, margin: "0 0 12px" }}>{f.icon}</p>
-                <p style={{ fontWeight: 800, fontSize: 15, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.2px" }}>{f.title}</p>
-                <p style={{ fontSize: 13, color: "#fdba74", margin: 0, lineHeight: 1.7 }}>{f.desc}</p>
+              <div key={f.title} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "1.5rem", backdropFilter: "blur(4px)" }}>
+                <p style={{ fontSize: 26, margin: "0 0 10px" }}>{f.icon}</p>
+                <p style={{ fontWeight: 800, fontSize: 14, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.1px" }}>{f.title}</p>
+                <p style={{ fontSize: 13, color: "#fdba74", margin: 0, lineHeight: 1.6 }}>{f.desc}</p>
               </div>
             ))}
           </div>
