@@ -44,13 +44,13 @@ export default function AffiliateLoginPage() {
         </div>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">Email or Username</label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
-              placeholder="you@example.com"
+              placeholder="you@example.com or username"
               required
             />
           </div>
