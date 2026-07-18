@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 
 export default function AccountLoginPage() {
   const [email, setEmail] = useState("");
@@ -32,8 +33,9 @@ export default function AccountLoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#f5f6fa] px-4">
-      <div className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-sm">
+    <main className="min-h-screen flex items-center justify-center bg-[#fff7ed] relative overflow-hidden px-4">
+      <AfricanVillageBackground />
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 w-full max-w-sm relative z-10">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-extrabold text-gray-900">Veelage</h1>
           <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
