@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ export default function LoginPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username: email, password }),
     });
 
     const data = await res.json();
@@ -42,14 +42,15 @@ export default function LoginPage() {
         </div>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Username</label>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
-              placeholder="Enter your username"
-              autoComplete="username"
+              placeholder="your@email.com"
+              autoComplete="email"
+              required
             />
           </div>
           <div>
