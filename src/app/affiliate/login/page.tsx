@@ -77,6 +77,9 @@ export default function AffiliateLoginPage() {
           {error && (
             <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-2.5">{error}</div>
           )}
+          <div className="text-right -mt-1">
+            <Link href="/affiliate/forgot-password" className="text-xs text-emerald-600 hover:underline">Forgot password?</Link>
+          </div>
           <button
             type="submit"
             disabled={loading}

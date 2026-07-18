@@ -121,14 +121,23 @@ export default async function CreatorDashboard() {
   const topProducts = Object.values(productMap).sort((a, b) => b.revenue - a.revenue).slice(0, 4);
   const maxProductRevenue = Math.max(1, ...topProducts.map((p) => p.revenue));
 
+  const now = new Date();
+  const dateLabel = now.toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" });
+
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-          Welcome, <span className="font-extrabold">{creator?.name ?? "Creator"}</span>!
-        </h1>
-        <p className="text-gray-400 text-sm mt-0.5">{creator?.email} · last 30 days</p>
+      {/* Screenshot-friendly header */}
+      <div className="bg-white rounded-2xl shadow-sm px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold text-orange-600 uppercase tracking-widest mb-0.5">Veelage Creator Dashboard</p>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900">{creator?.name ?? "Creator"}</h1>
+          <p className="text-gray-400 text-xs mt-0.5">{creator?.email}</p>
+        </div>
+        <div className="flex items-center gap-2 sm:text-right">
+          <div className="bg-orange-50 rounded-xl px-3 py-2 text-xs text-orange-700 font-semibold">
+            📅 Last 30 days · {dateLabel}
+          </div>
+        </div>
       </div>
 
       {/* Funnel cards */}

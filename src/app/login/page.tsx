@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 
@@ -80,6 +81,9 @@ export default function LoginPage() {
               {error}
             </div>
           )}
+          <div className="text-right -mt-1">
+            <Link href="/forgot-password" className="text-xs text-orange-600 hover:underline">Forgot password?</Link>
+          </div>
           <button
             type="submit"
             disabled={loading}
