@@ -9,7 +9,7 @@ import {
 
 const nav = [
   { href: "/affiliate/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/affiliate/links", label: "My Links", icon: Link2 },
+  { href: "/affiliate/links", label: "Marketplace", icon: Link2 },
   { href: "/affiliate/earnings", label: "Earnings", icon: TrendingUp },
   { href: "/affiliate/payouts", label: "Payouts", icon: Wallet },
   { href: "/affiliate/settings", label: "Settings", icon: Settings },
