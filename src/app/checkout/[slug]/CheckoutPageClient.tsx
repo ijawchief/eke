@@ -97,8 +97,9 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
       script.src = "https://js.paystack.co/v1/inline.js";
       script.onload = () => {
         const handler = window.PaystackPop.setup({
-          key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+          key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "",
           email,
+          amount: total,
           access_code,
           onSuccess: () => {
             window.location.href = `/confirmation?order_id=${order_id}&event_id=${event_id}`;
