@@ -7,11 +7,26 @@ export async function POST(req: NextRequest) {
   if (!email || !password) return NextResponse.json({ error: "Email and password required" }, { status: 400 });
 
   const db = getServiceClient();
-  const { data: affiliate } = await db
+  const { data: affiliate, error: dbError } = await db
     .from("affiliate")
     .select("id, email, password_hash, status, status_note")
     .eq("email", email.toLowerCase().trim())
-    .single();
+    .maybeSingle();
+
+  if (dbError) {
+    // Fallback if status columns don't exist yet (migration not run)
+    const { data: aff2 } = await db
+      .from("affiliate")
+      .select("id, email, password_hash")
+      .eq("email", email.toLowerCase().trim())
+      .maybeSingle();
+    if (!aff2) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    const hash2 = crypto.createHash("sha256").update(password).digest("hex");
+    if (hash2 !== aff2.password_hash) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    const res2 = NextResponse.json({ ok: true });
+    res2.cookies.set("affiliate_id", aff2.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7, path: "/" });
+    return res2;
+  }
 
   if (!affiliate) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
 
