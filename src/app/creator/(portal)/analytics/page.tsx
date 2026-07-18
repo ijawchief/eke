@@ -20,7 +20,7 @@ function timeAgo(date: string) {
 export default async function CreatorAnalyticsPage() {
   const h = await headers();
   const cookie = h.get("cookie") ?? "";
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const raw = cookie.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
   const creatorId = raw ? decodeURIComponent(raw) : null;
 
   const db = getServiceClient();

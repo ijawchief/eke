@@ -6,7 +6,7 @@ import { OnboardingClient } from "./OnboardingClient";
 export default async function OnboardingPage() {
   const h = await headers();
   const cookie = h.get("cookie") ?? "";
-  const creatorId = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const creatorId = cookie.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
   if (!creatorId) redirect("/login");
 
   const db = getServiceClient();

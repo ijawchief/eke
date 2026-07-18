@@ -4,7 +4,7 @@ import { getServiceClient } from "@/lib/supabase";
 import { CreatorShell } from "@/components/creator/CreatorShell";
 
 async function getCreator(cookie: string) {
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const raw = cookie.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
   const creatorId = raw ? decodeURIComponent(raw) : null;
   if (!creatorId) redirect("/login");
   const db = getServiceClient();
