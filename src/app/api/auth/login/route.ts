@@ -64,6 +64,33 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Check affiliate — match by email or username
+  const { data: affiliate } = await db
+    .from("affiliate")
+    .select("id, password_hash, status, status_note")
+    .or(`email.eq.${normalized},username.eq.${normalized}`)
+    .maybeSingle();
+
+  if (affiliate && affiliate.password_hash) {
+    const hash = crypto.createHash("sha256").update(password).digest("hex");
+    if (hash === affiliate.password_hash) {
+      if (affiliate.status === "banned") {
+        return NextResponse.json({ error: "Your account has been banned." + (affiliate.status_note ? ` Reason: ${affiliate.status_note}` : "") }, { status: 403 });
+      }
+      if (affiliate.status === "restricted") {
+        return NextResponse.json({ error: "Your account has been restricted." + (affiliate.status_note ? ` Reason: ${affiliate.status_note}` : "") }, { status: 403 });
+      }
+      const res = NextResponse.json({ role: "affiliate", redirect: "/affiliate/dashboard" });
+      res.cookies.set("affiliate_id", affiliate.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+      return res;
+    }
+  }
+
   return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
 }
 
