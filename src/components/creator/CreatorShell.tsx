@@ -5,16 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ShoppingCart, BarChart2,
-  Wallet, Settings, LogOut, Menu, X,
+  Wallet, Settings, LogOut, Menu, X, Plug,
 } from "lucide-react";
 
 const nav = [
-  { href: "/creator/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/creator/products", label: "Products", icon: Package },
-  { href: "/creator/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/creator/analytics", label: "Sales", icon: BarChart2 },
-  { href: "/creator/wallet", label: "Wallet", icon: Wallet },
-  { href: "/creator/settings", label: "Settings", icon: Settings },
+  { href: "/creator/dashboard",     label: "Dashboard",    icon: LayoutDashboard },
+  { href: "/creator/products",      label: "Products",     icon: Package },
+  { href: "/creator/orders",        label: "Orders",       icon: ShoppingCart },
+  { href: "/creator/analytics",     label: "Sales",        icon: BarChart2 },
+  { href: "/creator/wallet",        label: "Wallet",       icon: Wallet },
+  { href: "/creator/integrations",  label: "Integrations", icon: Plug },
+  { href: "/creator/settings",      label: "Settings",     icon: Settings },
 ];
 
 export function CreatorShell({
