@@ -129,7 +129,7 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
             <img src={thumbnail} alt="" className="w-16 h-16 rounded-xl object-cover shrink-0" />
           ) : (
             <div className="w-16 h-16 rounded-xl shrink-0 flex items-center justify-center text-2xl font-bold"
-              style={{ background: "linear-gradient(135deg, #f3f0ff, #fff0f8)", color: PINK }}>
+              style={{ background: "linear-gradient(135deg, #f3f0ff, #fff7ed)", color: PINK }}>
               {product.name.charAt(0).toUpperCase()}
             </div>
           )}

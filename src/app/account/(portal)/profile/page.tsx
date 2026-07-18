@@ -23,7 +23,7 @@ export default async function AccountProfilePage() {
 
       {/* Avatar */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-16 h-16 rounded-full bg-pink-500 flex items-center justify-center text-white text-2xl font-bold">
+        <div className="w-16 h-16 rounded-full bg-orange-600 flex items-center justify-center text-white text-2xl font-bold">
           {(customer?.name ?? customer?.email ?? "?").slice(0, 1).toUpperCase()}
         </div>
         <div>

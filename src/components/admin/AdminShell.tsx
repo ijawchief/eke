@@ -57,7 +57,7 @@ export function AdminShell({ children, currencySlot }: { children: React.ReactNo
           <LogOut size={16} /> Logout
         </Link>
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/10">
-          <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">A</div>
+          <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">A</div>
           <div className="min-w-0">
             <p className="text-white text-xs font-semibold truncate">Admin</p>
             <p className="text-white/30 text-xs truncate">Oporo System Ltd</p>

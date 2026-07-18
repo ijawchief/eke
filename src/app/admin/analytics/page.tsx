@@ -115,7 +115,7 @@ export default async function AnalyticsPage() {
                       <span className="text-gray-400">{count} orders · {pct}%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-pink-500 rounded-full" style={{ width: `${pct}%` }} />
+                      <div className="h-full bg-orange-600 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
@@ -135,7 +135,7 @@ export default async function AnalyticsPage() {
                 <div key={label} className="flex-1 flex flex-col items-center gap-1">
                   <div className="w-full flex items-end justify-center" style={{ height: "100px" }}>
                     <div
-                      className="w-full bg-pink-500 rounded-t-md transition-all"
+                      className="w-full bg-orange-600 rounded-t-md transition-all"
                       style={{ height: `${height}%`, minHeight: count > 0 ? 4 : 0 }}
                     />
                   </div>

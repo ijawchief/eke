@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
             <p style="color:#555;font-size:16px;">You were so close to getting <strong>${primaryProduct.name}</strong>.</p>
             <p style="color:#555;font-size:16px;">Your spot is still reserved — complete your order now before it's gone.</p>
             <a href="${productUrl}"
-               style="display:inline-block;margin:20px 0;background:#e91e8c;color:#fff;font-weight:bold;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:16px;">
+               style="display:inline-block;margin:20px 0;background:#ea580c;color:#fff;font-weight:bold;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:16px;">
               Complete My Order →
             </a>
             <p style="color:#999;font-size:13px;">If you have any questions, just reply to this email.</p>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { GripVertical, TrendingUp, MoreHorizontal, Pencil, ExternalLink, EyeOff, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const PINK = "#e91e8c";
+const PINK = "#ea580c";
 
 interface Props {
   id: string;
@@ -68,7 +68,7 @@ export function ProductCard({ id, name, slug, price, active, earned, sales, thum
         {thumb
           // eslint-disable-next-line @next/next/no-img-element
           ? <img src={thumb} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #f3f0ff, #fff0f8)" }}>
+          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #f3f0ff, #fff7ed)" }}>
               <span style={{ fontSize: 40, fontWeight: 700, color: PINK }}>
                 {name.charAt(0).toUpperCase()}
               </span>

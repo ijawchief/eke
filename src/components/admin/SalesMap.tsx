@@ -75,7 +75,7 @@ export function SalesMap() {
               key={t.key}
               onClick={() => setPeriod(t.key)}
               className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
-                period === t.key ? "bg-pink-500 text-white" : "text-white/40 hover:text-white/70"
+                period === t.key ? "bg-orange-600 text-white" : "text-white/40 hover:text-white/70"
               }`}
             >
               {t.label}
@@ -119,7 +119,7 @@ export function SalesMap() {
               >
                 <circle
                   r={r}
-                  fill="#ec4899"
+                  fill="#ea580c"
                   fillOpacity={0.85}
                   stroke="#ffffff"
                   strokeWidth={0.5}
@@ -145,7 +145,7 @@ export function SalesMap() {
             style={{ left: tooltip.x + 10, top: tooltip.y - 30 }}
           >
             <span className="font-semibold">{tooltip.country}</span>
-            <span className="text-pink-400 ml-2">{tooltip.count} sale{tooltip.count !== 1 ? "s" : ""}</span>
+            <span className="text-orange-500 ml-2">{tooltip.count} sale{tooltip.count !== 1 ? "s" : ""}</span>
           </div>
         )}
 
@@ -162,7 +162,7 @@ export function SalesMap() {
         <div className="px-5 pb-4 flex flex-wrap gap-x-4 gap-y-1">
           {markers.sort((a, b) => b.count - a.count).slice(0, 5).map(({ code, count }) => (
             <div key={code} className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-pink-500" />
+              <div className="w-2 h-2 rounded-full bg-orange-600" />
               <span className="text-white/60 text-xs">{code} <span className="text-white/30">({count})</span></span>
             </div>
           ))}

@@ -53,7 +53,7 @@ export default async function WalletPage() {
           <p className="text-xs text-gray-400 mb-2">Total Earned</p>
           <p className="text-3xl font-extrabold text-gray-900">{formatNaira(totalEarned)}</p>
         </div>
-        <div className="bg-pink-500 rounded-2xl p-6 shadow-sm">
+        <div className="bg-orange-600 rounded-2xl p-6 shadow-sm">
           <p className="text-xs text-white/70 mb-2">Available Balance</p>
           <p className="text-3xl font-extrabold text-white">{formatNaira(available)}</p>
         </div>

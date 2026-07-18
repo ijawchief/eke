@@ -14,10 +14,10 @@ export function RevenueChart({ data, currency }: { data: { label: string; value:
         <Tooltip
           contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
           labelStyle={{ color: "#374151", fontWeight: 600 }}
-          itemStyle={{ color: "#ec4899" }}
+          itemStyle={{ color: "#ea580c" }}
           formatter={(v) => [`${symbol}${Number(v).toLocaleString()}`, "Revenue"]}
         />
-        <Bar dataKey="value" fill="#ec4899" radius={[6, 6, 0, 0]} maxBarSize={40} />
+        <Bar dataKey="value" fill="#ea580c" radius={[6, 6, 0, 0]} maxBarSize={40} />
       </BarChart>
     </ResponsiveContainer>
   );

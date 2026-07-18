@@ -182,7 +182,7 @@ export default async function SalesPage({
                     <div className="text-right">
                       <span className="font-bold text-gray-900">{value.toLocaleString()}</span>
                       {pct !== null && (
-                        <span className="ml-2 text-xs text-pink-500 font-semibold">{pct}% CVR</span>
+                        <span className="ml-2 text-xs text-orange-600 font-semibold">{pct}% CVR</span>
                       )}
                     </div>
                   </div>
@@ -214,7 +214,7 @@ export default async function SalesPage({
                       <span className="text-gray-400">{count} checkouts · {pct}%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-pink-500 rounded-full" style={{ width: `${pct}%` }} />
+                      <div className="h-full bg-orange-600 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
@@ -251,7 +251,7 @@ export default async function SalesPage({
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 w-24 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-pink-500 rounded-full"
+                        className="h-full bg-orange-600 rounded-full"
                         style={{ width: `${grossRevenue > 0 ? (p.revenue / grossRevenue) * 100 : 0}%` }}
                       />
                     </div>
@@ -270,7 +270,7 @@ export default async function SalesPage({
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">All Sales This Period</h2>
-          <Link href="/admin/buyers" className="text-sm text-pink-500 hover:underline">View all buyers →</Link>
+          <Link href="/admin/buyers" className="text-sm text-orange-600 hover:underline">View all buyers →</Link>
         </div>
         <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
           <thead>

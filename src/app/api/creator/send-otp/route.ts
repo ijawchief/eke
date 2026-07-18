@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
           <h2 style="color:#111;">Verify your email</h2>
           <p>Hi ${creator.name ?? "there"},</p>
           <p>Your verification code is:</p>
-          <div style="font-size:40px;font-weight:800;letter-spacing:8px;color:#ec4899;margin:24px 0;">${otp}</div>
+          <div style="font-size:40px;font-weight:800;letter-spacing:8px;color:#ea580c;margin:24px 0;">${otp}</div>
           <p style="color:#888;font-size:13px;">This code expires in 10 minutes.</p>
         </div>
       `,

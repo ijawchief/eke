@@ -7,7 +7,7 @@ function Section({ title, icon: Icon, children }: { title: string; icon: React.E
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
       <div className="flex items-center gap-2.5 px-6 py-4 border-b border-gray-100">
-        <Icon size={16} className="text-pink-500" />
+        <Icon size={16} className="text-orange-600" />
         <h2 className="font-semibold text-gray-800">{title}</h2>
       </div>
       <div className="p-6">{children}</div>
@@ -28,7 +28,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 transition"
+      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
     />
   );
 }
@@ -82,7 +82,7 @@ export default function SettingsPage() {
           <Input type="email" value={supportEmail} onChange={(e) => setSupportEmail(e.target.value)} placeholder="support@yourstore.com" />
         </Field>
         <div className="pt-4">
-          <button onClick={handleSave} className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+          <button onClick={handleSave} className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             {saved ? <><CheckCircle size={15} /> Saved!</> : "Save Changes"}
           </button>
         </div>
@@ -94,7 +94,7 @@ export default function SettingsPage() {
           <Input value={storeUrl} onChange={(e) => setStoreUrl(e.target.value)} placeholder="https://yourstore.com" />
         </Field>
         <Field label="Default Currency">
-          <select className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pink-300">
+          <select className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-400">
             <option value="USD">USD — US Dollar</option>
             <option value="NGN">NGN — Nigerian Naira</option>
             <option value="EUR">EUR — Euro</option>
@@ -109,7 +109,7 @@ export default function SettingsPage() {
           </div>
         </Field>
         <div className="pt-4">
-          <button onClick={handleSave} className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+          <button onClick={handleSave} className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             {saved ? <><CheckCircle size={15} /> Saved!</> : "Save Changes"}
           </button>
         </div>
@@ -129,7 +129,7 @@ export default function SettingsPage() {
             </div>
             <button
               onClick={() => set(!value)}
-              className={`relative w-10 h-6 rounded-full transition-colors ${value ? "bg-pink-500" : "bg-gray-200"}`}
+              className={`relative w-10 h-6 rounded-full transition-colors ${value ? "bg-orange-600" : "bg-gray-200"}`}
             >
               <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${value ? "translate-x-5" : "translate-x-1"}`} />
             </button>
@@ -151,7 +151,7 @@ export default function SettingsPage() {
         {pwError && <p className="text-red-500 text-sm mt-1">{pwError}</p>}
         {pwSaved && <p className="text-green-600 text-sm mt-1 flex items-center gap-1"><CheckCircle size={14} /> Password updated</p>}
         <div className="pt-4">
-          <button onClick={handlePasswordChange} className="bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+          <button onClick={handlePasswordChange} className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
             Update Password
           </button>
         </div>

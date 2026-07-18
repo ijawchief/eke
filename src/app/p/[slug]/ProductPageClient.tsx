@@ -7,7 +7,7 @@ import { Product, Block } from "@/types";
 
 import Link from "next/link";
 
-const DEFAULT_COLOR = "#e91e8c";
+const DEFAULT_COLOR = "#ea580c";
 
 // country code → ISO currency code
 const COUNTRY_CURRENCY: Record<string, string> = {

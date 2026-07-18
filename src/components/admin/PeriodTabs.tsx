@@ -13,7 +13,7 @@ export function PeriodTabs({ current }: { current: string }) {
           key={p}
           onClick={() => router.push(`${pathname}?period=${p}`)}
           className={`px-3 py-1 rounded-md text-xs font-semibold capitalize transition-colors ${
-            current === p ? "bg-pink-500 text-white" : "text-gray-500 hover:text-gray-800"
+            current === p ? "bg-orange-600 text-white" : "text-gray-500 hover:text-gray-800"
           }`}
         >
           {p.charAt(0).toUpperCase() + p.slice(1)}

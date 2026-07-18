@@ -80,7 +80,7 @@ export default async function CreatorAnalyticsPage() {
           {days.map((d) => (
             <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
               <div
-                className="w-full bg-pink-400 rounded-t-md"
+                className="w-full bg-orange-500 rounded-t-md"
                 style={{ height: `${Math.max(4, (d.rev / maxDay) * 100)}%` }}
               />
               <span className="text-xs text-gray-400">{d.label}</span>
@@ -103,7 +103,7 @@ export default async function CreatorAnalyticsPage() {
                   <p className="text-xs text-gray-400">{p.units} sold</p>
                 </div>
                 <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-pink-400 rounded-full" style={{ width: `${(p.revenue / maxRev) * 100}%` }} />
+                  <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(p.revenue / maxRev) * 100}%` }} />
                 </div>
                 <p className="font-semibold text-gray-900 text-sm w-24 text-right">{formatNaira(p.revenue)}</p>
               </div>

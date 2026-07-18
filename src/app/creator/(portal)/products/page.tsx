@@ -52,7 +52,7 @@ export default async function CreatorProductsPage() {
                   href={`/p/${p.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-pink-500 hover:underline font-medium"
+                  className="flex items-center gap-1.5 text-xs text-orange-600 hover:underline font-medium"
                 >
                   <ExternalLink size={12} /> View product page
                 </a>

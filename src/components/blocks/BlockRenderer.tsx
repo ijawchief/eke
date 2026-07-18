@@ -12,7 +12,7 @@ function HeroBlock({ data }: { data: D }) {
   return (
     <div className="py-4 px-1">
       {!!data.badge && (
-        <span className="inline-block bg-pink-50 text-pink-600 text-xs font-bold px-3 py-1 rounded-full mb-3 tracking-wide uppercase">
+        <span className="inline-block bg-orange-50 text-orange-700 text-xs font-bold px-3 py-1 rounded-full mb-3 tracking-wide uppercase">
           {str(data.badge)}
         </span>
       )}
@@ -106,7 +106,7 @@ function TestimonialBlock({ data }: { data: D }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={str(data.avatar)} alt="" className="w-9 h-9 rounded-full object-cover" />
           ) : (
-            <div className="w-9 h-9 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 text-sm font-bold">
+            <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 text-sm font-bold">
               {str(data.name).charAt(0).toUpperCase()}
             </div>
           )}
@@ -133,7 +133,7 @@ function FAQBlock({ data }: { data: D }) {
         {items.map((item, i) => (
           <div
             key={i}
-            className={`rounded-xl border transition-all ${open === i ? "border-pink-200 bg-pink-50" : "border-gray-100 bg-white"} overflow-hidden`}
+            className={`rounded-xl border transition-all ${open === i ? "border-orange-300 bg-orange-50" : "border-gray-100 bg-white"} overflow-hidden`}
           >
             <button
               className="w-full text-left flex justify-between items-center px-4 py-3 font-semibold text-sm text-gray-800 transition-colors"
@@ -142,11 +142,11 @@ function FAQBlock({ data }: { data: D }) {
               <span>{item.q}</span>
               <ChevronDown
                 size={15}
-                className={`flex-shrink-0 text-gray-400 transition-transform ${open === i ? "rotate-180 text-pink-500" : ""}`}
+                className={`flex-shrink-0 text-gray-400 transition-transform ${open === i ? "rotate-180 text-orange-600" : ""}`}
               />
             </button>
             {open === i && (
-              <div className="px-4 pb-4 text-gray-600 text-xs leading-relaxed border-t border-pink-100 pt-3">
+              <div className="px-4 pb-4 text-gray-600 text-xs leading-relaxed border-t border-orange-100 pt-3">
                 {item.a}
               </div>
             )}
@@ -174,14 +174,14 @@ function CountdownBlock({ data }: { data: D }) {
 
   return (
     <div className="py-3 px-1">
-      <div className="bg-indigo-50 border border-pink-100 rounded-2xl p-5 text-center">
+      <div className="bg-indigo-50 border border-orange-100 rounded-2xl p-5 text-center">
         {!!data.label && (
-          <p className="text-pink-500 text-xs font-semibold uppercase tracking-widest mb-3">{str(data.label)}</p>
+          <p className="text-orange-600 text-xs font-semibold uppercase tracking-widest mb-3">{str(data.label)}</p>
         )}
         <div className="flex justify-center gap-2">
           {units.map(([unit, val]) => (
             <div key={unit} className="bg-white rounded-xl px-3 py-2 min-w-[56px] shadow-sm">
-              <div className="text-2xl font-extrabold text-pink-600 tabular-nums">{String(val).padStart(2, "0")}</div>
+              <div className="text-2xl font-extrabold text-orange-700 tabular-nums">{String(val).padStart(2, "0")}</div>
               <div className="text-xs text-gray-400 mt-0.5 font-medium uppercase tracking-wide">{unit}</div>
             </div>
           ))}

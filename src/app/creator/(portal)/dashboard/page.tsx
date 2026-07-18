@@ -58,13 +58,13 @@ export default async function CreatorDashboard() {
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-xs text-gray-400 mb-2">Wallet Balance</p>
-          <p className="text-3xl font-extrabold text-pink-500">{formatNaira(walletBalance)}</p>
+          <p className="text-3xl font-extrabold text-orange-600">{formatNaira(walletBalance)}</p>
           <p className="text-xs text-gray-400 mt-1">Available to withdraw</p>
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-xs text-gray-400 mb-2">Total Withdrawn</p>
           <p className="text-3xl font-extrabold text-gray-900">{formatNaira(totalWithdrawn)}</p>
-          <Link href="/creator/wallet" className="text-xs text-pink-500 hover:underline mt-1 inline-block">
+          <Link href="/creator/wallet" className="text-xs text-orange-600 hover:underline mt-1 inline-block">
             Withdraw funds →
           </Link>
         </div>
@@ -74,7 +74,7 @@ export default async function CreatorDashboard() {
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-semibold text-gray-800">Recent Sales</h2>
-          <Link href="/creator/orders" className="text-sm text-pink-500 hover:underline font-medium">View all</Link>
+          <Link href="/creator/orders" className="text-sm text-orange-600 hover:underline font-medium">View all</Link>
         </div>
         <table className="w-full text-sm">
           <thead>

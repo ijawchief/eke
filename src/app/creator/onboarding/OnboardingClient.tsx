@@ -149,14 +149,14 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
         {/* Step indicators */}
         <div className="flex items-center gap-3 mb-8">
           <div className={`flex items-center gap-2 flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-            step === "email" ? "bg-pink-500 text-white" : "bg-white text-green-600 border border-green-200"
+            step === "email" ? "bg-orange-600 text-white" : "bg-white text-green-600 border border-green-200"
           }`}>
             {emailVerifiedLocal ? <CheckCircle size={15} /> : <Mail size={15} />}
             Verify Email
           </div>
           <ArrowRight size={16} className="text-gray-300 flex-shrink-0" />
           <div className={`flex items-center gap-2 flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-            step === "bank" ? "bg-pink-500 text-white" : "bg-white text-gray-400 border border-gray-200"
+            step === "bank" ? "bg-orange-600 text-white" : "bg-white text-gray-400 border border-gray-200"
           }`}>
             <Building2 size={15} />
             Bank Details
@@ -175,7 +175,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
               <button
                 onClick={handleSendOtp}
                 disabled={sendingOtp}
-                className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
               >
                 {sendingOtp ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
                 {sendingOtp ? "Sending…" : "Send verification code"}
@@ -193,7 +193,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-center text-2xl font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-center text-2xl font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-400"
                     placeholder="000000"
                     maxLength={6}
                     autoFocus
@@ -205,7 +205,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                 <button
                   onClick={handleVerifyOtp}
                   disabled={verifyingOtp || otp.length !== 6}
-                  className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                  className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
                 >
                   {verifyingOtp ? <Loader2 size={15} className="animate-spin" /> : null}
                   {verifyingOtp ? "Verifying…" : "Verify Code"}
@@ -241,7 +241,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                 placeholder="08012345678"
               />
             </div>
@@ -256,7 +256,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                 type="text"
                 value={bvn}
                 onChange={(e) => setBvn(e.target.value.replace(/\D/g, ""))}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                 placeholder="22212345678"
                 maxLength={11}
               />
@@ -273,7 +273,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                 <select
                   value={bankCode}
                   onChange={(e) => handleBankChange(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pink-300"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
                 >
                   <option value="">Select bank…</option>
                   {banks.map((b) => (
@@ -293,7 +293,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                   type="text"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                   placeholder="0123456789"
                   maxLength={10}
                 />
@@ -319,7 +319,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
                     }
                   />
                   {resolving && (
-                    <Loader2 size={14} className="absolute right-3 top-3 text-pink-400 animate-spin" />
+                    <Loader2 size={14} className="absolute right-3 top-3 text-orange-500 animate-spin" />
                   )}
                   {!resolving && accountName && (
                     <CheckCircle size={14} className="absolute right-3 top-3 text-green-500" />
@@ -344,7 +344,7 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
             <button
               onClick={handleSaveBank}
               disabled={saving || !accountName || resolving}
-              className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+              className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
             >
               {saving ? <Loader2 size={15} className="animate-spin" /> : null}
               {saving ? "Saving…" : "Complete Setup"}

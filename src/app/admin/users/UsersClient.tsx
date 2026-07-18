@@ -80,7 +80,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
         >
           <Plus size={16} /> Add User
         </button>
@@ -89,13 +89,13 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
       {/* Admin account card */}
       <div className="bg-white rounded-2xl p-5 shadow-sm mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-pink-500 flex items-center justify-center text-white text-sm font-bold">A</div>
+          <div className="w-9 h-9 rounded-full bg-orange-600 flex items-center justify-center text-white text-sm font-bold">A</div>
           <div>
             <p className="font-semibold text-gray-800">Admin</p>
             <p className="text-xs text-gray-400">Oporo System Ltd · env-managed</p>
           </div>
         </div>
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700">Admin</span>
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">Admin</span>
       </div>
 
       {/* Creators table */}
@@ -133,7 +133,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                 <td className="px-6 py-3.5">
                   <div className="flex flex-col gap-1">
                     {c.is_admin ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit bg-pink-100 text-pink-700">Admin</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit bg-orange-100 text-orange-700">Admin</span>
                     ) : (
                       <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${
                         c.onboarding_done ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
@@ -204,7 +204,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                     onClick={() => setForm((f) => ({ ...f, is_admin: role === "Admin" }))}
                     className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
                       (role === "Admin") === form.is_admin
-                        ? "bg-pink-500 text-white"
+                        ? "bg-orange-600 text-white"
                         : "bg-white text-gray-500 hover:bg-gray-50"
                     }`}
                   >
@@ -226,7 +226,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
                     value={form[key as keyof Omit<FormState, "is_admin">] as string}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                     placeholder={placeholder}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                   />
                 </div>
               ))}
@@ -234,7 +234,7 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
                 {loading ? "Saving…" : editId ? "Save Changes" : `Create ${form.is_admin ? "Admin" : "Creator"}`}

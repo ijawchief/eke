@@ -103,7 +103,7 @@ export function PayoutsClient({
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
-              tab === t ? "bg-pink-500 text-white" : "bg-white text-gray-500 hover:bg-gray-50 border border-gray-200"
+              tab === t ? "bg-orange-600 text-white" : "bg-white text-gray-500 hover:bg-gray-50 border border-gray-200"
             }`}
           >
             {t}
@@ -163,7 +163,7 @@ export function PayoutsClient({
                           placeholder="Note (optional)"
                           value={note[p.id] ?? ""}
                           onChange={(e) => setNote((n) => ({ ...n, [p.id]: e.target.value }))}
-                          className="border border-gray-200 rounded-lg px-2 py-1 text-xs w-full focus:outline-none focus:ring-1 focus:ring-pink-300"
+                          className="border border-gray-200 rounded-lg px-2 py-1 text-xs w-full focus:outline-none focus:ring-1 focus:ring-orange-400"
                         />
                         <div className="flex gap-1.5">
                           <button

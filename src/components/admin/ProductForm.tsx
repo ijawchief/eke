@@ -8,18 +8,18 @@ import { CURRENCIES } from "@/lib/currency";
 import { cleanHtml } from "@/lib/cleanHtml";
 
 /* ─── tokens ─────────────────────────────────────────────────── */
-const PINK = "#e91e8c";
+const PINK = "#ea580c";
 
 // Per-step accent colours: Thumbnail=violet, Checkout=pink, Options=cyan
 const STEP_COLORS = [
   { bg: "#f3f0ff", text: "#7c3aed", border: "#ddd6fe", pill: "#7c3aed" },   // violet
-  { bg: "#fff0f8", text: "#e91e8c", border: "#fce7f3", pill: "#e91e8c" },   // pink
+  { bg: "#fff7ed", text: "#ea580c", border: "#fff7ed", pill: "#ea580c" },   // orange
   { bg: "#ecfeff", text: "#0891b2", border: "#cffafe", pill: "#0891b2" },   // cyan
 ];
 
-const SECTION_ACCENT = ["#7c3aed", "#7c3aed", "#e91e8c", "#e91e8c", "#e91e8c", "#e91e8c", "#0891b2", "#0891b2", "#0891b2"];
+const SECTION_ACCENT = ["#7c3aed", "#7c3aed", "#ea580c", "#ea580c", "#ea580c", "#ea580c", "#0891b2", "#0891b2", "#0891b2"];
 
-const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent bg-white`;
+const inp = `w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white`;
 const inpStyle = {};
 
 /* ─── step tab bar ───────────────────────────────────────────── */
@@ -108,7 +108,7 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
   const Btn = ({ onClick, title, active, children }: { onClick: () => void; title: string; active?: boolean; children: React.ReactNode }) => (
     <button type="button" title={title} onClick={onClick}
       className={`w-7 h-7 flex items-center justify-center rounded text-sm font-medium transition-colors
-        ${active ? "bg-pink-100 text-pink-600" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}>
+        ${active ? "bg-orange-100 text-orange-700" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}>
       {children}
     </button>
   );
@@ -430,7 +430,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 placeholder="e.g. The Ultimate Content Playbook"
                 className={inp} style={inpStyle} />
               {!isEdit && (
-                <div className="mt-3 flex items-center rounded-xl overflow-hidden border border-gray-200 bg-gray-50 focus-within:ring-2 focus-within:ring-pink-400 focus-within:border-transparent">
+                <div className="mt-3 flex items-center rounded-xl overflow-hidden border border-gray-200 bg-gray-50 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-transparent">
                   <span className="px-3 py-3 text-sm text-gray-400 shrink-0 border-r border-gray-200">/p/</span>
                   <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)}
                     placeholder="my-product" className="flex-1 px-3 py-3 text-sm focus:outline-none text-gray-800 placeholder-gray-400 bg-transparent" />
@@ -444,11 +444,11 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <div
                 className="rounded-2xl cursor-pointer transition-all overflow-hidden border-2 border-dashed border-violet-200 hover:border-violet-400"
                 onClick={() => !thumbUploading && thumbInputRef.current?.click()}
-                style={{ background: "linear-gradient(135deg, #f3f0ff 0%, #fff0f8 100%)" }}
+                style={{ background: "linear-gradient(135deg, #f3f0ff 0%, #fff7ed 100%)" }}
               >
                 <div className="flex flex-col items-center gap-5 py-12 px-6">
                   <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm"
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #ea580c)" }}>
                     {thumbUploading
                       ? <svg className="animate-spin w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                       : <Upload size={22} className="text-white" />
@@ -462,7 +462,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   </div>
                   <button type="button"
                     className="px-5 py-2 rounded-xl text-sm font-semibold text-white pointer-events-none shadow-sm"
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #ea580c)" }}>
                     Choose Image
                   </button>
                 </div>
@@ -558,7 +558,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <div className="space-y-2 mb-3">
                 {collectFields.map((f) => (
                   <div key={f.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 bg-white shadow-sm ${f.hidden ? "opacity-40" : ""}`}
-                    style={{ borderLeftColor: PINK, borderTop: "1px solid #fce7f3", borderRight: "1px solid #fce7f3", borderBottom: "1px solid #fce7f3" }}>
+                    style={{ borderLeftColor: PINK, borderTop: "1px solid #fff7ed", borderRight: "1px solid #fff7ed", borderBottom: "1px solid #fff7ed" }}>
                     <span className="w-4 text-center text-xs text-gray-400 shrink-0">{f.icon}</span>
                     <span className="flex-1 text-sm text-gray-700">{f.label}</span>
                     {f.locked
@@ -602,7 +602,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 </div>
               ) : (
                 <button onClick={() => setAddingField(true)}
-                  className="w-full py-3 rounded-xl text-sm font-medium border border-pink-300 text-pink-500 transition-colors hover:bg-pink-50">
+                  className="w-full py-3 rounded-xl text-sm font-medium border border-orange-400 text-orange-600 transition-colors hover:bg-orange-50">
                   + Add Field
                 </button>
               )}
@@ -615,11 +615,11 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                 <p className="text-xs text-gray-400">Files are sent to the customer automatically after purchase</p>
                 <div className="flex rounded-xl overflow-hidden border border-gray-200 shrink-0 ml-4">
                   <button onClick={() => setDeliverMode("file")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "file" ? "bg-pink-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "file" ? "bg-orange-600 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
                     <Upload size={12} /> Upload File
                   </button>
                   <button onClick={() => setDeliverMode("url")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "url" ? "bg-pink-500 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${deliverMode === "url" ? "bg-orange-600 text-white" : "bg-white text-gray-500 hover:text-gray-700"}`}>
                     <Link2 size={12} /> Redirect to URL
                   </button>
                 </div>
@@ -629,8 +629,8 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
                   placeholder="https://your-platform.com/your-product" className={inp} style={inpStyle} />
               ) : (
                 <div>
-                  <div className="rounded-2xl p-8 text-center cursor-pointer transition-all border-2 border-dashed border-pink-200 hover:border-pink-400"
-                    style={{ background: "linear-gradient(135deg, #fff0f8 0%, #ecfeff 100%)" }}
+                  <div className="rounded-2xl p-8 text-center cursor-pointer transition-all border-2 border-dashed border-orange-300 hover:border-orange-500"
+                    style={{ background: "linear-gradient(135deg, #fff7ed 0%, #ecfeff 100%)" }}
                     onClick={() => !fileUploading && fileInputRef.current?.click()}>
                     {fileUploading ? (
                       <div className="flex flex-col items-center gap-2">
@@ -704,7 +704,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               </div>
               <button
                 onClick={() => setFaqItems([...faqItems, { id: crypto.randomUUID(), q: "", a: "" }])}
-                className="w-full py-3 rounded-xl text-sm font-medium border border-pink-300 text-pink-500 transition-colors hover:bg-pink-50">
+                className="w-full py-3 rounded-xl text-sm font-medium border border-orange-400 text-orange-600 transition-colors hover:bg-orange-50">
                 + Add FAQ
               </button>
             </div>
@@ -720,7 +720,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
               <p className="text-xs text-gray-400 mb-3">Pick an accent colour for your product page</p>
               <div className="flex flex-wrap gap-3">
                 {[
-                  { label: "Pink",   color: "#e91e8c" },
+                  { label: "Pink",   color: "#ea580c" },
                   { label: "Violet", color: "#7c3aed" },
                   { label: "Blue",   color: "#2563eb" },
                   { label: "Cyan",   color: "#0891b2" },
@@ -823,7 +823,7 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
             {isLastStep ? (
               <button onClick={() => handleSave("publish")} disabled={!!saving}
                 className="text-white font-semibold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-all shadow-md"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)", boxShadow: "0 4px 16px #e91e8c44" }}>
+                style={{ background: "linear-gradient(135deg, #7c3aed, #ea580c)", boxShadow: "0 4px 16px #ea580c44" }}>
                 {saving === "publish" ? "Publishing…" : isEdit ? "Save Changes" : "🚀 Publish"}
               </button>
             ) : (

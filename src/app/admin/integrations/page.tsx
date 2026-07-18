@@ -252,12 +252,12 @@ export default async function IntegrationsPage() {
       </div>
 
       {/* Add pixel CTA */}
-      <div className="mt-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-6 text-white">
+      <div className="mt-8 bg-gradient-to-r from-orange-600 to-purple-600 rounded-2xl p-6 text-white">
         <h3 className="font-bold text-lg mb-1">Ready to set up a product?</h3>
         <p className="text-white/80 text-sm mb-4">Go to your product list and click the pixel icon or email icon to open the tracking and webhook settings for each product.</p>
         <Link
           href="/admin/products"
-          className="inline-flex items-center gap-2 bg-white text-pink-600 font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-pink-50 transition-colors"
+          className="inline-flex items-center gap-2 bg-white text-orange-700 font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-orange-50 transition-colors"
         >
           <ExternalLink size={14} />
           Go to Products

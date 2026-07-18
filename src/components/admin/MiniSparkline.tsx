@@ -9,7 +9,7 @@ interface Props {
   endLabel?: string;
 }
 
-export function MiniSparkline({ data, color = "#ec4899", startLabel, endLabel }: Props) {
+export function MiniSparkline({ data, color = "#ea580c", startLabel, endLabel }: Props) {
   return (
     <div>
       <ResponsiveContainer width="100%" height={60}>

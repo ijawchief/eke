@@ -36,7 +36,7 @@ export default async function CheckoutPage({ params }: Props) {
     bumpProduct = data;
   }
 
-  const themeColor = (p.page_blocks?.find((b: Block) => b.type === "theme")?.data?.color as string) ?? "#e91e8c";
+  const themeColor = (p.page_blocks?.find((b: Block) => b.type === "theme")?.data?.color as string) ?? "#ea580c";
   const thumbnail = p.page_blocks?.find((b: Block) => b.type === "image")?.data?.url as string | undefined;
 
   return (

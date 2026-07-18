@@ -31,7 +31,7 @@ export function DashboardPeriodTabs({ current }: { current: string }) {
           onClick={() => go(tab.key, from, to)}
           className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
             current === tab.key
-              ? "bg-pink-500 text-white"
+              ? "bg-orange-600 text-white"
               : "bg-gray-100 text-gray-500 hover:bg-gray-200"
           }`}
         >
@@ -45,7 +45,7 @@ export function DashboardPeriodTabs({ current }: { current: string }) {
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             onBlur={() => go("custom", from, to)}
-            className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-pink-300"
+            className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
           <span className="text-gray-400 text-xs">→</span>
           <input
@@ -53,7 +53,7 @@ export function DashboardPeriodTabs({ current }: { current: string }) {
             value={to}
             onChange={(e) => setTo(e.target.value)}
             onBlur={() => go("custom", from, to)}
-            className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-pink-300"
+            className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
-const COLORS = ["#ec4899", "#f97316", "#3b82f6", "#10b981", "#8b5cf6"];
+const COLORS = ["#ea580c", "#f97316", "#3b82f6", "#10b981", "#8b5cf6"];
 
 export function SalesByProductChart({ data }: { data: { name: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0);

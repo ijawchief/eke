@@ -66,7 +66,7 @@ export function CurrencySwitcher({ current }: { current: Currency }) {
                 key={c.code}
                 onClick={() => select(c.code)}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                  c.code === current ? "bg-pink-50 text-pink-600 font-semibold" : "text-gray-700 hover:bg-gray-50"
+                  c.code === current ? "bg-orange-50 text-orange-700 font-semibold" : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
                 <span className="w-8 text-xs font-bold text-gray-500">{c.code}</span>

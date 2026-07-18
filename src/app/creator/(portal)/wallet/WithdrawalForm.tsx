@@ -65,7 +65,7 @@ export function WithdrawalForm({ creatorId, availableKobo, bankName, accountNumb
         <CheckCircle className="mx-auto text-green-500 mb-3" size={40} />
         <p className="font-semibold text-gray-800">Withdrawal requested!</p>
         <p className="text-gray-400 text-sm mt-1">You&apos;ll be notified once it&apos;s processed.</p>
-        <button onClick={() => setSuccess(false)} className="text-pink-500 hover:underline text-sm mt-4">
+        <button onClick={() => setSuccess(false)} className="text-orange-600 hover:underline text-sm mt-4">
           Make another request
         </button>
       </div>
@@ -79,8 +79,8 @@ export function WithdrawalForm({ creatorId, availableKobo, bankName, accountNumb
       </div>
 
       {/* Saved bank details */}
-      <div className="bg-pink-50 border border-pink-100 rounded-xl p-3 text-sm">
-        <p className="text-xs font-semibold text-pink-400 uppercase tracking-wide mb-1">Payout account</p>
+      <div className="bg-orange-50 border border-orange-100 rounded-xl p-3 text-sm">
+        <p className="text-xs font-semibold text-orange-500 uppercase tracking-wide mb-1">Payout account</p>
         <p className="font-semibold text-gray-800">{accountName}</p>
         <p className="text-gray-500 text-xs">{bankName} · {accountNumber}</p>
       </div>
@@ -91,7 +91,7 @@ export function WithdrawalForm({ creatorId, availableKobo, bankName, accountNumb
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           placeholder="e.g. 50000"
         />
       </div>
@@ -101,7 +101,7 @@ export function WithdrawalForm({ creatorId, availableKobo, bankName, accountNumb
       <button
         type="submit"
         disabled={loading || availableKobo <= 0}
-        className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+        className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
       >
         {loading ? "Submitting…" : "Request Withdrawal"}
       </button>

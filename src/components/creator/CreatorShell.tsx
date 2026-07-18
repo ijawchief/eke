@@ -70,7 +70,7 @@ export function CreatorShell({
           Logout
         </Link>
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/10">
-          <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {creator.initials}
           </div>
           <div className="min-w-0">
@@ -119,7 +119,7 @@ export function CreatorShell({
           </button>
           <span className="lg:hidden text-base font-bold text-gray-900">Veelage</span>
           <div className="ml-auto flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold">
               {creator.initials}
             </div>
           </div>

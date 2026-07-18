@@ -70,7 +70,7 @@ export default async function BuyersPage({
             href={`/admin/buyers?days=${opt.days}`}
             className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
               days === opt.days
-                ? "bg-pink-500 text-white"
+                ? "bg-orange-600 text-white"
                 : "bg-white text-gray-500 hover:bg-gray-50 border border-gray-200"
             }`}
           >

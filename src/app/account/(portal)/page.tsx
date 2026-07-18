@@ -34,7 +34,7 @@ export default async function AccountDashboard() {
       {allOrders.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
           <p className="text-gray-400 mb-3">You haven&apos;t bought anything yet.</p>
-          <Link href="/" className="text-pink-500 text-sm font-semibold hover:underline">Browse products →</Link>
+          <Link href="/" className="text-orange-600 text-sm font-semibold hover:underline">Browse products →</Link>
         </div>
       ) : (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
@@ -49,8 +49,8 @@ export default async function AccountDashboard() {
                   {product.thumbnail_url ? (
                     <img src={product.thumbnail_url} alt={product.name} className="w-full h-36 object-cover" />
                   ) : (
-                    <div className="w-full h-36 bg-pink-50 flex items-center justify-center">
-                      <span className="text-pink-200 text-4xl font-black">{product.name?.[0]}</span>
+                    <div className="w-full h-36 bg-orange-50 flex items-center justify-center">
+                      <span className="text-orange-300 text-4xl font-black">{product.name?.[0]}</span>
                     </div>
                   )}
                   <div className="p-4 flex-1 flex flex-col">
@@ -67,7 +67,7 @@ export default async function AccountDashboard() {
                       </Link>
                       <Link
                         href={`/confirmation?order_id=${order.id}`}
-                        className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors"
                       >
                         <Download size={12} /> Download
                       </Link>

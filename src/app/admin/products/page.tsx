@@ -74,7 +74,7 @@ export default async function ProductsPage() {
 
       <Link href="/admin/products/new"
         className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold text-white transition-opacity hover:opacity-90"
-        style={{ background: "linear-gradient(135deg, #7c3aed, #e91e8c)" }}>
+        style={{ background: "linear-gradient(135deg, #7c3aed, #ea580c)" }}>
         <Plus size={16} />
         Add Product
       </Link>

@@ -130,8 +130,8 @@ export default async function AdminDashboard({
               <span className="text-sm font-semibold">Gross Revenue</span>
               <ArrowRight size={13} />
             </div>
-            <div className="w-8 h-8 bg-pink-50 rounded-xl flex items-center justify-center">
-              <DollarSign size={15} className="text-pink-500" />
+            <div className="w-8 h-8 bg-orange-50 rounded-xl flex items-center justify-center">
+              <DollarSign size={15} className="text-orange-600" />
             </div>
           </div>
           <p className="text-3xl font-extrabold text-gray-900 mb-3">{fmt(grossRevenue)}</p>
@@ -141,7 +141,7 @@ export default async function AdminDashboard({
             </span>
           </div>
           <div className="mt-auto">
-            <MiniSparkline data={dailyData.map((d) => ({ value: d.revenue }))} color="#ec4899" startLabel={startLabel} endLabel={endLabel} />
+            <MiniSparkline data={dailyData.map((d) => ({ value: d.revenue }))} color="#ea580c" startLabel={startLabel} endLabel={endLabel} />
           </div>
         </Link>
 
@@ -233,7 +233,7 @@ export default async function AdminDashboard({
             <h2 className="font-semibold text-gray-800">Product Performance</h2>
             <p className="text-xs text-gray-400 mt-0.5">{totalActiveProducts} active products · top sellers this period</p>
           </div>
-          <Link href="/admin/sales" className="text-sm text-pink-500 hover:underline font-medium flex items-center gap-1">
+          <Link href="/admin/sales" className="text-sm text-orange-600 hover:underline font-medium flex items-center gap-1">
             Full breakdown <ArrowRight size={14} />
           </Link>
         </div>
@@ -244,7 +244,7 @@ export default async function AdminDashboard({
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-50">
             {topProducts.map((p, i) => {
               const pct = Math.round((p.revenue / maxProductRevenue) * 100);
-              const colors = ["bg-pink-500", "bg-blue-500", "bg-yellow-500", "bg-green-500"];
+              const colors = ["bg-orange-600", "bg-blue-500", "bg-yellow-500", "bg-green-500"];
               return (
                 <div key={p.name} className="px-6 py-5">
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -271,7 +271,7 @@ export default async function AdminDashboard({
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-800">Recent Sales</h2>
-            <Link href="/admin/buyers" className="flex items-center gap-1 text-sm text-pink-500 hover:underline font-medium">
+            <Link href="/admin/buyers" className="flex items-center gap-1 text-sm text-orange-600 hover:underline font-medium">
               View all <ArrowRight size={14} />
             </Link>
           </div>
@@ -288,7 +288,7 @@ export default async function AdminDashboard({
               return (
                 <div key={o.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 text-pink-500 text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-orange-600 text-xs font-bold">
                       {(customer?.name ?? customer?.email ?? "?")[0].toUpperCase()}
                     </div>
                     <div className="min-w-0">

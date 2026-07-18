@@ -50,7 +50,7 @@ export function AccountShell({
         {/* Switch to creator */}
         <Link
           href="/creator/dashboard"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-pink-300 hover:text-white hover:bg-white/10 transition-all"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-orange-400 hover:text-white hover:bg-white/10 transition-all"
         >
           <Briefcase size={16} />
           Switch to creator
@@ -63,7 +63,7 @@ export function AccountShell({
           Logout
         </Link>
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/10">
-          <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {customer.initials}
           </div>
           <div className="min-w-0">
@@ -109,7 +109,7 @@ export function AccountShell({
           </button>
           <span className="lg:hidden text-base font-bold text-gray-900">Veelage</span>
           <div className="ml-auto">
-            <div className="w-7 h-7 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold">
               {customer.initials}
             </div>
           </div>
