@@ -113,28 +113,14 @@ export default function Home() {
             into a business.
           </h1>
 
-          <p style={{ fontSize: 18, color: "#78350f", lineHeight: 1.7, marginBottom: "3rem", maxWidth: 460, marginLeft: "auto", marginRight: "auto" }}>
+          <p style={{ fontSize: 18, color: "#78350f", lineHeight: 1.7, marginBottom: "2.5rem", maxWidth: 460, marginLeft: "auto", marginRight: "auto" }}>
             Sell digital products, courses, and expertise — and get paid. No tech skills needed.
           </p>
 
-          {/* ── WHO ARE YOU ── */}
-          <p style={{ fontSize: 13, color: "#92400e", fontWeight: 600, marginBottom: "1.25rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-            What brings you here?
-          </p>
-          <div style={{ display: "flex", gap: 16, maxWidth: 580, margin: "0 auto", flexWrap: "wrap", justifyContent: "center" }}>
-            <Link href="/login" style={{ flex: 1, minWidth: 240, textDecoration: "none", background: O, borderRadius: 16, padding: "1.75rem 1.5rem", textAlign: "left", display: "block", boxShadow: `0 8px 32px ${O}44`, transition: "transform 0.15s" }}>
-              <p style={{ fontSize: 28, margin: "0 0 10px" }}>🎓</p>
-              <p style={{ margin: "0 0 6px", fontSize: 17, fontWeight: 800, color: "#fff", letterSpacing: "-0.4px" }}>I want to sell my knowledge</p>
-              <p style={{ margin: "0 0 16px", fontSize: 13, color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>Create products, build your audience, and earn from what you know.</p>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 4 }}>Start selling →</span>
-            </Link>
-            <Link href="/account/login" style={{ flex: 1, minWidth: 240, textDecoration: "none", background: "#fff", border: `2px solid ${O}33`, borderRadius: 16, padding: "1.75rem 1.5rem", textAlign: "left", display: "block", boxShadow: "0 4px 20px rgba(0,0,0,0.06)", transition: "transform 0.15s" }}>
-              <p style={{ fontSize: 28, margin: "0 0 10px" }}>🛍️</p>
-              <p style={{ margin: "0 0 6px", fontSize: 17, fontWeight: 800, color: "#0a0a0a", letterSpacing: "-0.4px" }}>I&apos;m exploring products to buy</p>
-              <p style={{ margin: "0 0 16px", fontSize: 13, color: "#92400e", lineHeight: 1.6 }}>Discover ebooks, courses, and tools made by African creators.</p>
-              <span style={{ fontSize: 13, fontWeight: 700, color: O, display: "flex", alignItems: "center", gap: 4 }}>Browse products →</span>
-            </Link>
-          </div>
+          <Link href="/login" style={{ display: "inline-block", textDecoration: "none", background: O, color: "#fff", fontWeight: 800, fontSize: 17, padding: "16px 40px", borderRadius: 14, boxShadow: `0 8px 32px ${O}55`, letterSpacing: "-0.3px" }}>
+            Start selling for free →
+          </Link>
+          <p style={{ fontSize: 13, color: "#92400e", marginTop: "1rem" }}>Free to join · No credit card required</p>
         </div>
       </section>
 
@@ -241,25 +227,51 @@ export default function Home() {
       <section id="features" style={{ background: `linear-gradient(160deg, #431407 0%, #7c2d12 50%, #9a3412 100%)`, padding: "7rem 2rem" }}>
         <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-            <p style={{ fontSize: 11, letterSpacing: "0.14em", color: "#fb923c", textTransform: "uppercase", marginBottom: "0.75rem", fontWeight: 700 }}>EVERYTHING YOU NEED</p>
-            <h2 style={{ fontSize: "clamp(1.9rem, 3.8vw, 2.9rem)", fontWeight: 900, letterSpacing: "-1.5px", color: "#fff", margin: "0 0 1rem" }}>One platform. Every tool.</h2>
-            <p style={{ fontSize: 15, color: "#fdba74", lineHeight: 1.7, maxWidth: 380, margin: "0 auto" }}>
-              A full business stack — no third-party tools, no duct tape.
+            <p style={{ fontSize: 11, letterSpacing: "0.14em", color: "#fb923c", textTransform: "uppercase", marginBottom: "0.75rem", fontWeight: 700 }}>BUILT TO CONVERT</p>
+            <h2 style={{ fontSize: "clamp(1.9rem, 3.8vw, 2.9rem)", fontWeight: 900, letterSpacing: "-1.5px", color: "#fff", margin: "0 0 1rem" }}>
+              Every step optimised<br />for more sales.
+            </h2>
+            <p style={{ fontSize: 15, color: "#fdba74", lineHeight: 1.7, maxWidth: 460, margin: "0 auto" }}>
+              Most platforms just host your product. Veelage is engineered to squeeze every naira of revenue out of your traffic — from the first click to the final receipt.
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {[
-              { icon: "🛍️", title: "Beautiful Sales Pages", desc: "Auto-generated pages that convert. No design skills needed." },
-              { icon: "💳", title: "Instant Payouts", desc: "Get paid directly to your Nigerian bank account after every sale." },
-              { icon: "📊", title: "Sales Analytics", desc: "Track revenue, top products, and buyer behaviour in real time." },
-              { icon: "📧", title: "Auto Email Delivery", desc: "Customers get their downloads automatically — we handle it." },
-              { icon: "🔗", title: "Custom Product Links", desc: "Your products live at a clean, branded link you can share anywhere." },
-              { icon: "📱", title: "Mobile Optimised", desc: "Buyers can pay from any device. Your store looks great everywhere." },
+              {
+                icon: "🎯",
+                title: "Direct-Response Sales Pages",
+                desc: "Your product page isn't just a listing — it's a conversion machine. Built with proven copywriting structure: headline, social proof, objection handling, and a clear call to action. No distractions, no navigation leaks.",
+              },
+              {
+                icon: "⬆️",
+                title: "Upsells & Order Bumps",
+                desc: "Increase your average order value without more traffic. Add a one-click order bump at checkout, or present an upsell offer immediately after purchase — while the buyer's card is still warm.",
+              },
+              {
+                icon: "📧",
+                title: "Personalised Cart Abandonment Emails",
+                desc: "Every product can have its own sender name and email — so abandoned cart sequences feel like they're coming from the creator, not a faceless platform. Higher open rates. More recoveries.",
+              },
+              {
+                icon: "🔍",
+                title: "Checkout Funnel Analytics",
+                desc: "See exactly where you're losing buyers. How many hit your page, how many started checkout, how many dropped off before paying. Find the leak, fix it, make more money.",
+              },
+              {
+                icon: "💳",
+                title: "Instant Bank Payouts",
+                desc: "Get paid directly to your Nigerian bank account after every sale. No waiting periods, no hoops. Withdraw anytime from your dashboard.",
+              },
+              {
+                icon: "📱",
+                title: "Mobile-First Checkout",
+                desc: "Most of your buyers are on their phones. Every sales page and checkout is built for mobile — fast, clean, and frictionless from tap to payment.",
+              },
             ].map((f) => (
-              <div key={f.title} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "1.75rem", backdropFilter: "blur(4px)" }}>
+              <div key={f.title} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "1.75rem", backdropFilter: "blur(4px)" }}>
                 <p style={{ fontSize: 28, margin: "0 0 12px" }}>{f.icon}</p>
-                <p style={{ fontWeight: 700, fontSize: 15, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.2px" }}>{f.title}</p>
-                <p style={{ fontSize: 13, color: "#fdba74", margin: 0, lineHeight: 1.65 }}>{f.desc}</p>
+                <p style={{ fontWeight: 800, fontSize: 15, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.2px" }}>{f.title}</p>
+                <p style={{ fontSize: 13, color: "#fdba74", margin: 0, lineHeight: 1.7 }}>{f.desc}</p>
               </div>
             ))}
           </div>
