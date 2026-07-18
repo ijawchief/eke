@@ -3,6 +3,7 @@ import { getServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import { MiniSparkline } from "@/components/admin/MiniSparkline";
 import { Eye, ShoppingCart, TrendingUp, DollarSign, ArrowRight, Info } from "lucide-react";
+import { PeriodTabs } from "./PeriodTabs";
 
 function formatNaira(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
@@ -18,16 +19,43 @@ function timeAgo(date: string) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export default async function CreatorDashboard() {
+function getPeriodRange(period: string, from?: string, to?: string): { start: Date; end: Date; label: string } {
+  const end = new Date();
+  end.setHours(23, 59, 59, 999);
+
+  if (period === "today") {
+    const start = new Date(); start.setHours(0, 0, 0, 0);
+    return { start, end, label: "Today" };
+  }
+  if (period === "week") {
+    const start = new Date(); start.setDate(start.getDate() - 6); start.setHours(0, 0, 0, 0);
+    return { start, end, label: "Last 7 days" };
+  }
+  if (period === "custom" && from && to) {
+    const start = new Date(from); start.setHours(0, 0, 0, 0);
+    const customEnd = new Date(to); customEnd.setHours(23, 59, 59, 999);
+    return { start, end: customEnd, label: `${from} – ${to}` };
+  }
+  // default: this month
+  const start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0);
+  return { start, end, label: "This month" };
+}
+
+export default async function CreatorDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ period?: string; from?: string; to?: string }>;
+}) {
+  const sp = await searchParams;
+  const period = sp.period ?? "month";
+  const { start, end } = getPeriodRange(period, sp.from, sp.to);
+
   const h = await headers();
   const cookie = h.get("cookie") ?? "";
   const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
   const creatorId = raw ? decodeURIComponent(raw) : null;
 
   const db = getServiceClient();
-  const end = new Date();
-  const start = new Date(end);
-  start.setMonth(start.getMonth() - 1);
 
   const [
     { data: creator },
@@ -37,7 +65,7 @@ export default async function CreatorDashboard() {
     { data: products },
     { data: views },
   ] = await Promise.all([
-    db.from("creator").select("name, email").eq("id", creatorId).single(),
+    db.from("creator").select("name").eq("id", creatorId).single(),
     db.from("order_item")
       .select("id, price_kobo, created_at, product:product_id(name), order:order_id(status, created_at, customer:customer_id(email, name))")
       .eq("creator_id", creatorId)
@@ -46,7 +74,8 @@ export default async function CreatorDashboard() {
     db.from("order_item")
       .select("price_kobo, created_at, order:order_id(status)")
       .eq("creator_id", creatorId)
-      .gte("created_at", start.toISOString()),
+      .gte("created_at", start.toISOString())
+      .lte("created_at", end.toISOString()),
     db.from("withdrawal_request")
       .select("id, amount_kobo, status, created_at")
       .eq("creator_id", creatorId)
@@ -58,7 +87,8 @@ export default async function CreatorDashboard() {
     db.from("page_view")
       .select("id, created_at, product_id")
       .in("product_id", (await db.from("product").select("id").eq("creator_id", creatorId)).data?.map((p) => p.id) ?? [])
-      .gte("created_at", start.toISOString()),
+      .gte("created_at", start.toISOString())
+      .lte("created_at", end.toISOString()),
   ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,34 +114,39 @@ export default async function CreatorDashboard() {
   const checkoutCvr = periodStarted > 0 ? ((periodPaid.length / periodStarted) * 100).toFixed(1) : "0";
   const viewCvr = pageViewCount > 0 ? ((periodStarted / pageViewCount) * 100).toFixed(1) : "0";
 
-  // Daily sparkline — last 30 days
+  // Sparkline — 30 buckets across the selected period
   const sparkDays = 30;
+  const totalMs = end.getTime() - start.getTime();
+  const bucketMs = totalMs / sparkDays;
   const dailyData = Array.from({ length: sparkDays }, (_, i) => {
-    const d = new Date(end);
-    d.setDate(d.getDate() - (sparkDays - 1 - i));
-    const key = d.toISOString().slice(0, 10);
+    const bucketStart = new Date(start.getTime() + i * bucketMs);
+    const bucketEnd   = new Date(start.getTime() + (i + 1) * bucketMs);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rev = (periodItems ?? []).filter((item: any) => {
       const o = Array.isArray(item.order) ? item.order[0] : item.order;
-      return o?.status === "paid" && item.created_at.slice(0, 10) === key;
+      const t = new Date(item.created_at).getTime();
+      return o?.status === "paid" && t >= bucketStart.getTime() && t < bucketEnd.getTime();
     }).reduce((s: number, item: { price_kobo: number }) => s + item.price_kobo, 0);
-    const viewsDay = (views ?? []).filter((v: { created_at: string }) => v.created_at.slice(0, 10) === key).length;
-    const checkoutsDay = (periodItems ?? []).filter((item: { created_at: string }) => item.created_at.slice(0, 10) === key).length;
-    const salesDay = periodPaid.filter((item: { created_at: string }) => item.created_at.slice(0, 10) === key).length;
-    return {
-      date: d.toLocaleDateString("en", { month: "short", day: "numeric" }),
-      revenue: rev / 100,
-      views: viewsDay,
-      checkouts: checkoutsDay,
-      sales: salesDay,
-    };
+    const viewsN = (views ?? []).filter((v: { created_at: string }) => {
+      const t = new Date(v.created_at).getTime();
+      return t >= bucketStart.getTime() && t < bucketEnd.getTime();
+    }).length;
+    const checkoutsN = (periodItems ?? []).filter((item: { created_at: string }) => {
+      const t = new Date(item.created_at).getTime();
+      return t >= bucketStart.getTime() && t < bucketEnd.getTime();
+    }).length;
+    const salesN = periodPaid.filter((item: { created_at: string }) => {
+      const t = new Date(item.created_at).getTime();
+      return t >= bucketStart.getTime() && t < bucketEnd.getTime();
+    }).length;
+    return { date: bucketStart.toLocaleDateString("en", { month: "short", day: "numeric" }), revenue: rev / 100, views: viewsN, checkouts: checkoutsN, sales: salesN };
   });
   const startLabel = dailyData[0]?.date ?? "";
-  const endLabel = dailyData[dailyData.length - 1]?.date ?? "";
+  const endLabel   = dailyData[dailyData.length - 1]?.date ?? "";
 
   // Product performance
   const productMap: Record<string, { name: string; revenue: number; units: number }> = {};
-  paidItems.forEach((item: { price_kobo: number; product?: { name: string }[] | { name: string } | null; order?: unknown }) => {
+  paidItems.forEach((item: { price_kobo: number; product?: { name: string }[] | { name: string } | null }) => {
     const prod = Array.isArray((item as { product?: unknown }).product) ? (item as { product: { name: string }[] }).product[0] : (item as { product?: { name: string } | null }).product;
     const pname = prod?.name ?? "Unknown";
     if (!productMap[pname]) productMap[pname] = { name: pname, revenue: 0, units: 0 };
@@ -121,24 +156,17 @@ export default async function CreatorDashboard() {
   const topProducts = Object.values(productMap).sort((a, b) => b.revenue - a.revenue).slice(0, 4);
   const maxProductRevenue = Math.max(1, ...topProducts.map((p) => p.revenue));
 
-  const now = new Date();
-  const dateLabel = now.toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" });
-
   return (
     <div className="space-y-5">
-      {/* Screenshot-friendly header */}
-      <div className="bg-white rounded-2xl shadow-sm px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-orange-600 uppercase tracking-widest mb-0.5">Veelage Creator Dashboard</p>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900">{creator?.name ?? "Creator"}</h1>
-          <p className="text-gray-400 text-xs mt-0.5">{creator?.email}</p>
-        </div>
-        <div className="flex items-center gap-2 sm:text-right">
-          <div className="bg-orange-50 rounded-xl px-3 py-2 text-xs text-orange-700 font-semibold">
-            📅 Last 30 days · {dateLabel}
-          </div>
-        </div>
+      {/* Header */}
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+          Welcome back, <span className="font-extrabold">{creator?.name ?? "Creator"}</span>
+        </h1>
       </div>
+
+      {/* Period filter */}
+      <PeriodTabs period={period} from={sp.from} to={sp.to} />
 
       {/* Funnel cards */}
       <div className="grid gap-3 sm:gap-4 grid-cols-2 xl:grid-cols-4">
@@ -286,7 +314,7 @@ export default async function CreatorDashboard() {
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-gray-800 text-sm truncate">{prod?.name ?? "—"}</p>
                   <p className="text-xs text-gray-400 truncate">{cust?.email ?? "—"}</p>
-                  <p className="text-xs text-gray-400">{new Date(item.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}</p>
+                  <p className="text-xs text-gray-400">{timeAgo(item.created_at)}</p>
                 </div>
                 <p className="font-semibold text-gray-900 text-sm flex-shrink-0">{formatNaira(item.price_kobo)}</p>
               </div>
@@ -319,9 +347,9 @@ export default async function CreatorDashboard() {
                       <p className="font-medium text-gray-800">{cust?.name ?? cust?.email ?? "—"}</p>
                       {cust?.name && <p className="text-xs text-gray-400">{cust?.email}</p>}
                     </td>
-                    <td className="px-6 py-3 text-gray-600">{prod?.name ?? "—"}</td>
+                    <td className="px-6 py-3 text-gray-600">{prod?.name ?? "���"}</td>
                     <td className="px-6 py-3 font-semibold">{formatNaira(item.price_kobo)}</td>
-                    <td className="px-6 py-3 text-gray-400 text-xs">{new Date(item.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}</td>
+                    <td className="px-6 py-3 text-gray-400 text-xs">{timeAgo(item.created_at)}</td>
                   </tr>
                 );
               })}

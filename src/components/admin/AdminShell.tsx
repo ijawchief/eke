@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart2,
-  LogOut, Settings, Wallet, Plug, Menu, X,
+  LogOut, Settings, Wallet, Plug, Menu, X, UserCheck, ShieldCheck,
 } from "lucide-react";
 
 const nav = [
@@ -13,9 +13,10 @@ const nav = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/sales", label: "Sales", icon: BarChart2 },
-  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/users", label: "Creators", icon: UserCheck },
   { href: "/admin/payouts", label: "Payouts", icon: Wallet },
   { href: "/admin/affiliates", label: "Affiliates", icon: Users },
+  { href: "/admin/team", label: "Team", icon: ShieldCheck },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },
 ];
 
