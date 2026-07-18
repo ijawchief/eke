@@ -218,6 +218,9 @@ export function ProductPageClient({ product }: Props) {
           .product-hero-image {
             height: 260px;
           }
+          main p, main li, main span, main td, main a, main label {
+            font-size: 14px !important;
+          }
         }
       `}</style>
 
