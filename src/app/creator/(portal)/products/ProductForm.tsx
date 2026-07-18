@@ -273,14 +273,16 @@ export function CreatorProductForm({ initialData }: CreatorProductFormProps) {
   const handleSave = async (mode: "draft" | "publish") => {
     if (!name) { setStepError("Product title is required"); return; }
     if (!price) { setStepError("Price is required"); return; }
+    const priceKobo = Math.round(parseFloat(price) * 100);
+    if (!priceKobo || isNaN(priceKobo) || priceKobo <= 0) { setStepError("Please enter a valid price"); return; }
     setStepError("");
     setSaving(mode);
 
     const payload = {
       name,
       slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-      price_kobo: Math.round(parseFloat(price) * 100),
-      compare_at_kobo: discountEnabled && compareAt ? Math.round(parseFloat(compareAt) * 100) : null,
+      price_kobo: priceKobo,
+      compare_at_kobo: discountEnabled && compareAt ? Math.round(parseFloat(compareAt) * 100) || null : null,
       external_url: deliverMode === "url" ? (deliveryUrl || null) : (uploadedFile?.url || null),
       active: isEdit ? active : mode === "publish",
       page_blocks: isEdit ? buildBlocksEdit() : buildBlocks(),

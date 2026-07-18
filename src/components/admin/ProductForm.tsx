@@ -329,27 +329,32 @@ export function ProductForm({ initialData, defaultTab = "page" }: ProductFormPro
     return [...blocks, ...others, { id: crypto.randomUUID(), type: "theme", data: { color: themeColor } }];
   }, [initialData, name, headline, subtitle, rating, author, descBody, thumbnail, faqItems, themeColor]);
 
+  const toKobo = (displayVal: string) => {
+    const v = parseFloat(displayVal);
+    if (!v || isNaN(v)) return 0;
+    if (adminCurrency === "NGN") return Math.round(v * 100);
+    const ngnRate = fxRates.NGN ?? 1650;
+    const curRate = fxRates[adminCurrency] ?? 1;
+    const usd = v / curRate;
+    return Math.round(usd * ngnRate * 100);
+  };
+
   const handleSave = async (mode: "draft" | "publish") => {
     if (!name) { setStepError("Product title is required"); return; }
     if (!price) { setStepError("Price is required"); return; }
+    const priceKobo = toKobo(price);
+    if (!priceKobo || priceKobo <= 0) { setStepError("Please enter a valid price"); return; }
     setStepError("");
     setSaving(mode);
 
     const payload = {
       name,
       slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-      price_kobo: (() => {
-        const v = parseFloat(price);
-        if (adminCurrency === "NGN") return Math.round(v * 100);
-        const usd = v / (fxRates[adminCurrency] ?? 1);
-        return Math.round(usd * (fxRates.NGN ?? 1650) * 100);
-      })(),
+      price_kobo: priceKobo,
       compare_at_kobo: (() => {
         if (!discountEnabled || !compareAt) return null;
-        const v = parseFloat(compareAt);
-        if (adminCurrency === "NGN") return Math.round(v * 100);
-        const usd = v / (fxRates[adminCurrency] ?? 1);
-        return Math.round(usd * (fxRates.NGN ?? 1650) * 100);
+        const v = toKobo(compareAt);
+        return v > 0 ? v : null;
       })(),
       external_url: deliverMode === "url" ? (deliveryUrl || null) : (uploadedFile?.url || null),
       active: isEdit ? active : mode === "publish",
