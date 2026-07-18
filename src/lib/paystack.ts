@@ -27,7 +27,11 @@ export async function initializeTransaction(params: {
       channels: params.channels ?? ["card", "bank", "ussd", "bank_transfer"],
     }),
   });
-  if (!res.ok) throw new Error(`Paystack init failed: ${await res.text()}`);
+  if (!res.ok) {
+    const body = await res.text();
+    console.error("Paystack init error:", res.status, body);
+    throw new Error(`Paystack: ${body}`);
+  }
   const json = await res.json();
   return json.data as { access_code: string; authorization_url: string; reference: string };
 }

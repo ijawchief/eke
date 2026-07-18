@@ -91,6 +91,7 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
       if (!res.ok) throw new Error(data.error ?? "Checkout failed");
 
       const { access_code, order_id, event_id } = data;
+      if (!access_code) throw new Error("Payment could not be initialised — please try again");
 
       const script = document.createElement("script");
       script.src = "https://js.paystack.co/v1/inline.js";
