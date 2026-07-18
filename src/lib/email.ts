@@ -81,17 +81,53 @@ export async function sendDeliveryEmail(params: {
   productName: string;
   accessLink: string;
   orderRef: string;
+  buyerName?: string | null;
 }) {
   await getResend().emails.send({
     from: FROM,
     to: params.to,
-    subject: `Your access to ${params.productName}`,
+    subject: `You're in! Your access to ${params.productName}`,
     html: `
-      <h2>You're in! 🎉</h2>
-      <p>Thank you for your purchase. Here is your access link:</p>
-      <p><a href="${params.accessLink}" style="font-size:18px;font-weight:bold;">${params.accessLink}</a></p>
-      <p>Order reference: <code>${params.orderRef}</code></p>
-      <p>If you have any issues, reply to this email.</p>
+      <div style="background:#FDF6EE;min-height:100vh;padding:40px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+        <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+
+          <div style="background:#C04B1E;padding:32px 32px 28px;">
+            <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,0.7);letter-spacing:0.05em;text-transform:uppercase;">Veelage</p>
+            <h1 style="margin:0;font-size:26px;font-weight:700;color:#fff;line-height:1.2;">You're in! 🎉</h1>
+          </div>
+
+          <div style="padding:32px;">
+            <p style="margin:0 0 8px;font-size:16px;color:#2C2C2C;line-height:1.6;">
+              Hey${params.buyerName ? ` ${params.buyerName}` : ""},
+            </p>
+            <p style="margin:0 0 24px;font-size:16px;color:#2C2C2C;line-height:1.6;">
+              Thank you for your purchase. Your access to <strong>${params.productName}</strong> is ready — click the button below to get started.
+            </p>
+
+            <div style="text-align:center;margin:32px 0;">
+              <a href="${params.accessLink}"
+                style="display:inline-block;background:#C04B1E;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:16px 32px;border-radius:12px;letter-spacing:0.01em;">
+                Access Your Product Here →
+              </a>
+            </div>
+
+            <p style="margin:24px 0 8px;font-size:13px;color:#999;">
+              If the button doesn't work, copy and paste this link into your browser:
+            </p>
+            <p style="margin:0 0 24px;font-size:12px;color:#bbb;word-break:break-all;">${params.accessLink}</p>
+
+            <div style="border-top:1px solid #F0E8DF;padding-top:20px;">
+              <p style="margin:0;font-size:13px;color:#bbb;">Order reference: <span style="font-family:monospace;">${params.orderRef}</span></p>
+              <p style="margin:6px 0 0;font-size:13px;color:#bbb;">If you have any issues, reply to this email and we'll sort it out.</p>
+            </div>
+          </div>
+
+          <div style="padding:20px 32px;border-top:1px solid #F0E8DF;background:#FDF6EE;">
+            <p style="margin:0;font-size:13px;color:#bbb;text-align:center;">Team Veelage · <a href="https://veelage.co" style="color:#C04B1E;text-decoration:none;">veelage.co</a></p>
+          </div>
+
+        </div>
+      </div>
     `,
   });
 }

@@ -145,6 +145,7 @@ export async function POST(req: NextRequest) {
           productName: p.name,
           accessLink: p.delivery_type === "magic_link" ? (p.external_url ?? "") : (p.file_ref ?? ""),
           orderRef: reference,
+          buyerName: customer.name ?? null,
         });
       }
     }),
