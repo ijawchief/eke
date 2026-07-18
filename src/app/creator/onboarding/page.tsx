@@ -1,12 +1,11 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServiceClient } from "@/lib/supabase";
 import { OnboardingClient } from "./OnboardingClient";
 
 export default async function OnboardingPage() {
-  const h = await headers();
-  const cookie = h.get("cookie") ?? "";
-  const creatorId = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const cookieStore = await cookies();
+  const creatorId = cookieStore.get("creator_id")?.value;
   if (!creatorId) redirect("/login");
 
   const db = getServiceClient();

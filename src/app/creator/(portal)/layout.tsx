@@ -1,27 +1,23 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServiceClient } from "@/lib/supabase";
 import { CreatorShell } from "@/components/creator/CreatorShell";
 
-async function getCreator(cookie: string) {
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
-  const creatorId = raw ? decodeURIComponent(raw) : null;
+export default async function CreatorPortalLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const creatorId = cookieStore.get("creator_id")?.value;
   if (!creatorId) redirect("/login");
+
   const db = getServiceClient();
-  const { data } = await db
+  const { data: creator } = await db
     .from("creator")
     .select("id, name, email, onboarding_done")
     .eq("id", creatorId)
     .single();
-  if (!data) redirect("/login");
-  if (!data.onboarding_done) redirect("/creator/onboarding");
-  return data;
-}
 
-export default async function CreatorPortalLayout({ children }: { children: React.ReactNode }) {
-  const h = await headers();
-  const cookie = h.get("cookie") ?? "";
-  const creator = await getCreator(cookie);
+  if (!creator) redirect("/login");
+  if (!creator.onboarding_done) redirect("/creator/onboarding");
+
   const initials = (creator.name ?? "C").split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (

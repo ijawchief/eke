@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { RevenueChart } from "@/components/admin/RevenueChart";
 import Link from "next/link";
@@ -18,10 +18,8 @@ function timeAgo(date: string) {
 }
 
 export default async function CreatorAnalyticsPage() {
-  const h = await headers();
-  const cookie = h.get("cookie") ?? "";
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
-  const creatorId = raw ? decodeURIComponent(raw) : null;
+  const cookieStore = await cookies();
+  const creatorId = cookieStore.get("creator_id")?.value ?? null;
 
   const db = getServiceClient();
   const end = new Date();

@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { WithdrawalForm } from "./WithdrawalForm";
 
@@ -7,9 +7,8 @@ function formatNaira(kobo: number) {
 }
 
 export default async function WalletPage() {
-  const h = await headers();
-  const cookie = h.get("cookie") ?? "";
-  const creatorId = cookie.match(/creator_id=([^;]+)/)?.[1]!;
+  const cookieStore = await cookies();
+  const creatorId = cookieStore.get("creator_id")?.value ?? "";
 
   const db = getServiceClient();
 

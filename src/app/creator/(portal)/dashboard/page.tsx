@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import { MiniSparkline } from "@/components/admin/MiniSparkline";
@@ -50,10 +50,8 @@ export default async function CreatorDashboard({
   const period = sp.period ?? "month";
   const { start, end } = getPeriodRange(period, sp.from, sp.to);
 
-  const h = await headers();
-  const cookie = h.get("cookie") ?? "";
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
-  const creatorId = raw ? decodeURIComponent(raw) : null;
+  const cookieStore = await cookies();
+  const creatorId = cookieStore.get("creator_id")?.value ?? null;
 
   const db = getServiceClient();
 

@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 
 function formatNaira(kobo: number) {
@@ -6,9 +6,8 @@ function formatNaira(kobo: number) {
 }
 
 export default async function CreatorOrdersPage() {
-  const h = await headers();
-  const cookie = h.get("cookie") ?? "";
-  const creatorId = cookie.match(/creator_id=([^;]+)/)?.[1]!;
+  const cookieStore = await cookies();
+  const creatorId = cookieStore.get("creator_id")?.value ?? "";
 
   const db = getServiceClient();
   const { data: items } = await db
