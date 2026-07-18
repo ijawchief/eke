@@ -110,7 +110,7 @@ export default async function IntegrationsPage() {
   }) => p.meta_pixel_id || p.tiktok_pixel_id || p.webhook_url);
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl w-full">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Integrations</h1>
         <p className="text-gray-400 text-sm mt-1">Connect your products to email marketing tools, ad pixels, and automation platforms.</p>
@@ -124,7 +124,7 @@ export default async function IntegrationsPage() {
           Veelage fires a JSON payload to the webhook URL you set on that product. Use Zapier or Make to connect that
           webhook to any email platform in minutes — no code required.
         </p>
-        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           <div className="bg-gray-50 rounded-xl p-4 text-center">
             <div className="text-2xl mb-2">🛒</div>
             <p className="text-xs font-semibold text-gray-700">Buyer purchases or abandons</p>
@@ -154,7 +154,7 @@ export default async function IntegrationsPage() {
               id: string; name: string; slug: string; from_name?: string | null;
               meta_pixel_id?: string | null; tiktok_pixel_id?: string | null; webhook_url?: string | null;
             }) => (
-              <div key={p.id} className="flex items-center gap-4 py-3 border-b border-gray-50 last:border-0">
+              <div key={p.id} className="flex items-start sm:items-center gap-3 py-3 border-b border-gray-50 last:border-0 flex-wrap sm:flex-nowrap">
                 <div className="flex-1">
                   <p className="font-semibold text-gray-800 text-sm">{p.name}</p>
                   <p className="text-xs text-gray-400">/p/{p.slug}</p>

@@ -115,7 +115,7 @@ export default async function AdminDashboard({
       </div>
 
       {/* Period tabs row */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="overflow-x-auto -mx-1 px-1">
         <DashboardPeriodTabs current={period} />
       </div>
 
@@ -241,12 +241,12 @@ export default async function AdminDashboard({
         {topProducts.length === 0 ? (
           <div className="px-6 py-10 text-center text-gray-400 text-sm">No sales in this period</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-50">
+          <div className="grid grid-cols-2 xl:grid-cols-4 divide-x divide-y xl:divide-y-0 divide-gray-50">
             {topProducts.map((p, i) => {
               const pct = Math.round((p.revenue / maxProductRevenue) * 100);
               const colors = ["bg-orange-600", "bg-blue-500", "bg-yellow-500", "bg-green-500"];
               return (
-                <div key={p.name} className="px-6 py-5">
+                <div key={p.name} className="px-4 sm:px-6 py-4 sm:py-5">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className={`w-6 h-6 rounded-lg ${colors[i]} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
                       {i + 1}

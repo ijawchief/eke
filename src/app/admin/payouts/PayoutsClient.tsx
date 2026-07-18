@@ -96,13 +96,13 @@ export function PayoutsClient({
         </div>
       </div>
 
-      {/* Status tabs */}
-      <div className="flex gap-2 mb-4">
+      {/* Status tabs — scrollable on mobile */}
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 -mx-1 px-1">
         {STATUS_TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
+            className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
               tab === t ? "bg-orange-600 text-white" : "bg-white text-gray-500 hover:bg-gray-50 border border-gray-200"
             }`}
           >
@@ -111,95 +111,127 @@ export function PayoutsClient({
         ))}
       </div>
 
-      {/* Table */}
+      {/* Payouts list */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
-          <thead>
-            <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
-              <th className="px-6 py-3">Creator</th>
-              <th className="px-6 py-3">Amount</th>
-              <th className="px-6 py-3">Bank Details</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Requested</th>
-              <th className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {filtered.length === 0 && (
-              <tr><td colSpan={6} className="text-center py-12 text-gray-400">No {tab !== "all" ? tab : ""} payouts</td></tr>
-            )}
-            {filtered.map((p) => {
-              const creator = Array.isArray(p.creator) ? p.creator[0] : p.creator;
-              return (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <p className="font-semibold text-gray-800">{creator?.name ?? "—"}</p>
-                    <p className="text-xs text-gray-400">{creator?.email}</p>
-                    {p.phone && <p className="text-xs text-gray-400">{p.phone}</p>}
-                  </td>
-                  <td className="px-6 py-4 font-bold text-gray-900">{fmt(p.amount_kobo)}</td>
-                  <td className="px-6 py-4 text-xs">
-                    <p className="font-medium text-gray-700">{p.account_name}</p>
-                    <p className="text-gray-400">{p.bank_name}</p>
-                    <p className="text-gray-400">{p.account_number}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      p.status === "paid" ? "bg-green-100 text-green-700" :
-                      p.status === "pending" ? "bg-yellow-100 text-yellow-700" :
-                      p.status === "approved" ? "bg-blue-100 text-blue-700" :
-                      "bg-red-100 text-red-600"
-                    }`}>{p.status}</span>
-                    {p.note && <p className="text-xs text-gray-400 mt-1 max-w-[120px] truncate">{p.note}</p>}
-                  </td>
-                  <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
-                    {new Date(p.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
-                  </td>
-                  <td className="px-6 py-4">
-                    {p.status === "pending" && (
-                      <div className="flex flex-col gap-2">
-                        <input
-                          type="text"
-                          placeholder="Note (optional)"
-                          value={note[p.id] ?? ""}
-                          onChange={(e) => setNote((n) => ({ ...n, [p.id]: e.target.value }))}
-                          className="border border-gray-200 rounded-lg px-2 py-1 text-xs w-full focus:outline-none focus:ring-1 focus:ring-orange-400"
-                        />
-                        <div className="flex gap-1.5">
-                          <button
-                            onClick={() => updateStatus(p.id, "approved")}
-                            disabled={loading === p.id}
-                            className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg font-semibold transition-colors disabled:opacity-50"
-                          >
-                            {loading === p.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />}
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => updateStatus(p.id, "rejected")}
-                            disabled={loading === p.id}
-                            className="flex items-center gap-1 px-2.5 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 text-xs rounded-lg font-semibold transition-colors disabled:opacity-50"
-                          >
-                            <XCircle size={11} /> Reject
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                    {p.status === "approved" && (
-                      <button
-                        onClick={() => updateStatus(p.id, "paid")}
-                        disabled={loading === p.id}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs rounded-lg font-semibold transition-colors disabled:opacity-50"
-                      >
-                        {loading === p.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />}
-                        Mark Paid
+        {/* Mobile cards */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {filtered.length === 0 && <p className="text-center py-12 text-gray-400 text-sm">No {tab !== "all" ? tab : ""} payouts</p>}
+          {filtered.map((p) => {
+            const creator = Array.isArray(p.creator) ? p.creator[0] : p.creator;
+            return (
+              <div key={p.id} className="px-4 py-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-gray-800 text-sm">{creator?.name ?? "—"}</p>
+                    <p className="text-xs text-gray-400 truncate">{creator?.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">{p.account_name} · {p.bank_name} · {p.account_number}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="font-bold text-gray-900">{fmt(p.amount_kobo)}</p>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${p.status === "paid" ? "bg-green-100 text-green-700" : p.status === "pending" ? "bg-yellow-100 text-yellow-700" : p.status === "approved" ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-600"}`}>{p.status}</span>
+                  </div>
+                </div>
+                {p.status === "pending" && (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Note (optional)"
+                      value={note[p.id] ?? ""}
+                      onChange={(e) => setNote((n) => ({ ...n, [p.id]: e.target.value }))}
+                      className="border border-gray-200 rounded-lg px-3 py-2 text-xs w-full focus:outline-none focus:ring-1 focus:ring-orange-400"
+                    />
+                    <div className="flex gap-2">
+                      <button onClick={() => updateStatus(p.id, "approved")} disabled={loading === p.id}
+                        className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg font-semibold disabled:opacity-50">
+                        {loading === p.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />} Approve
                       </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table></div>
+                      <button onClick={() => updateStatus(p.id, "rejected")} disabled={loading === p.id}
+                        className="flex-1 flex items-center justify-center gap-1 py-2 bg-red-100 hover:bg-red-200 text-red-600 text-xs rounded-lg font-semibold disabled:opacity-50">
+                        <XCircle size={11} /> Reject
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {p.status === "approved" && (
+                  <button onClick={() => updateStatus(p.id, "paid")} disabled={loading === p.id}
+                    className="w-full flex items-center justify-center gap-1 py-2 bg-green-500 hover:bg-green-600 text-white text-xs rounded-lg font-semibold disabled:opacity-50">
+                    {loading === p.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />} Mark Paid
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <th className="px-6 py-3">Creator</th>
+                <th className="px-6 py-3">Amount</th>
+                <th className="px-6 py-3">Bank Details</th>
+                <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Requested</th>
+                <th className="px-6 py-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {filtered.length === 0 && (
+                <tr><td colSpan={6} className="text-center py-12 text-gray-400">No {tab !== "all" ? tab : ""} payouts</td></tr>
+              )}
+              {filtered.map((p) => {
+                const creator = Array.isArray(p.creator) ? p.creator[0] : p.creator;
+                return (
+                  <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <p className="font-semibold text-gray-800">{creator?.name ?? "—"}</p>
+                      <p className="text-xs text-gray-400">{creator?.email}</p>
+                      {p.phone && <p className="text-xs text-gray-400">{p.phone}</p>}
+                    </td>
+                    <td className="px-6 py-4 font-bold text-gray-900">{fmt(p.amount_kobo)}</td>
+                    <td className="px-6 py-4 text-xs">
+                      <p className="font-medium text-gray-700">{p.account_name}</p>
+                      <p className="text-gray-400">{p.bank_name}</p>
+                      <p className="text-gray-400">{p.account_number}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${p.status === "paid" ? "bg-green-100 text-green-700" : p.status === "pending" ? "bg-yellow-100 text-yellow-700" : p.status === "approved" ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-600"}`}>{p.status}</span>
+                      {p.note && <p className="text-xs text-gray-400 mt-1 max-w-[120px] truncate">{p.note}</p>}
+                    </td>
+                    <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
+                      {new Date(p.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                    </td>
+                    <td className="px-6 py-4">
+                      {p.status === "pending" && (
+                        <div className="flex flex-col gap-2">
+                          <input type="text" placeholder="Note (optional)" value={note[p.id] ?? ""} onChange={(e) => setNote((n) => ({ ...n, [p.id]: e.target.value }))}
+                            className="border border-gray-200 rounded-lg px-2 py-1 text-xs w-full focus:outline-none focus:ring-1 focus:ring-orange-400" />
+                          <div className="flex gap-1.5">
+                            <button onClick={() => updateStatus(p.id, "approved")} disabled={loading === p.id}
+                              className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg font-semibold transition-colors disabled:opacity-50">
+                              {loading === p.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />} Approve
+                            </button>
+                            <button onClick={() => updateStatus(p.id, "rejected")} disabled={loading === p.id}
+                              className="flex items-center gap-1 px-2.5 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 text-xs rounded-lg font-semibold transition-colors disabled:opacity-50">
+                              <XCircle size={11} /> Reject
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {p.status === "approved" && (
+                        <button onClick={() => updateStatus(p.id, "paid")} disabled={loading === p.id}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs rounded-lg font-semibold transition-colors disabled:opacity-50">
+                          {loading === p.id ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />} Mark Paid
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

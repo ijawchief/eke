@@ -226,89 +226,135 @@ export default async function SalesPage({
 
       {/* Product performance */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">Revenue by Product</h2>
         </div>
-        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
-          <thead>
-            <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
-              <th className="px-6 py-3">Product</th>
-              <th className="px-6 py-3">Units Sold</th>
-              <th className="px-6 py-3">Revenue</th>
-              <th className="px-6 py-3">Share</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {productRows.length === 0 && (
-              <tr><td colSpan={4} className="text-center py-10 text-gray-400">No sales in this period</td></tr>
-            )}
-            {productRows.map((p) => (
-              <tr key={p.name} className="hover:bg-gray-50">
-                <td className="px-6 py-3.5 font-medium text-gray-800">{p.name}</td>
-                <td className="px-6 py-3.5 text-gray-600">{p.units}</td>
-                <td className="px-6 py-3.5 font-bold text-gray-900">{fmt(p.revenue)}</td>
-                <td className="px-6 py-3.5">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-24 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-orange-600 rounded-full"
-                        style={{ width: `${grossRevenue > 0 ? (p.revenue / grossRevenue) * 100 : 0}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {grossRevenue > 0 ? ((p.revenue / grossRevenue) * 100).toFixed(0) : 0}%
-                    </span>
+        {/* Mobile cards */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {productRows.length === 0 && <p className="text-center py-10 text-gray-400 text-sm">No sales in this period</p>}
+          {productRows.map((p) => (
+            <div key={p.name} className="px-4 py-3.5 flex items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-gray-800 text-sm truncate">{p.name}</p>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <div className="h-1.5 flex-1 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-orange-600 rounded-full" style={{ width: `${grossRevenue > 0 ? (p.revenue / grossRevenue) * 100 : 0}%` }} />
                   </div>
-                </td>
+                  <span className="text-xs text-gray-400 flex-shrink-0">{grossRevenue > 0 ? ((p.revenue / grossRevenue) * 100).toFixed(0) : 0}%</span>
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <p className="font-bold text-gray-900 text-sm">{fmt(p.revenue)}</p>
+                <p className="text-xs text-gray-400">{p.units} sold</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Desktop table */}
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="w-full text-sm min-w-[500px]">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <th className="px-6 py-3">Product</th>
+                <th className="px-6 py-3">Units Sold</th>
+                <th className="px-6 py-3">Revenue</th>
+                <th className="px-6 py-3">Share</th>
               </tr>
-            ))}
-          </tbody>
-        </table></div>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {productRows.length === 0 && (
+                <tr><td colSpan={4} className="text-center py-10 text-gray-400">No sales in this period</td></tr>
+              )}
+              {productRows.map((p) => (
+                <tr key={p.name} className="hover:bg-gray-50">
+                  <td className="px-6 py-3.5 font-medium text-gray-800">{p.name}</td>
+                  <td className="px-6 py-3.5 text-gray-600">{p.units}</td>
+                  <td className="px-6 py-3.5 font-bold text-gray-900">{fmt(p.revenue)}</td>
+                  <td className="px-6 py-3.5">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-24 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-orange-600 rounded-full" style={{ width: `${grossRevenue > 0 ? (p.revenue / grossRevenue) * 100 : 0}%` }} />
+                      </div>
+                      <span className="text-xs text-gray-400">{grossRevenue > 0 ? ((p.revenue / grossRevenue) * 100).toFixed(0) : 0}%</span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* All paid orders in period */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">All Sales This Period</h2>
-          <Link href="/admin/buyers" className="text-sm text-orange-600 hover:underline">View all buyers →</Link>
+          <Link href="/admin/buyers" className="text-sm text-orange-600 hover:underline">View all →</Link>
         </div>
-        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
-          <thead>
-            <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
-              <th className="px-6 py-3">Buyer</th>
-              <th className="px-6 py-3">Product</th>
-              <th className="px-6 py-3">Amount</th>
-              <th className="px-6 py-3">Location</th>
-              <th className="px-6 py-3">When</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {paidOrders.length === 0 && (
-              <tr><td colSpan={5} className="text-center py-10 text-gray-400">No paid orders in this period</td></tr>
-            )}
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {paidOrders.slice(0, 50).map((o: any) => {
-              const customer = Array.isArray(o.customer) ? o.customer[0] : o.customer;
-              const item = o.order_item?.[0];
-              const product = item ? (Array.isArray(item.product) ? item.product[0] : item.product) : null;
-              const location = [o.city, o.country].filter(Boolean).join(", ") || "—";
-              return (
-                <tr key={o.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-3.5">
-                    <p className="font-semibold text-gray-800">{customer?.name ?? "—"}</p>
-                    <p className="text-xs text-gray-400">{customer?.email}</p>
-                  </td>
-                  <td className="px-6 py-3.5 text-gray-600 max-w-[180px] truncate">{product?.name ?? "—"}</td>
-                  <td className="px-6 py-3.5 font-bold text-gray-900">{fmt(o.total_kobo)}</td>
-                  <td className="px-6 py-3.5 text-xs text-gray-500">{location}</td>
-                  <td className="px-6 py-3.5 text-xs text-gray-400 whitespace-nowrap">
-                    {o.paid_at ? timeAgo(o.paid_at) : "—"}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table></div>
+        {/* Mobile cards */}
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {paidOrders.length === 0 && <p className="text-center py-10 text-gray-400 text-sm">No paid orders in this period</p>}
+          {paidOrders.slice(0, 50).map((o: any) => {
+            const customer = Array.isArray(o.customer) ? o.customer[0] : o.customer;
+            const item = o.order_item?.[0];
+            const product = item ? (Array.isArray(item.product) ? item.product[0] : item.product) : null;
+            const location = [o.city, o.country].filter(Boolean).join(", ") || null;
+            return (
+              <div key={o.id} className="px-4 py-3.5 flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-gray-800 text-sm truncate">{customer?.name ?? customer?.email ?? "—"}</p>
+                  <p className="text-xs text-gray-400 truncate mt-0.5">{product?.name ?? "—"}</p>
+                  {location && <p className="text-xs text-gray-400">{location}</p>}
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-bold text-gray-900 text-sm">{fmt(o.total_kobo)}</p>
+                  <p className="text-xs text-gray-400">{o.paid_at ? timeAgo(o.paid_at) : "—"}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {/* Desktop table */}
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="w-full text-sm min-w-[560px]">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <th className="px-6 py-3">Buyer</th>
+                <th className="px-6 py-3">Product</th>
+                <th className="px-6 py-3">Amount</th>
+                <th className="px-6 py-3">Location</th>
+                <th className="px-6 py-3">When</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {paidOrders.length === 0 && (
+                <tr><td colSpan={5} className="text-center py-10 text-gray-400">No paid orders in this period</td></tr>
+              )}
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {paidOrders.slice(0, 50).map((o: any) => {
+                const customer = Array.isArray(o.customer) ? o.customer[0] : o.customer;
+                const item = o.order_item?.[0];
+                const product = item ? (Array.isArray(item.product) ? item.product[0] : item.product) : null;
+                const location = [o.city, o.country].filter(Boolean).join(", ") || "—";
+                return (
+                  <tr key={o.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-3.5">
+                      <p className="font-semibold text-gray-800">{customer?.name ?? "—"}</p>
+                      <p className="text-xs text-gray-400">{customer?.email}</p>
+                    </td>
+                    <td className="px-6 py-3.5 text-gray-600 max-w-[180px] truncate">{product?.name ?? "—"}</td>
+                    <td className="px-6 py-3.5 font-bold text-gray-900">{fmt(o.total_kobo)}</td>
+                    <td className="px-6 py-3.5 text-xs text-gray-500">{location}</td>
+                    <td className="px-6 py-3.5 text-xs text-gray-400 whitespace-nowrap">
+                      {o.paid_at ? timeAgo(o.paid_at) : "—"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

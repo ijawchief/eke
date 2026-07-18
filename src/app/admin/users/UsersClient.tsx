@@ -108,97 +108,129 @@ export function UsersClient({ creators }: { creators: Creator[] }) {
         <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">Admin</span>
       </div>
 
-      {/* Creators table */}
+      {/* Creators list */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">Creator Accounts ({creators.length})</h2>
         </div>
-        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
-          <thead>
-            <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
-              <th className="px-6 py-3">Creator</th>
-              <th className="px-6 py-3">Username</th>
-              <th className="px-6 py-3">Bank</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Joined</th>
-              <th className="px-6 py-3"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {creators.length === 0 && (
-              <tr><td colSpan={6} className="text-center py-12 text-gray-400">No creators yet</td></tr>
-            )}
-            {creators.map((c) => (
-              <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-3.5">
-                  <p className="font-semibold text-gray-800">{c.name ?? "—"}</p>
-                  <p className="text-xs text-gray-400">{c.email ?? "—"}</p>
-                </td>
-                <td className="px-6 py-3.5 text-gray-600">{c.username ?? "—"}</td>
-                <td className="px-6 py-3.5 text-xs text-gray-500">
-                  {c.bank_name ? (
-                    <><p>{c.bank_name}</p><p className="text-gray-400">{c.account_number}</p></>
-                  ) : "—"}
-                </td>
-                <td className="px-6 py-3.5">
-                  <div className="flex flex-col gap-1">
-                    {c.is_admin ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit bg-orange-100 text-orange-700">Admin</span>
-                    ) : (
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${
-                        c.onboarding_done ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                      }`}>
-                        {c.onboarding_done ? "Onboarded" : "Pending setup"}
-                      </span>
-                    )}
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${
-                      c.email_verified ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"
-                    }`}>
-                      {c.email_verified ? "Email verified" : "Unverified"}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-3.5 text-xs text-gray-400">
-                  {new Date(c.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
-                </td>
-                <td className="px-6 py-3.5">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleVerified(c.id, !!c.email_verified)}
-                      title={c.email_verified ? "Deactivate account" : "Activate account"}
-                      className={`p-1.5 rounded-lg transition-colors ${c.email_verified ? "text-green-500 hover:bg-green-50" : "text-gray-300 hover:text-green-500 hover:bg-green-50"}`}
-                    >
-                      {c.email_verified ? <ShieldCheck size={14} /> : <ShieldOff size={14} />}
-                    </button>
-                    <button
-                      onClick={() => openEdit(c)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-                    >
-                      <Pencil size={14} />
-                    </button>
-                    {deleteConfirm === c.id ? (
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors">
-                          <Check size={14} />
-                        </button>
-                        <button onClick={() => setDeleteConfirm(null)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 transition-colors">
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setDeleteConfirm(c.id)}
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    )}
-                  </div>
-                </td>
+
+        {/* Mobile cards */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {creators.length === 0 && <p className="text-center py-12 text-gray-400 text-sm">No creators yet</p>}
+          {creators.map((c) => (
+            <div key={c.id} className="px-4 py-4">
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-gray-800 text-sm">{c.name ?? "—"}</p>
+                  <p className="text-xs text-gray-400 truncate">{c.email ?? "—"}</p>
+                  <p className="text-xs text-gray-400">@{c.username ?? "—"}</p>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => toggleVerified(c.id, !!c.email_verified)}
+                    title={c.email_verified ? "Deactivate account" : "Activate account"}
+                    className={`p-1.5 rounded-lg transition-colors ${c.email_verified ? "text-green-500 hover:bg-green-50" : "text-gray-300 hover:text-green-500 hover:bg-green-50"}`}
+                  >
+                    {c.email_verified ? <ShieldCheck size={16} /> : <ShieldOff size={16} />}
+                  </button>
+                  <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                    <Pencil size={16} />
+                  </button>
+                  {deleteConfirm === c.id ? (
+                    <>
+                      <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"><Check size={16} /></button>
+                      <button onClick={() => setDeleteConfirm(null)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><X size={16} /></button>
+                    </>
+                  ) : (
+                    <button onClick={() => setDeleteConfirm(c.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50"><Trash2 size={16} /></button>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {c.is_admin ? (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">Admin</span>
+                ) : (
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${c.onboarding_done ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                    {c.onboarding_done ? "Onboarded" : "Pending setup"}
+                  </span>
+                )}
+                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${c.email_verified ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                  {c.email_verified ? "Verified" : "Unverified"}
+                </span>
+                {c.bank_name && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">{c.bank_name}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
+                <th className="px-6 py-3">Creator</th>
+                <th className="px-6 py-3">Username</th>
+                <th className="px-6 py-3">Bank</th>
+                <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Joined</th>
+                <th className="px-6 py-3"></th>
               </tr>
-            ))}
-          </tbody>
-        </table></div>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {creators.length === 0 && (
+                <tr><td colSpan={6} className="text-center py-12 text-gray-400">No creators yet</td></tr>
+              )}
+              {creators.map((c) => (
+                <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-3.5">
+                    <p className="font-semibold text-gray-800">{c.name ?? "—"}</p>
+                    <p className="text-xs text-gray-400">{c.email ?? "—"}</p>
+                  </td>
+                  <td className="px-6 py-3.5 text-gray-600">{c.username ?? "—"}</td>
+                  <td className="px-6 py-3.5 text-xs text-gray-500">
+                    {c.bank_name ? (<><p>{c.bank_name}</p><p className="text-gray-400">{c.account_number}</p></>) : "—"}
+                  </td>
+                  <td className="px-6 py-3.5">
+                    <div className="flex flex-col gap-1">
+                      {c.is_admin ? (
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit bg-orange-100 text-orange-700">Admin</span>
+                      ) : (
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${c.onboarding_done ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                          {c.onboarding_done ? "Onboarded" : "Pending setup"}
+                        </span>
+                      )}
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold w-fit ${c.email_verified ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                        {c.email_verified ? "Email verified" : "Unverified"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-3.5 text-xs text-gray-400">
+                    {new Date(c.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                  </td>
+                  <td className="px-6 py-3.5">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => toggleVerified(c.id, !!c.email_verified)} title={c.email_verified ? "Deactivate account" : "Activate account"}
+                        className={`p-1.5 rounded-lg transition-colors ${c.email_verified ? "text-green-500 hover:bg-green-50" : "text-gray-300 hover:text-green-500 hover:bg-green-50"}`}>
+                        {c.email_verified ? <ShieldCheck size={14} /> : <ShieldOff size={14} />}
+                      </button>
+                      <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                        <Pencil size={14} />
+                      </button>
+                      {deleteConfirm === c.id ? (
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"><Check size={14} /></button>
+                          <button onClick={() => setDeleteConfirm(null)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><X size={14} /></button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setDeleteConfirm(c.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50"><Trash2 size={14} /></button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Create/Edit modal */}
