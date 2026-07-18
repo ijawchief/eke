@@ -135,9 +135,9 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#fff7ed] flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#f5f6fa] flex items-center justify-center px-4 relative overflow-hidden">
       <AfricanVillageBackground />
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-extrabold text-gray-900">
