@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { DollarSign, Eye, ShoppingCart, TrendingUp, ArrowRight, Info } from "lucide-react";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
@@ -21,89 +22,185 @@ const shadow = {
   glow:  `0 8px 32px ${C.burnt}44`,
 };
 
-const BARS = [42, 61, 38, 75, 55, 88, 64, 95, 72, 100, 83, 91];
-const MONTHS = ["J","F","M","A","M","J","J","A","S","O","N","D"];
-
-// ─── Dashboard mockup (light, cream) ─────────────────────────────────────────
-function DashboardMockup() {
+// ─── Tiny sparkline SVG ───────────────────────────────────────────────────────
+function Sparkline({ points, color }: { points: number[]; color: string }) {
+  const w = 200, h = 60;
+  const max = Math.max(...points, 1);
+  const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+  const ys = points.map((v) => h - (v / max) * (h - 8) - 4);
+  const line = xs.map((x, i) => `${i === 0 ? "M" : "L"} ${x} ${ys[i]}`).join(" ");
+  const fill = `${line} L ${w} ${h} L 0 ${h} Z`;
   return (
-    <div style={{
-      background: C.cream, border: `1px solid ${C.faint}55`, borderRadius: 20, overflow: "hidden",
-      maxWidth: 780, margin: "0 auto", boxShadow: shadow.heavy,
-    }}>
+    <svg viewBox={`0 0 ${w} ${h}`} style={{ width: "100%", height: 60 }} preserveAspectRatio="none">
+      <defs>
+        <linearGradient id={`sp-${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor={color} stopOpacity={0.25} />
+          <stop offset="95%" stopColor={color} stopOpacity={0} />
+        </linearGradient>
+      </defs>
+      <path d={fill} fill={`url(#sp-${color.replace("#","")})`} />
+      <path d={line} fill="none" stroke={color} strokeWidth={1.5} />
+    </svg>
+  );
+}
+
+// ─── Dashboard mockup — matches real creator dashboard exactly ────────────────
+const SP_REVENUE    = [12,18,9,24,30,22,40,36,55,48,62,70,58,80,75,90,83,95,88,100,92,85,97,100,88,94,78,100,96,104];
+const SP_VIEWS      = [40,55,38,62,70,60,80,72,88,75,92,85,100,90,78,95,88,100,82,92,86,98,76,100,90,94,88,96,100,92];
+const SP_CHECKOUTS  = [20,35,18,45,50,40,60,52,70,58,75,65,80,70,60,78,72,85,68,78,72,82,60,88,76,82,70,86,88,82];
+const SP_SALES      = [8,14,6,18,22,16,28,24,35,28,38,32,42,36,28,40,36,44,32,40,36,44,28,48,38,44,34,46,48,42];
+
+function DashboardMockup() {
+  const statCards = [
+    {
+      label: "Revenue", value: "₦2,847,500", tag: "Wallet: ₦1,203,000",
+      tagStyle: { background: "#fff7ed", color: "#c2410c" },
+      iconBg: "#fff7ed", icon: <DollarSign size={13} color="#ea580c" />,
+      color: "#ea580c", sp: SP_REVENUE,
+    },
+    {
+      label: "Page Views", value: "8,241", tag: "→ checkout: 4.2%",
+      tagStyle: { background: "#f3f4f6", color: "#4b5563" },
+      iconBg: "#eff6ff", icon: <Eye size={13} color="#3b82f6" />,
+      color: "#3b82f6", sp: SP_VIEWS,
+    },
+    {
+      label: "Checkouts", value: "346", tag: "CVR: 28.3%",
+      tagStyle: { background: "#111827", color: "#ffffff" },
+      iconBg: "#fefce8", icon: <ShoppingCart size={13} color="#eab308" />,
+      color: "#f59e0b", sp: SP_CHECKOUTS,
+    },
+    {
+      label: "Sales", value: "98", tag: "All time: 1,241",
+      tagStyle: { background: "#f3f4f6", color: "#4b5563" },
+      iconBg: "#f0fdf4", icon: <TrendingUp size={13} color="#22c55e" />,
+      color: "#22c55e", sp: SP_SALES,
+    },
+  ];
+
+  const products = [
+    { name: "Financial Freedom Blueprint", units: 641, revenue: 100, color: "#ea580c" },
+    { name: "Crypto Investing for Beginners", units: 318, revenue: 62, color: "#3b82f6" },
+    { name: "Figma UI Kit — 2025 Edition", units: 187, revenue: 44, color: "#eab308" },
+    { name: "Brand Identity Starter Kit", units: 95, revenue: 28, color: "#22c55e" },
+  ];
+
+  const recentSales = [
+    { name: "Adaeze Okafor",  email: "adaeze@gmail.com",   product: "Financial Freedom Blueprint",  amount: "₦12,500", time: "2m ago" },
+    { name: "Emeka Tunde",    email: "emeka@outlook.com",   product: "Crypto for Beginners",         amount: "₦8,000",  time: "18m ago" },
+    { name: "Fatima Aliyu",   email: "fatima@yahoo.com",    product: "Financial Freedom Blueprint",  amount: "₦12,500", time: "1h ago" },
+  ];
+
+  const g = { bg: "#ffffff", border: "#e5e7eb", text: "#111827", sub: "#6b7280", faint: "#9ca3af" };
+
+  return (
+    <div style={{ background: "#f9fafb", border: `1px solid ${g.border}`, borderRadius: 20, overflow: "hidden", maxWidth: 860, margin: "0 auto", boxShadow: shadow.heavy }}>
       {/* browser chrome */}
-      <div style={{ background: C.cream2, borderBottom: `1px solid ${C.faint}66`, padding: "12px 20px", display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ width: 10, height: 10, borderRadius: "50%", background: C.faint, display: "inline-block" }} />
-        <span style={{ width: 10, height: 10, borderRadius: "50%", background: C.faint, display: "inline-block" }} />
-        <span style={{ width: 10, height: 10, borderRadius: "50%", background: C.faint, display: "inline-block" }} />
-        <span style={{ flex: 1, textAlign: "center", fontSize: 11, color: C.faint }}>veelage.co — creator dashboard</span>
+      <div style={{ background: g.bg, borderBottom: `1px solid ${g.border}`, padding: "10px 18px", display: "flex", alignItems: "center", gap: 7 }}>
+        {["#f87171","#fbbf24","#4ade80"].map((c) => <span key={c} style={{ width: 9, height: 9, borderRadius: "50%", background: c, display: "inline-block" }} />)}
+        <span style={{ flex: 1, textAlign: "center", fontSize: 11, color: g.faint, background: "#f3f4f6", borderRadius: 6, padding: "2px 12px", maxWidth: 240, margin: "0 auto" }}>veelage.co/creator/dashboard</span>
       </div>
 
-      <div style={{ padding: "28px", display: "flex", flexDirection: "column", gap: 20 }}>
-        {/* greeting */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <p style={{ margin: 0, fontSize: 13, color: C.mid }}>Welcome back, Chidi 👋</p>
-            <p style={{ margin: "4px 0 0", fontSize: 18, fontWeight: 800, color: C.charcoal, letterSpacing: "-0.5px" }}>Your earnings this month</p>
+      <div style={{ display: "flex", height: 520 }}>
+        {/* sidebar */}
+        <div style={{ width: 52, background: g.bg, borderRight: `1px solid ${g.border}`, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 16, gap: 18 }}>
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontSize: 12, fontWeight: 900 }}>V</span>
           </div>
-          <div style={{ background: C.white, border: `1px solid ${C.faint}55`, borderRadius: 10, padding: "6px 14px", fontSize: 12, color: C.mid, boxShadow: shadow.card }}>July 2025</div>
-        </div>
-
-        {/* stat cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-          {[
-            { label: "Revenue",     value: "₦103,847,200", sub: "+24% vs last month", up: true },
-            { label: "Total sales", value: "2,841",         sub: "across all products" },
-            { label: "Avg. order",  value: "₦35,200",       sub: "+8% this week",     up: true },
-          ].map((c) => (
-            <div key={c.label} style={{ background: C.white, border: `1px solid ${C.faint}44`, borderRadius: 14, padding: "14px 16px", boxShadow: shadow.card }}>
-              <p style={{ margin: "0 0 6px", fontSize: 10, color: C.mid, letterSpacing: "0.06em", textTransform: "uppercase" }}>{c.label}</p>
-              <p style={{ margin: "0 0 4px", fontSize: 17, fontWeight: 800, color: C.charcoal, letterSpacing: "-0.5px" }}>{c.value}</p>
-              <p style={{ margin: 0, fontSize: 11, color: c.up ? C.burnt : C.mid }}>{c.sub}</p>
-            </div>
+          {["▣","☰","⊞","◎","⚙"].map((ic, i) => (
+            <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: i === 0 ? "#fff7ed" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: i === 0 ? "#ea580c" : g.faint, cursor: "default" }}>{ic}</div>
           ))}
         </div>
 
-        {/* bar chart */}
-        <div style={{ background: C.white, border: `1px solid ${C.faint}44`, borderRadius: 14, padding: "18px", boxShadow: shadow.card }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-            <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: C.charcoal }}>Monthly revenue</p>
-            <p style={{ margin: 0, fontSize: 11, color: C.faint }}>₦ Naira</p>
+        {/* main */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px 22px", display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* header */}
+          <div>
+            <p style={{ margin: 0, fontSize: 16, fontWeight: 800, color: g.text }}>
+              Welcome back, <span style={{ fontWeight: 900 }}>Chidi Okonkwo</span>
+            </p>
           </div>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 72 }}>
-            {BARS.map((h, i) => (
-              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-                <div style={{ width: "100%", height: `${h}%`, background: i === 11 ? C.burnt : C.burntBg, borderRadius: 4 }} />
-                <span style={{ fontSize: 7.5, color: C.faint }}>{MONTHS[i]}</span>
+
+          {/* period tabs */}
+          <div style={{ display: "flex", gap: 6 }}>
+            {["Today","This Week","This Month","Custom"].map((t, i) => (
+              <span key={t} style={{ fontSize: 10, fontWeight: 600, padding: "5px 10px", borderRadius: 10, background: i === 2 ? "#ea580c" : g.bg, color: i === 2 ? "#fff" : g.sub, border: i === 2 ? "none" : `1px solid ${g.border}` }}>{t}</span>
+            ))}
+          </div>
+
+          {/* stat cards 2×2 */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {statCards.map((c) => (
+              <div key={c.label} style={{ background: g.bg, borderRadius: 14, padding: "14px 16px", boxShadow: "0 1px 3px rgba(0,0,0,0.07)", display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, color: g.sub }}>
+                    <Info size={10} color={g.faint} />
+                    <span style={{ fontSize: 11, fontWeight: 600 }}>{c.label}</span>
+                    <ArrowRight size={10} color={g.faint} />
+                  </div>
+                  <div style={{ width: 26, height: 26, borderRadius: 8, background: c.iconBg, display: "flex", alignItems: "center", justifyContent: "center" }}>{c.icon}</div>
+                </div>
+                <p style={{ margin: "0 0 6px", fontSize: 20, fontWeight: 900, color: g.text, letterSpacing: "-0.5px" }}>{c.value}</p>
+                <span style={{ ...c.tagStyle, fontSize: 10, fontWeight: 600, padding: "3px 8px", borderRadius: 100, display: "inline-block", marginBottom: 8, alignSelf: "flex-start" }}>{c.tag}</span>
+                <Sparkline points={c.sp} color={c.color} />
               </div>
             ))}
           </div>
-        </div>
 
-        {/* recent sales */}
-        <div style={{ background: C.white, border: `1px solid ${C.faint}44`, borderRadius: 14, overflow: "hidden", boxShadow: shadow.card }}>
-          <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.faint}33` }}>
-            <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: C.charcoal }}>Recent sales</p>
-          </div>
-          {[
-            { name: "Adaeze O.", product: "Financial Freedom Blueprint", amount: "₦12,500", time: "2 min ago" },
-            { name: "Emeka T.",  product: "Crypto Investing for Beginners", amount: "₦8,000", time: "18 min ago" },
-            { name: "Fatima A.", product: "Financial Freedom Blueprint", amount: "₦12,500", time: "1 hr ago" },
-          ].map((s, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: i < 2 ? `1px solid ${C.faint}22` : "none" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 30, height: 30, borderRadius: "50%", background: C.burntBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: C.burnt, fontWeight: 800, flexShrink: 0 }}>{s.name[0]}</div>
-                <div>
-                  <p style={{ margin: 0, fontSize: 12, color: C.charcoal, fontWeight: 600 }}>{s.name}</p>
-                  <p style={{ margin: 0, fontSize: 10, color: C.faint }}>{s.product}</p>
-                </div>
+          {/* product performance */}
+          <div style={{ background: g.bg, borderRadius: 14, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.07)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: `1px solid ${g.border}` }}>
+              <div>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: g.text }}>Product Performance</p>
+                <p style={{ margin: "2px 0 0", fontSize: 10, color: g.faint }}>4 active products</p>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <p style={{ margin: 0, fontSize: 12, color: C.charcoal, fontWeight: 700 }}>{s.amount}</p>
-                <p style={{ margin: 0, fontSize: 10, color: C.faint }}>{s.time}</p>
-              </div>
+              <span style={{ fontSize: 10, color: "#ea580c", fontWeight: 600, display: "flex", alignItems: "center", gap: 3 }}>Manage <ArrowRight size={10} /></span>
             </div>
-          ))}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", borderBottom: "none" }}>
+              {products.map((p, i) => (
+                <div key={p.name} style={{ padding: "12px 14px", borderRight: i < 3 ? `1px solid ${g.border}` : "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                    <div style={{ width: 18, height: 18, borderRadius: 5, background: p.color, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 9, fontWeight: 800 }}>{i+1}</div>
+                    <span style={{ fontSize: 9, color: g.faint, fontWeight: 600 }}>{p.units} sold</span>
+                  </div>
+                  <p style={{ margin: "0 0 4px", fontSize: 10, fontWeight: 600, color: g.text, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.name}</p>
+                  <div style={{ height: 4, background: "#f3f4f6", borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
+                    <div style={{ height: "100%", width: `${p.revenue}%`, background: p.color, borderRadius: 4 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* recent sales */}
+          <div style={{ background: g.bg, borderRadius: 14, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.07)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: `1px solid ${g.border}` }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: g.text }}>Recent Sales</p>
+              <span style={{ fontSize: 10, color: "#ea580c", fontWeight: 600, display: "flex", alignItems: "center", gap: 3 }}>View all <ArrowRight size={10} /></span>
+            </div>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${g.border}` }}>
+                  {["Customer","Product","Amount","Date"].map((h) => (
+                    <th key={h} style={{ padding: "8px 14px", textAlign: "left", fontSize: 9, color: g.faint, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {recentSales.map((s, i) => (
+                  <tr key={i} style={{ borderBottom: i < recentSales.length - 1 ? `1px solid #f9fafb` : "none" }}>
+                    <td style={{ padding: "9px 14px" }}>
+                      <p style={{ margin: 0, fontWeight: 600, color: g.text }}>{s.name}</p>
+                      <p style={{ margin: 0, color: g.faint, fontSize: 9 }}>{s.email}</p>
+                    </td>
+                    <td style={{ padding: "9px 14px", color: g.sub }}>{s.product}</td>
+                    <td style={{ padding: "9px 14px", fontWeight: 700, color: g.text }}>{s.amount}</td>
+                    <td style={{ padding: "9px 14px", color: g.faint }}>{s.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -277,15 +374,14 @@ export default function Home() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {[
-              { icon: "🛒", title: "Sales pages that sell",      desc: "Your product gets a page built to convert — not just look good." },
-              { icon: "⬆️", title: "Sell more per order",        desc: "Add upsells and order bumps so every checkout earns you more." },
-              { icon: "📧", title: "Win back lost buyers",       desc: "Automated emails chase people who didn't complete payment — using your name, not ours." },
-              { icon: "🔍", title: "See where you lose sales",   desc: "Know exactly how many people viewed, started checkout, and paid. Fix what's broken." },
-              { icon: "💳", title: "Get paid instantly",         desc: "Money goes straight to your bank account after every sale." },
-              { icon: "📱", title: "Works on any phone",         desc: "Your buyers are on mobile. Your store is ready for them." },
+              { title: "Sales pages that sell",      desc: "Your product gets a page built to convert — not just look good." },
+              { title: "Sell more per order",        desc: "Add upsells and order bumps so every checkout earns you more." },
+              { title: "Win back lost buyers",       desc: "Automated emails chase people who didn't complete payment — using your name, not ours." },
+              { title: "See where you lose sales",   desc: "Know exactly how many people viewed, started checkout, and paid. Fix what's broken." },
+              { title: "Get paid instantly",         desc: "Money goes straight to your bank account after every sale." },
+              { title: "Works on any phone",         desc: "Your buyers are on mobile. Your store is ready for them." },
             ].map((f) => (
               <div key={f.title} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem" }}>
-                <p style={{ fontSize: 26, margin: "0 0 12px" }}>{f.icon}</p>
                 <p style={{ fontWeight: 800, fontSize: 14, color: C.white, margin: "0 0 7px", letterSpacing: "-0.1px" }}>{f.title}</p>
                 <p style={{ fontSize: 13, color: C.faint, margin: 0, lineHeight: 1.65 }}>{f.desc}</p>
               </div>
