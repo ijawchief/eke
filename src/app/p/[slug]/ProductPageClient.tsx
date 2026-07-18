@@ -180,7 +180,7 @@ export function ProductPageClient({ product }: Props) {
                     {geoCompare ?? fmt(product.compare_at_kobo)}
                   </p>
                 )}
-                <span style={{ fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 900, color: PINK, lineHeight: 1 }}>
+                <span className="hero-price" style={{ fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 900, color: PINK, lineHeight: 1 }}>
                   {geoPrice ?? fmt(product.price_kobo)}
                 </span>
               </div>
@@ -220,6 +220,9 @@ export function ProductPageClient({ product }: Props) {
           }
           main p, main li, main td, main a, main label {
             font-size: 14px !important;
+          }
+          main .hero-price {
+            font-size: 2rem !important;
           }
         }
       `}</style>
