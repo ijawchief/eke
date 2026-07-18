@@ -125,83 +125,108 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section style={{ background: heroGradient(PINK) }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "3rem 1.5rem", display: "grid", gridTemplateColumns: imageBlock ? "360px 1fr" : "1fr", gap: "2.5rem", alignItems: "start" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "2rem 1.25rem 2.5rem" }}>
 
-          {/* Left – product image */}
-          {imageBlock && (
-            <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.13)", height: 360 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageBlock.data.url as string}
-                alt={(imageBlock.data.alt as string) ?? product.name}
-                style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
-              />
-            </div>
-          )}
+          {/* Desktop: side-by-side | Mobile: stacked */}
+          <div className="product-hero-grid">
 
-          {/* Right – sales copy */}
-          <div style={{ paddingTop: "0.5rem" }}>
-
-            {/* Stars */}
-            {rating > 0 && (
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.9rem" }}>
-                <span style={{ color: "#f59e0b", fontSize: "1.2rem", letterSpacing: "-1px" }}>
-                  {"★".repeat(rating)}{"☆".repeat(5 - rating)}
-                </span>
-                <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>{rating}.0 / 5</span>
+            {/* Thumbnail */}
+            {imageBlock && (
+              <div className="product-hero-image" style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.13)" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageBlock.data.url as string}
+                  alt={(imageBlock.data.alt as string) ?? product.name}
+                  style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
+                />
               </div>
             )}
 
-            {/* Title */}
-            <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: author ? "0.5rem" : "0.75rem" }}>
-              {product.name}
-            </h1>
-            {author && (
-              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.55)", marginBottom: "0.9rem", fontWeight: 500 }}>
-                by {author}
-              </p>
-            )}
+            {/* Sales copy */}
+            <div style={{ paddingTop: "0.25rem" }}>
 
-            {/* Subheadline */}
-            {subheadline && (
-              <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.65, marginBottom: "1.5rem" }}>{subheadline}</p>
-            )}
+              {/* Stars */}
+              {rating > 0 && (
+                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.9rem" }}>
+                  <span style={{ color: "#f59e0b", fontSize: "1.2rem", letterSpacing: "-1px" }}>
+                    {"★".repeat(rating)}{"☆".repeat(5 - rating)}
+                  </span>
+                  <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>{rating}.0 / 5</span>
+                </div>
+              )}
 
-            {/* Divider */}
-            <div style={{ height: 1, background: "rgba(255,255,255,0.1)", marginBottom: "1.5rem" }} />
-
-            {/* Price */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              {product.compare_at_kobo && (
-                <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.35)", textDecoration: "line-through", marginBottom: "0.15rem" }}>
-                  {fmt(product.compare_at_kobo)}
+              {/* Title */}
+              <h1 style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.2rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: author ? "0.5rem" : "0.75rem" }}>
+                {product.name}
+              </h1>
+              {author && (
+                <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.55)", marginBottom: "0.9rem", fontWeight: 500 }}>
+                  by {author}
                 </p>
               )}
-              <span style={{ fontSize: "2.4rem", fontWeight: 900, color: PINK, lineHeight: 1 }}>
-                {fmt(product.price_kobo)}
-              </span>
-            </div>
 
-            {/* CTA */}
-            <Link
-              href={checkoutUrl}
-              style={{ display: "block", textAlign: "center", padding: "1rem 1.5rem", borderRadius: 14, fontSize: "1.05rem", fontWeight: 800, color: "#fff", background: PINK, boxShadow: `0 6px 20px ${PINK}44`, textDecoration: "none", marginBottom: "0.75rem", letterSpacing: "0.02em" }}
-            >
-              Buy Now →
-            </Link>
-            <p style={{ textAlign: "center", fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>
-              🔒 Secure checkout · Instant access after payment
-            </p>
+              {/* Subheadline */}
+              {subheadline && (
+                <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.65, marginBottom: "1.5rem" }}>{subheadline}</p>
+              )}
+
+              {/* Divider */}
+              <div style={{ height: 1, background: "rgba(255,255,255,0.1)", marginBottom: "1.5rem" }} />
+
+              {/* Price */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                {product.compare_at_kobo && (
+                  <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.35)", textDecoration: "line-through", marginBottom: "0.15rem" }}>
+                    {geoCompare ?? fmt(product.compare_at_kobo)}
+                  </p>
+                )}
+                <span style={{ fontSize: "2.4rem", fontWeight: 900, color: PINK, lineHeight: 1 }}>
+                  {geoPrice ?? fmt(product.price_kobo)}
+                </span>
+              </div>
+
+              {/* CTA */}
+              <Link
+                href={checkoutUrl}
+                style={{ display: "block", textAlign: "center", padding: "1rem 1.5rem", borderRadius: 14, fontSize: "1.05rem", fontWeight: 800, color: "#fff", background: PINK, boxShadow: `0 6px 20px ${PINK}44`, textDecoration: "none", marginBottom: "0.75rem", letterSpacing: "0.02em" }}
+              >
+                Buy Now →
+              </Link>
+              <p style={{ textAlign: "center", fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>
+                🔒 Secure checkout · Instant access after payment
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
+      <style>{`
+        .product-hero-grid {
+          display: grid;
+          grid-template-columns: ${imageBlock ? "360px 1fr" : "1fr"};
+          gap: 2.5rem;
+          align-items: start;
+        }
+        .product-hero-image {
+          height: 360px;
+        }
+        @media (max-width: 640px) {
+          .product-hero-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+          .product-hero-image {
+            height: 260px;
+          }
+        }
+      `}</style>
+
       {/* ── CONTENT SECTION ──────────────────────────────────────── */}
       <section className="bg-white">
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "4rem 2rem" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "3rem 1.25rem" }}>
 
           {showHeadline && (
-            <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#111827", lineHeight: 1.3, marginBottom: "2rem" }}>
+            <h2 style={{ fontSize: "clamp(1.35rem, 4vw, 1.75rem)", fontWeight: 800, color: "#111827", lineHeight: 1.3, marginBottom: "1.5rem" }}>
               {headline}
             </h2>
           )}
@@ -219,20 +244,20 @@ export function ProductPageClient({ product }: Props) {
             marginTop: "2.5rem",
             background: heroGradient(PINK),
             borderRadius: 20,
-            padding: "2.5rem 2rem",
+            padding: "2rem 1.5rem",
             textAlign: "center",
             border: "1px solid rgba(255,255,255,0.07)",
           }}>
             {product.compare_at_kobo && (
               <p style={{ color: "#9ca3af", fontSize: "0.9rem", marginBottom: "0.25rem", textDecoration: "line-through" }}>
-                {fmt(product.compare_at_kobo)}
+                {geoCompare ?? fmt(product.compare_at_kobo)}
               </p>
             )}
             <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.85rem", marginBottom: "0.5rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
               {product.compare_at_kobo ? "Today only" : "Get instant access for"}
             </p>
             <p style={{ fontSize: "3rem", fontWeight: 900, color: "#fff", lineHeight: 1, marginBottom: "1.75rem" }}>
-              {fmt(product.price_kobo)}
+              {geoPrice ?? fmt(product.price_kobo)}
             </p>
             <Link
               href={checkoutUrl}
