@@ -316,14 +316,12 @@ export function ProductPageClient({ product }: Props) {
           )}
         </div>
       </section>
-      {/* Powered by Veelage — sticky footer */}
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, textAlign: "center", padding: "0.6rem 1rem", background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", borderTop: "1px solid #f0f0f0", zIndex: 50 }}>
-        <a href="/" style={{ fontSize: "0.72rem", color: "#9ca3af", textDecoration: "none" }}>
+      {/* Powered by Veelage */}
+      <div style={{ textAlign: "center", padding: "1.5rem 1rem", borderTop: "1px solid #f0f0f0" }}>
+        <a href="/" style={{ fontSize: "0.75rem", color: "#9ca3af", textDecoration: "none" }}>
           Powered by <strong style={{ color: "#6b7280" }}>Veelage</strong>
         </a>
       </div>
-      {/* spacer so content isn't hidden behind sticky bar */}
-      <div style={{ height: "2.5rem" }} />
     </main>
   );
 }
