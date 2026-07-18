@@ -3,7 +3,7 @@ import { getServiceClient } from "@/lib/supabase";
 
 async function getCreatorId(req: NextRequest) {
   const cookie = req.headers.get("cookie") ?? "";
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const raw = cookie.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
   return raw ? decodeURIComponent(raw) : null;
 }
 

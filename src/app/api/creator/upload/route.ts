@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  const cookie = req.headers.get("cookie") ?? "";
-  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
+  // Try req.cookies first (works in most cases), fall back to raw header parse
+  const fromCookies = req.cookies.get("creator_id")?.value;
+  const cookieHeader = req.headers.get("cookie") ?? "";
+  const fromHeader = cookieHeader.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
+  const raw = fromCookies ?? fromHeader;
   const creatorId = raw ? decodeURIComponent(raw) : null;
-  if (!creatorId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!creatorId) return NextResponse.json({ error: "Unauthorized — please log out and log back in" }, { status: 401 });
 
   const form = await req.formData();
   const file = form.get("file") as File | null;

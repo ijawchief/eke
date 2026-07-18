@@ -8,7 +8,7 @@ function generateOtp() {
 
 export async function POST(req: NextRequest) {
   const cookie = req.headers.get("cookie") ?? "";
-  const creatorId = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const creatorId = cookie.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
   if (!creatorId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const db = getServiceClient();
