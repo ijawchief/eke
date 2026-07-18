@@ -20,18 +20,57 @@ export async function sendSaleNotification(params: {
   await getResend().emails.send({
     from: FROM,
     to: params.to,
-    subject: `💰 New sale: ${params.productName} — ${amount}`,
+    subject: `You just made a sale — ${params.productName}`,
     html: `
-      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;">
-        <h2 style="color:#C04B1E;margin-bottom:4px;">You just made a sale! 🎉</h2>
-        <p style="color:#555;margin-top:0;">Here's a summary of the order:</p>
-        <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-          <tr><td style="padding:8px 0;color:#888;font-size:14px;">Product</td><td style="padding:8px 0;font-weight:600;font-size:14px;">${params.productName}</td></tr>
-          <tr><td style="padding:8px 0;color:#888;font-size:14px;">Amount</td><td style="padding:8px 0;font-weight:600;font-size:14px;color:#C04B1E;">${amount}</td></tr>
-          <tr><td style="padding:8px 0;color:#888;font-size:14px;">Buyer</td><td style="padding:8px 0;font-size:14px;">${params.buyerName ? `${params.buyerName} (${params.buyerEmail})` : params.buyerEmail}</td></tr>
-          <tr><td style="padding:8px 0;color:#888;font-size:14px;">Reference</td><td style="padding:8px 0;font-size:13px;color:#aaa;">${params.orderRef}</td></tr>
-        </table>
-        <p style="font-size:13px;color:#aaa;">View your dashboard at <a href="https://veelage.co/creator/dashboard" style="color:#C04B1E;">veelage.co/creator/dashboard</a></p>
+      <div style="background:#FDF6EE;min-height:100vh;padding:40px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+        <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+
+          <div style="background:#C04B1E;padding:32px 32px 28px;">
+            <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,0.7);letter-spacing:0.05em;text-transform:uppercase;">Veelage</p>
+            <h1 style="margin:0;font-size:26px;font-weight:700;color:#fff;line-height:1.2;">Another one! 🚀</h1>
+          </div>
+
+          <div style="padding:32px;">
+            <p style="margin:0 0 24px;font-size:16px;color:#2C2C2C;line-height:1.6;">
+              Someone out there just decided your knowledge was worth paying for.
+            </p>
+
+            <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+              <tr style="border-bottom:1px solid #F0E8DF;">
+                <td style="padding:12px 0;font-size:13px;color:#999;width:110px;">Product</td>
+                <td style="padding:12px 0;font-size:14px;font-weight:600;color:#2C2C2C;">${params.productName}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #F0E8DF;">
+                <td style="padding:12px 0;font-size:13px;color:#999;">Amount</td>
+                <td style="padding:12px 0;font-size:16px;font-weight:700;color:#C04B1E;">${amount}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #F0E8DF;">
+                <td style="padding:12px 0;font-size:13px;color:#999;">Customer</td>
+                <td style="padding:12px 0;font-size:14px;color:#2C2C2C;">${params.buyerName ?? "—"}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #F0E8DF;">
+                <td style="padding:12px 0;font-size:13px;color:#999;">Email</td>
+                <td style="padding:12px 0;font-size:14px;color:#2C2C2C;">${params.buyerEmail}</td>
+              </tr>
+              <tr>
+                <td style="padding:12px 0;font-size:13px;color:#999;">Reference</td>
+                <td style="padding:12px 0;font-size:12px;color:#bbb;font-family:monospace;">${params.orderRef}</td>
+              </tr>
+            </table>
+
+            <p style="margin:0 0 28px;font-size:16px;color:#2C2C2C;">Keep stacking wins. 💪</p>
+
+            <a href="https://veelage.co/creator/dashboard"
+              style="display:inline-block;background:#C04B1E;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:12px 24px;border-radius:10px;">
+              View Dashboard →
+            </a>
+          </div>
+
+          <div style="padding:20px 32px;border-top:1px solid #F0E8DF;background:#FDF6EE;">
+            <p style="margin:0;font-size:13px;color:#bbb;text-align:center;">Team Veelage · <a href="https://veelage.co" style="color:#C04B1E;text-decoration:none;">veelage.co</a></p>
+          </div>
+
+        </div>
       </div>
     `,
   });
