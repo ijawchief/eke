@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, Loader2, AlertCircle, Mail, Building2, ArrowRight } from "lucide-react";
+import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 
 interface Bank { name: string; code: string }
 
@@ -134,7 +135,8 @@ export function OnboardingClient({ email, name, emailVerified }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6fa] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#fff7ed] flex items-center justify-center px-4 relative overflow-hidden">
+      <AfricanVillageBackground />
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
