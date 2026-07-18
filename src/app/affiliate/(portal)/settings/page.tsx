@@ -1,12 +1,19 @@
 import { headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { ChangePasswordForm } from "./ChangePasswordForm";
+import { AffiliateCurrencySwitcher } from "@/components/affiliate/AffiliateCurrencySwitcher";
+
+function getCurrency(cookie: string): string {
+  const match = cookie.match(/affiliate_currency=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : "USD";
+}
 
 export default async function AffiliateSettingsPage() {
   const h = await headers();
   const cookie = h.get("cookie") ?? "";
   const raw = cookie.match(/affiliate_id=([^;]+)/)?.[1];
   const affiliateId = raw ? decodeURIComponent(raw) : "";
+  const currency = getCurrency(cookie);
 
   const db = getServiceClient();
   const { data: affiliate } = await db
@@ -44,6 +51,13 @@ export default async function AffiliateSettingsPage() {
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <h2 className="font-semibold text-gray-800 mb-4">Change Password</h2>
           <ChangePasswordForm />
+        </div>
+
+        {/* Currency */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h2 className="font-semibold text-gray-800 mb-1">Display Currency</h2>
+          <p className="text-xs text-gray-400 mb-4">Earnings are stored in NGN and converted for display</p>
+          <AffiliateCurrencySwitcher current={currency} />
         </div>
       </div>
     </div>
