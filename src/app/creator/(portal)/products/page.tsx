@@ -13,6 +13,8 @@ export default async function CreatorProductsPage() {
   const cookieStore = await cookies();
   const creatorId = cookieStore.get("creator_id")?.value ?? null;
 
+  if (!creatorId) return <div style={{padding:40,fontFamily:"monospace"}}>❌ No creator_id cookie found</div>;
+
   const db = getServiceClient();
   const [{ data: products }, { data: orderItems }] = await Promise.all([
     db.from("product")
