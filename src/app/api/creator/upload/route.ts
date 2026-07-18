@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  const raw = req.cookies.get("creator_id")?.value;
+  const cookie = req.headers.get("cookie") ?? "";
+  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
   const creatorId = raw ? decodeURIComponent(raw) : null;
   if (!creatorId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

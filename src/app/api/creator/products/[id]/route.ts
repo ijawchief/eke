@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 
 async function getCreatorId(req: NextRequest) {
-  const raw = req.cookies.get("creator_id")?.value;
+  const cookie = req.headers.get("cookie") ?? "";
+  const raw = cookie.match(/creator_id=([^;]+)/)?.[1];
   return raw ? decodeURIComponent(raw) : null;
 }
 
