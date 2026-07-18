@@ -78,11 +78,14 @@ function RichEditor({ value, onChange }: { value: string; onChange: (v: string) 
 
   const handleImgUpload = async (file: File) => {
     setImgUploading(true);
-    const form = new FormData();
-    form.append("file", file);
-    const res = await fetch("/api/creator/upload", { method: "POST", body: form, credentials: "include" });
-    const data = await res.json();
-    if (data.url) exec("insertImage", data.url);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/creator/upload", { method: "POST", body: form, credentials: "include" });
+      const data = await res.json();
+      if (data.url) exec("insertImage", data.url);
+      else console.error("Upload error:", data.error);
+    } catch (e) { console.error("Upload failed", e); }
     setImgUploading(false);
   };
 
@@ -304,11 +307,14 @@ export function CreatorProductForm({ initialData }: CreatorProductFormProps) {
   };
 
   const uploadFile = async (file: File, onDone: (url: string) => void) => {
-    const form = new FormData();
-    form.append("file", file);
-    const res = await fetch("/api/creator/upload", { method: "POST", body: form, credentials: "include" });
-    const data = await res.json();
-    if (data.url) onDone(data.url);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/creator/upload", { method: "POST", body: form, credentials: "include" });
+      const data = await res.json();
+      if (data.url) onDone(data.url);
+      else setStepError(data.error ?? "Upload failed — please try again");
+    } catch { setStepError("Upload failed — please try again"); }
   };
 
   const advanceStep = () => {
