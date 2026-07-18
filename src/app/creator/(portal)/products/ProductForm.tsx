@@ -321,7 +321,6 @@ export function CreatorProductForm({ initialData }: CreatorProductFormProps) {
     setStepError("");
     if (step === 0) {
       if (!name.trim()) { setStepError("Product title is required before continuing."); return; }
-      if (!thumbnail) { setStepError("Please select a product image before continuing."); return; }
     }
     if (step === 1) {
       if (!price) { setStepError("Please set a price before continuing."); return; }
@@ -368,25 +367,23 @@ export function CreatorProductForm({ initialData }: CreatorProductFormProps) {
 
           <div className="mb-10">
             <Label n={2} text="Select image" />
-            <div className="rounded-2xl cursor-pointer transition-all overflow-hidden border-2 border-dashed border-violet-200 hover:border-violet-400"
+            <div className="rounded-2xl cursor-pointer transition-all overflow-hidden border-2 border-dashed border-orange-200 hover:border-orange-400"
               onClick={() => !thumbUploading && thumbInputRef.current?.click()}
-              style={{ background: "linear-gradient(135deg, #f3f0ff 0%, #fff7ed 100%)" }}>
+              style={{ background: "linear-gradient(135deg, #fff7ed 0%, #fef3e8 100%)" }}>
               <div className="flex flex-col items-center gap-5 py-12 px-6">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm"
-                  style={{ background: "linear-gradient(135deg, #7c3aed, #ea580c)" }}>
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm bg-[#C04B1E]">
                   {thumbUploading
                     ? <svg className="animate-spin w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                     : <Upload size={22} className="text-white" />
                   }
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-semibold mb-1" style={{ color: "#7c3aed" }}>
+                  <p className="text-sm font-semibold mb-1 text-orange-700">
                     {thumbUploading ? "Uploading image…" : "Drop your thumbnail here"}
                   </p>
                   <p className="text-xs text-gray-400">PNG, JPG, WEBP · Recommended 400×400</p>
                 </div>
-                <button type="button" className="px-5 py-2 rounded-xl text-sm font-semibold text-white pointer-events-none shadow-sm"
-                  style={{ background: "linear-gradient(135deg, #7c3aed, #ea580c)" }}>
+                <button type="button" className="px-5 py-2 rounded-xl text-sm font-semibold text-white pointer-events-none shadow-sm bg-[#C04B1E]">
                   Choose Image
                 </button>
               </div>
