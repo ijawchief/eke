@@ -75,6 +75,18 @@ export function ProductPageClient({ product }: Props) {
   })();
 
   useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      document.cookie = `affiliate_ref=${encodeURIComponent(ref)}; path=/; max-age=86400`;
+      fetch("/api/affiliate/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_id: product.id, affiliate_username: ref }),
+      }).catch(() => {});
+    }
+  }, [product.id, searchParams]);
+
+  useEffect(() => {
     const sessionId = sessionStorage.getItem("eke_sid") ?? crypto.randomUUID();
     sessionStorage.setItem("eke_sid", sessionId);
     fetch("/api/track/view", {

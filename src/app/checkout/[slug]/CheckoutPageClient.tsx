@@ -52,6 +52,8 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
   const getAttribution = useCallback(() => {
     const fbp = document.cookie.match(/_fbp=([^;]+)/)?.[1];
     const fbc = document.cookie.match(/_fbc=([^;]+)/)?.[1];
+    const affiliateRefRaw = document.cookie.match(/affiliate_ref=([^;]+)/)?.[1];
+    const affiliateRef = affiliateRefRaw ? decodeURIComponent(affiliateRefRaw) : null;
     return {
       utm_source: searchParams.get("utm_source"),
       utm_medium: searchParams.get("utm_medium"),
@@ -62,6 +64,7 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
       fbp: fbp ?? null,
       fbc: fbc ?? null,
       landing_url: window.location.href,
+      affiliate_ref: affiliateRef,
     };
   }, [searchParams]);
 

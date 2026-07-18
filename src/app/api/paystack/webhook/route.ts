@@ -143,5 +143,44 @@ export async function POST(req: NextRequest) {
     }),
   ]);
 
+  // Affiliate commission
+  const affiliateRef = (attribution as Record<string, string | null>)?.affiliate_ref;
+  if (affiliateRef && (products ?? []).length > 0) {
+    try {
+      const { data: affiliate } = await db
+        .from("affiliate")
+        .select("id, balance_kobo, total_earned_kobo")
+        .eq("username", affiliateRef.toLowerCase())
+        .single();
+
+      if (affiliate) {
+        // Get commission rate: product-level override or platform default
+        const firstProduct = (products ?? [])[0] as { id: string; affiliate_commission_rate?: number | null };
+        let commissionRate = 10.0;
+        if (firstProduct?.affiliate_commission_rate != null) {
+          commissionRate = firstProduct.affiliate_commission_rate;
+        } else {
+          const { data: config } = await db.from("affiliate_config").select("commission_rate").eq("id", 1).single();
+          if (config) commissionRate = config.commission_rate;
+        }
+
+        const commissionKobo = Math.round(order.total_kobo * commissionRate / 100);
+
+        await db.from("affiliate_commission").insert({
+          affiliate_id: affiliate.id,
+          order_id: order.id,
+          product_id: firstProduct.id,
+          amount_kobo: commissionKobo,
+          status: "pending",
+        });
+
+        await db.from("affiliate").update({
+          balance_kobo: affiliate.balance_kobo + commissionKobo,
+          total_earned_kobo: affiliate.total_earned_kobo + commissionKobo,
+        }).eq("id", affiliate.id);
+      }
+    } catch { /* don't fail webhook for affiliate errors */ }
+  }
+
   return NextResponse.json({ received: true });
 }

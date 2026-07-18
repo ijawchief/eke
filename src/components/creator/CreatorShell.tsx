@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ShoppingCart, BarChart2,
-  Wallet, Settings, LogOut, Menu, X, Users,
+  Wallet, Settings, LogOut, Menu, X,
 } from "lucide-react";
 
 const nav = [
@@ -54,14 +54,6 @@ export function CreatorShell({
       </nav>
 
       <div className="px-3 pb-4 space-y-1">
-        {/* Switch to customer view */}
-        <Link
-          href="/account"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/40 hover:text-white hover:bg-white/10 transition-all"
-        >
-          <Users size={16} />
-          Switch to buyer view
-        </Link>
         <Link
           href="/api/creator/logout"
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/40 hover:text-white hover:bg-white/10 transition-all"
