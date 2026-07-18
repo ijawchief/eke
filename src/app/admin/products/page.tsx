@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { ProductCard } from "./ProductCard";
+import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 
 function getThumbnail(blocks: { type: string; data: Record<string, unknown> }[]): string | null {
   const img = blocks?.find((b) => b.type === "image");
@@ -41,7 +42,13 @@ export default async function ProductsPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Products</h1>
+      {/* Village banner header */}
+      <div className="relative overflow-hidden rounded-2xl mb-6 h-32 bg-[#fff7ed]">
+        <AfricanVillageBackground />
+        <div className="relative z-10 flex items-end h-full px-6 pb-5">
+          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+        </div>
+      </div>
 
       {list.length === 0 ? (
         <div className="text-center py-20 text-gray-400">

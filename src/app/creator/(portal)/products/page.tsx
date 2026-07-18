@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
+import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 
 function formatNaira(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
@@ -22,10 +23,14 @@ export default async function CreatorProductsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-400 text-sm mt-1">Manage your digital products</p>
+      {/* Village banner header */}
+      <div className="relative overflow-hidden rounded-2xl mb-6 h-32 bg-[#fff7ed]">
+        <AfricanVillageBackground />
+        <div className="relative z-10 flex items-end justify-between h-full px-6 pb-5">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+            <p className="text-gray-500 text-sm">Manage your digital products</p>
+          </div>
         </div>
       </div>
 
