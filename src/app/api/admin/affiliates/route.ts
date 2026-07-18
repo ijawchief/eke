@@ -6,7 +6,7 @@ export async function GET() {
 
   const { data: affiliates } = await db
     .from("affiliate")
-    .select("id, name, email, username, balance_kobo, total_earned_kobo, created_at")
+    .select("id, name, email, username, balance_kobo, total_earned_kobo, status, status_note, created_at")
     .order("created_at", { ascending: false });
 
   if (!affiliates?.length) return NextResponse.json([]);
@@ -23,7 +23,7 @@ export async function GET() {
       .in("affiliate_id", affiliateIds),
   ]);
 
-  const result = affiliates.map((a: { id: string; name: string; email: string; username: string; balance_kobo: number; total_earned_kobo: number; created_at: string }) => {
+  const result = affiliates.map((a: { id: string; name: string; email: string; username: string; balance_kobo: number; total_earned_kobo: number; status: string; status_note: string | null; created_at: string }) => {
     const myPayouts = (payouts ?? []).filter((p: { affiliate_id: string }) => p.affiliate_id === a.id);
     const myCommissions = (commissions ?? []).filter((c: { affiliate_id: string }) => c.affiliate_id === a.id);
     const pending_kobo = myCommissions.filter((c: { status: string }) => c.status === "pending").reduce((s: number, c: { amount_kobo: number }) => s + c.amount_kobo, 0);
@@ -34,8 +34,47 @@ export async function GET() {
   return NextResponse.json(result);
 }
 
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  const db = getServiceClient();
+  await db.from("affiliate").delete().eq("id", id);
+  return NextResponse.json({ ok: true });
+}
+
 export async function PATCH(req: NextRequest) {
-  const { id, status, note } = await req.json();
+  const body = await req.json();
+
+  // Ban / restrict / unban
+  if (body.type === "status") {
+    const { id, status, status_note } = body;
+    if (!id || !status) return NextResponse.json({ error: "id and status required" }, { status: 400 });
+    const db = getServiceClient();
+    const { error } = await db.from("affiliate").update({ status, status_note: status_note ?? null }).eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ ok: true });
+  }
+
+  // Affiliate account edit
+  if (body.type === "affiliate") {
+    const { id, name, email, username, password } = body;
+    if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+    const db = getServiceClient();
+    const updates: Record<string, unknown> = {};
+    if (name)     updates.name     = name;
+    if (email)    updates.email    = email.toLowerCase().trim();
+    if (username) updates.username = username.toLowerCase();
+    if (password) {
+      const crypto = await import("crypto");
+      updates.password_hash = crypto.createHash("sha256").update(password).digest("hex");
+    }
+    const { error } = await db.from("affiliate").update(updates).eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ ok: true });
+  }
+
+  const { id, status, note } = body;
   if (!id || !status) return NextResponse.json({ error: "id and status required" }, { status: 400 });
 
   const db = getServiceClient();

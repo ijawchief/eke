@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   const db = getServiceClient();
   const { data: affiliate } = await db
     .from("affiliate")
-    .select("id, email, password_hash")
+    .select("id, email, password_hash, status, status_note")
     .eq("email", email.toLowerCase().trim())
     .single();
 
@@ -17,6 +17,13 @@ export async function POST(req: NextRequest) {
 
   const hash = crypto.createHash("sha256").update(password).digest("hex");
   if (hash !== affiliate.password_hash) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+
+  if (affiliate.status === "banned") {
+    return NextResponse.json({ error: "Your account has been banned." + (affiliate.status_note ? ` Reason: ${affiliate.status_note}` : "") }, { status: 403 });
+  }
+  if (affiliate.status === "restricted") {
+    return NextResponse.json({ error: "Your account has been restricted." + (affiliate.status_note ? ` Reason: ${affiliate.status_note}` : "") }, { status: 403 });
+  }
 
   const res = NextResponse.json({ ok: true });
   res.cookies.set("affiliate_id", affiliate.id, {

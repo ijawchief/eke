@@ -6,7 +6,7 @@ export default async function AdminAffiliatesPage() {
 
   const { data: affiliates } = await db
     .from("affiliate")
-    .select("id, name, email, username, balance_kobo, total_earned_kobo, created_at")
+    .select("id, name, email, username, balance_kobo, total_earned_kobo, status, status_note, created_at")
     .order("created_at", { ascending: false });
 
   const affiliateIds = (affiliates ?? []).map((a: { id: string }) => a.id);
@@ -28,7 +28,7 @@ export default async function AdminAffiliatesPage() {
   const enriched = (affiliates ?? []).map((a: {
     id: string; name: string; email: string; username: string;
     balance_kobo: number; total_earned_kobo: number; created_at: string;
-  }) => {
+  status: "active" | "restricted" | "banned"; status_note: string | null; }) => {
     const myPayouts = (payouts ?? []).filter((p: { affiliate_id: string }) => p.affiliate_id === a.id);
     const myCommissions = (commissions ?? []).filter((c: { affiliate_id: string }) => c.affiliate_id === a.id);
     const pending_kobo = myCommissions.filter((c: { status: string }) => c.status === "pending").reduce((s: number, c: { amount_kobo: number }) => s + c.amount_kobo, 0);
