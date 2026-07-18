@@ -50,7 +50,7 @@ export default async function AffiliateDashboardPage() {
     db.from("affiliate_commission").select("product_id, affiliate_id, amount_kobo").gte("created_at", since7d),
     // Today's clicks (all affiliates, for product of the day)
     db.from("affiliate_click").select("product_id").gte("created_at", since24h),
-    db.from("affiliate").select("username").eq("id", affiliateId).single(),
+    db.from("affiliate").select("username, name, email").eq("id", affiliateId).single(),
     db.from("product").select("id, name, slug, price_kobo, thumbnail_url, affiliate_commission_rate").eq("active", true),
     db.from("affiliate_config").select("commission_rate").eq("id", 1).single(),
   ]);
@@ -58,6 +58,7 @@ export default async function AffiliateDashboardPage() {
   const pending_kobo = (pendingData ?? []).reduce((s: number, r: { amount_kobo: number }) => s + r.amount_kobo, 0);
   const paid_kobo   = (paidData   ?? []).reduce((s: number, r: { amount_kobo: number }) => s + r.amount_kobo, 0);
   const username = affiliate?.username ?? "";
+  const dateLabel = now.toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" });
   const defaultRate = (platformConfig as { commission_rate: number } | null)?.commission_rate ?? 10;
 
   // Build product map
@@ -106,9 +107,18 @@ export default async function AffiliateDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-400 text-sm mt-1">Your affiliate performance overview</p>
+      {/* Screenshot-friendly header */}
+      <div className="bg-white rounded-2xl shadow-sm px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-0.5">Veelage Affiliate Dashboard</p>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900">{affiliate?.name ?? "Affiliate"}</h1>
+          <p className="text-gray-400 text-xs mt-0.5">{affiliate?.email} · @{username}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="bg-emerald-50 rounded-xl px-3 py-2 text-xs text-emerald-700 font-semibold">
+            📅 {dateLabel}
+          </div>
+        </div>
       </div>
 
       {/* Stat cards */}
