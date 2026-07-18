@@ -1,4 +1,5 @@
 import { headers, cookies } from "next/headers";
+
 import { getServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
@@ -12,8 +13,17 @@ function formatNaira(kobo: number) {
 export default async function CreatorProductsPage() {
   const cookieStore = await cookies();
   const creatorId = cookieStore.get("creator_id")?.value ?? null;
+  const h = await headers();
+  const rawCookie = h.get("cookie") ?? "";
+  const fromRegex = rawCookie.match(/creator_id=([^;]+)/)?.[1] ?? null;
 
-  if (!creatorId) return <div style={{padding:40,fontFamily:"monospace"}}>❌ No creator_id cookie found</div>;
+  if (!creatorId) return (
+    <div style={{padding:40,fontFamily:"monospace",fontSize:13}}>
+      <p>❌ cookies() returned null</p>
+      <p>Raw cookie header: <code>{rawCookie || "(empty)"}</code></p>
+      <p>Regex match: <code>{fromRegex || "(null)"}</code></p>
+    </div>
+  );
 
   const db = getServiceClient();
   const [{ data: products }, { data: orderItems }] = await Promise.all([
