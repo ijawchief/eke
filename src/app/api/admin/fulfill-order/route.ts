@@ -4,11 +4,19 @@ import { verifyTransaction } from "@/lib/paystack";
 import { sendDeliveryEmail, sendSaleNotification } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
-  const adminToken = req.cookies.get("admin_token")?.value
-    ?? req.headers.get("cookie")?.match(/admin_token=([^;]+)/)?.[1];
-  if (!adminToken || decodeURIComponent(adminToken) !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const cookie = req.headers.get("cookie") ?? "";
+  const rawToken = cookie.match(/admin_token=([^;]+)/)?.[1];
+  const adminToken = rawToken ? decodeURIComponent(rawToken) : req.cookies.get("admin_token")?.value;
+  const creatorRaw = cookie.match(/creator_id=([^;]+)/)?.[1];
+  const creatorId = creatorRaw ? decodeURIComponent(creatorRaw) : req.cookies.get("creator_id")?.value;
+
+  let authorized = adminToken === process.env.ADMIN_SECRET;
+  if (!authorized && creatorId) {
+    const db = getServiceClient();
+    const { data } = await db.from("creator").select("is_admin").eq("id", creatorId).single();
+    authorized = !!data?.is_admin;
   }
+  if (!authorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { order_id } = await req.json();
   const db = getServiceClient();
