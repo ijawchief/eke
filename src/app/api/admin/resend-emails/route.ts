@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { sendDeliveryEmail, sendSaleNotification } from "@/lib/email";
+import { sendSaleNotification, getResend } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const cookie = req.headers.get("cookie") ?? "";
@@ -43,21 +43,25 @@ export async function POST(req: NextRequest) {
     : { data: [] };
   const creatorEmailMap = Object.fromEntries((creators ?? []).map((c: { id: string; email: string }) => [c.id, c.email]));
 
-  await Promise.allSettled([
+  const emailLog: Record<string, unknown>[] = [];
+
+  const results = await Promise.allSettled([
     ...(products ?? []).map(async (p: { id: string; name: string; delivery_type: string; external_url: string | null; file_ref: string | null }) => {
+      const accessLink = p.delivery_type === "magic_link" ? (p.external_url ?? "") : (p.file_ref ?? "");
+      emailLog.push({ type: "delivery", to: customer?.email, product: p.name, accessLink, delivery_type: p.delivery_type });
       if (customer?.email) {
-        await sendDeliveryEmail({
+        const r = await getResend().emails.send({
+          from: "Veelage <no-reply@veelage.co>",
           to: customer.email,
-          productName: p.name,
-          accessLink: p.delivery_type === "magic_link" ? (p.external_url ?? "") : (p.file_ref ?? ""),
-          orderRef: order.paystack_reference,
-          buyerName: customer.name ?? null,
-          amountKobo: order.total_kobo,
+          subject: `Your order is confirmed — ${p.name}`,
+          html: `<p>Access your product: <a href="${accessLink}">${accessLink}</a></p>`,
         });
+        emailLog.push({ type: "delivery_result", id: r.data?.id, error: r.error });
       }
     }),
     ...(products ?? []).map(async (p: { id: string; name: string; creator_id?: string | null }) => {
       const creatorEmail = p.creator_id ? creatorEmailMap[p.creator_id] : null;
+      emailLog.push({ type: "sale_notify", to: creatorEmail, product: p.name });
       if (creatorEmail && customer?.email) {
         await sendSaleNotification({
           to: creatorEmail,
@@ -71,5 +75,6 @@ export async function POST(req: NextRequest) {
     }),
   ]);
 
-  return NextResponse.json({ ok: true, message: "Emails resent" });
+  const errors = results.filter(r => r.status === "rejected").map(r => (r as PromiseRejectedResult).reason?.message);
+  return NextResponse.json({ ok: true, message: "Emails resent", emailLog, errors });
 }
