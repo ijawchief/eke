@@ -84,37 +84,49 @@ function ConfirmationContent() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-      <div className="max-w-lg w-full">
-        <div className="text-5xl mb-6">🎉</div>
-        <h1 className="text-3xl font-bold mb-3">Payment Successful!</h1>
-        <p className="text-gray-600 mb-8">
-          Check your email — your access link is on its way.
-        </p>
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ background: "#FDF6EE" }}>
+      <div className="max-w-md w-full">
+
+        {/* Success card */}
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-5">
+          <div style={{ background: "#C04B1E", padding: "2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>🎉</div>
+            <h1 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>Payment Successful!</h1>
+          </div>
+          <div style={{ padding: "1.75rem", textAlign: "center" }}>
+            <p style={{ color: "#2C2C2C", fontSize: "1rem", lineHeight: 1.6, marginBottom: "1.25rem" }}>
+              Your order has been confirmed. Check your email — your access link is on its way.
+            </p>
+            <div style={{ background: "#FDF6EE", borderRadius: 12, padding: "0.75rem 1rem", display: "inline-block" }}>
+              <p style={{ fontSize: "0.7rem", color: "#999", marginBottom: "0.2rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Order Reference</p>
+              <code style={{ fontSize: "0.75rem", color: "#2C2C2C", fontFamily: "monospace" }}>{orderId}</code>
+            </div>
+          </div>
+        </div>
 
         {/* One-click upsell */}
         {upsellProductId && upsellName && upsellPrice && !upsellDone && (
-          <div className="border-2 border-yellow-400 rounded-2xl p-6 mb-8 bg-yellow-50">
-            <p className="text-xs font-semibold text-yellow-700 uppercase mb-2">Special One-Time Offer</p>
-            <h2 className="text-xl font-bold mb-2">{upsellName}</h2>
-            {upsellPrice && (
-              <p className="text-2xl font-bold text-green-600 mb-4">
-                Add for {formatNaira(parseInt(upsellPrice))}
-              </p>
-            )}
-            <p className="text-sm text-gray-600 mb-4">
+          <div style={{ background: "#fff", borderRadius: 16, border: "2px solid #C04B1E", padding: "1.5rem", marginBottom: "1.25rem" }}>
+            <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#C04B1E", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+              Special One-Time Offer
+            </p>
+            <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#2C2C2C", marginBottom: "0.5rem" }}>{upsellName}</h2>
+            <p style={{ fontSize: "1.5rem", fontWeight: 900, color: "#C04B1E", marginBottom: "0.75rem" }}>
+              Add for {formatNaira(parseInt(upsellPrice))}
+            </p>
+            <p style={{ fontSize: "0.85rem", color: "#666", marginBottom: "1.25rem", lineHeight: 1.5 }}>
               This offer will not appear again. Charged to your card on file — no form required.
             </p>
             <button
               onClick={handleUpsell}
               disabled={upsellLoading}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-colors"
+              style={{ width: "100%", background: "#C04B1E", color: "#fff", fontWeight: 700, fontSize: "0.95rem", padding: "0.9rem", borderRadius: 12, border: "none", cursor: "pointer", marginBottom: "0.5rem", opacity: upsellLoading ? 0.6 : 1 }}
             >
               {upsellLoading ? "Processing…" : `YES! Add ${upsellName}`}
             </button>
             <button
               onClick={() => setUpsellDone(true)}
-              className="w-full mt-2 text-gray-400 text-sm underline"
+              style={{ width: "100%", background: "none", border: "none", color: "#aaa", fontSize: "0.8rem", cursor: "pointer", textDecoration: "underline" }}
             >
               No thanks, I don&apos;t want this
             </button>
@@ -122,13 +134,13 @@ function ConfirmationContent() {
         )}
 
         {upsellDone && upsellProductId && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-8">
-            <p className="text-green-700 font-medium">Upsell added! Check your email for access.</p>
+          <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, padding: "1rem", marginBottom: "1.25rem", textAlign: "center" }}>
+            <p style={{ color: "#15803d", fontWeight: 600, fontSize: "0.9rem" }}>✓ Upsell added! Check your email for access.</p>
           </div>
         )}
 
-        <p className="text-sm text-gray-400">
-          Order reference: <code className="bg-gray-100 px-2 py-0.5 rounded">{orderId}</code>
+        <p style={{ textAlign: "center", fontSize: "0.75rem", color: "#bbb" }}>
+          Powered by <strong style={{ color: "#888" }}>Veelage</strong>
         </p>
       </div>
     </main>
