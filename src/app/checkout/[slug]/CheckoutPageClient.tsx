@@ -102,7 +102,8 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
           amount: total,
           access_code,
           onSuccess: () => {
-            window.location.href = `/confirmation?order_id=${order_id}&event_id=${event_id}`;
+            const url = `/confirmation?order_id=${order_id}&event_id=${event_id}`;
+            try { window.location.replace(url); } catch { window.location.href = url; }
           },
           onCancel: () => { setLoading(false); },
         });
