@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { getCurrencyFromCookie, getRates, formatCurrency } from "@/lib/currency";
 import { FulfillButton } from "./FulfillButton";
+import { ResendEmailsButton } from "./ResendEmailsButton";
 
 export default async function OrdersPage() {
   const h = await headers();
@@ -90,6 +91,7 @@ export default async function OrdersPage() {
                     </td>
                     <td className="px-6 py-3">
                       {o.status === "pending" && <FulfillButton orderId={o.id} />}
+                      {o.status === "paid" && <ResendEmailsButton orderId={o.id} />}
                     </td>
                   </tr>
                 );
