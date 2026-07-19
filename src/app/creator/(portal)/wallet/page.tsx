@@ -8,7 +8,13 @@ function formatNaira(kobo: number) {
 
 export default async function WalletPage() {
   const cookieStore = await cookies();
-  const creatorId = cookieStore.get("creator_id")?.value ?? "";
+  const creatorId_raw = cookieStore.get("creator_id")?.value ?? "";
+  let creatorId = creatorId_raw;
+  if (!creatorId) {
+    const h = await headers();
+    const raw = h.get("cookie")?.match(/creator_id=([^;]+)/)?.[1];
+    creatorId = raw ? decodeURIComponent(raw) : "";
+  }
 
   const db = getServiceClient();
 

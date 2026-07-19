@@ -1,5 +1,5 @@
 import { getServiceClient } from "@/lib/supabase";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 
@@ -101,7 +101,13 @@ const PAYLOAD_EXAMPLE = `{
 
 export default async function CreatorIntegrationsPage() {
   const cookieStore = await cookies();
-  const creatorId = cookieStore.get("creator_id")?.value ?? null;
+  const creatorId_raw = cookieStore.get("creator_id")?.value ?? null;
+  let creatorId = creatorId_raw;
+  if (!creatorId) {
+    const h = await headers();
+    const raw = h.get("cookie")?.match(/creator_id=([^;]+)/)?.[1];
+    creatorId = raw ? decodeURIComponent(raw) : null;
+  }
 
   const db = getServiceClient();
   const { data: products } = await db
