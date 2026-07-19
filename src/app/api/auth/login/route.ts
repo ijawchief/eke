@@ -56,8 +56,9 @@ export async function POST(req: NextRequest) {
       const res = NextResponse.json({ role: "creator", redirect: "/creator/dashboard" });
       res.cookies.set("creator_id", creator.id, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 24 * 7,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 30,
         path: "/",
       });
       return res;
@@ -83,8 +84,9 @@ export async function POST(req: NextRequest) {
       const res = NextResponse.json({ role: "affiliate", redirect: "/affiliate/dashboard" });
       res.cookies.set("affiliate_id", affiliate.id, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 24 * 7,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 30,
         path: "/",
       });
       return res;

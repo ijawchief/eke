@@ -5,8 +5,9 @@ import crypto from "crypto";
 function setCookie(res: NextResponse, id: string) {
   res.cookies.set("affiliate_id", id, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 7,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
   return res;

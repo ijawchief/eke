@@ -30,8 +30,9 @@ export async function POST(req: NextRequest) {
 function setAdminCookie(res: NextResponse) {
   res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 7,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
   return res;
