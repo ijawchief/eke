@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { WithdrawalForm } from "./WithdrawalForm";
 

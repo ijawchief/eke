@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { CreatorProductForm } from "../ProductForm";
 
