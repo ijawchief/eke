@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
 import { getCurrencyFromCookie, getRates, formatCurrency } from "@/lib/currency";
+import { FulfillButton } from "./FulfillButton";
 
 export default async function OrdersPage() {
   const h = await headers();
@@ -61,6 +62,7 @@ export default async function OrdersPage() {
                 <th className="text-left px-6 py-4">Status</th>
                 <th className="text-left px-6 py-4">Source</th>
                 <th className="text-left px-6 py-4">Date</th>
+                <th className="text-left px-6 py-4">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -85,6 +87,9 @@ export default async function OrdersPage() {
                     <td className="px-6 py-3 text-gray-400 text-xs">{source}</td>
                     <td className="px-6 py-3 text-gray-400 text-xs">
                       {new Date(o.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                    </td>
+                    <td className="px-6 py-3">
+                      {o.status === "pending" && <FulfillButton orderId={o.id} />}
                     </td>
                   </tr>
                 );
