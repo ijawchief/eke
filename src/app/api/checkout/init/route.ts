@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   // Validate product (server-side price, never trust client)
   const { data: product, error: productErr } = await db
     .from("product")
-    .select("id, price_kobo, currency, active, name")
+    .select("id, price_kobo, currency, active, name, creator_id")
     .eq("id", product_id)
     .eq("active", true)
     .single();
@@ -79,10 +79,11 @@ export async function POST(req: NextRequest) {
 
   // Create order items
   const items = [
-    { order_id: order.id, product_id: product.id, kind: "main", price_kobo: product.price_kobo },
+    { order_id: order.id, product_id: product.id, kind: "main", price_kobo: product.price_kobo, creator_id: product.creator_id ?? null },
   ];
   if (bumpProduct) {
-    items.push({ order_id: order.id, product_id: bumpProduct.id, kind: "bump", price_kobo: bumpProduct.price_kobo });
+    const { data: bumpFull } = await db.from("product").select("creator_id").eq("id", bumpProduct.id).single();
+    items.push({ order_id: order.id, product_id: bumpProduct.id, kind: "bump", price_kobo: bumpProduct.price_kobo, creator_id: bumpFull?.creator_id ?? null });
   }
 
   await db.from("order_item").insert(items);
