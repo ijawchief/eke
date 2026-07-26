@@ -26,13 +26,13 @@ export default function LoginPage() {
       body: JSON.stringify({ username: identifier, password }),
     });
 
-   const data = await res.json();
+    const data = await res.json();
 
-console.log("login success");
+    console.log("login success");
 
-await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-router.push(data.redirect);
+    router.push(data.redirect);
   };
 
   return (
@@ -45,7 +45,9 @@ router.push(data.redirect);
         </div>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Email or Username</label>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              Email or Username
+            </label>
             <input
               type="text"
               value={identifier}
@@ -57,7 +59,9 @@ router.push(data.redirect);
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -82,7 +86,12 @@ router.push(data.redirect);
             </div>
           )}
           <div className="text-right -mt-1">
-            <Link href="/forgot-password" className="text-xs text-orange-600 hover:underline">Forgot password?</Link>
+            <Link
+              href="/forgot-password"
+              className="text-xs text-orange-600 hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
           <button
             type="submit"
