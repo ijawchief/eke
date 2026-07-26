@@ -4,19 +4,20 @@ import crypto from "crypto";
 
 
 
-function clearForCreator(res: NextResponse) {
-  res.cookies.delete("admin_token");
-  res.cookies.delete("affiliate_id");
+function clearCookie(res: NextResponse, name: string) {
+  res.cookies.set(name, "", {
+    expires: new Date(0),
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
 }
 
-function clearForAdmin(res: NextResponse) {
-  res.cookies.delete("creator_id");
-  res.cookies.delete("affiliate_id");
-}
-
-function clearForAffiliate(res: NextResponse) {
-  res.cookies.delete("admin_token");
-  res.cookies.delete("creator_id");
+function clearAuthCookies(res: NextResponse) {
+  clearCookie(res, "admin_token");
+  clearCookie(res, "creator_id");
+  clearCookie(res, "affiliate_id");
 }
 
 export async function POST(req: NextRequest) {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
       redirect: "/admin",
     });
 
-    clearForAdmin(res);
+    clearAuthCookies(res);
 
     res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
       httpOnly: true,
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
       redirect: "/admin",
     });
 
-    clearForAdmin(res);
+    clearAuthCookies(res);
 
     res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
       httpOnly: true,
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
       redirect: "/creator/dashboard",
     });
 
-    clearForCreator(res);
+    clearAuthCookies(res);
 
     res.cookies.set("creator_id", creator.id, {
       httpOnly: true,
@@ -167,7 +168,7 @@ export async function POST(req: NextRequest) {
       redirect: "/affiliate/dashboard",
     });
 
-    clearForAffiliate(res);
+    clearAuthCookies(res);
 
     res.cookies.set("affiliate_id", affiliate.id, {
       httpOnly: true,
