@@ -287,8 +287,8 @@ export function AffiliatesClient({ affiliates }: { affiliates: Affiliate[] }) {
               {affiliates.length === 0 && (
                 <tr><td colSpan={7} className="px-6 py-10 text-center text-gray-400">No affiliates yet</td></tr>
               )}
-              {affiliates.map((a) => (
-                <>
+              {affiliates.map((a, index) => (
+                <div key={index}>
                   <tr key={a.id} className={`hover:bg-gray-50 transition-colors ${a.status === "banned" ? "opacity-60" : ""}`}>
                     <td className="px-6 py-4 cursor-pointer" onClick={() => setExpanded(expanded === a.id ? null : a.id)}>
                       <p className="font-medium text-gray-800 flex items-center gap-1.5">
@@ -356,7 +356,7 @@ export function AffiliatesClient({ affiliates }: { affiliates: Affiliate[] }) {
                       </td>
                     </tr>
                   )}
-                </>
+                </div>
               ))}
             </tbody>
           </table>

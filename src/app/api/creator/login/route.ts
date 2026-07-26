@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true });
   res.cookies.set("creator_id", creator.id, {
     httpOnly: true,
-    secure: true,
-    sameSite: "lax",
+    secure:process.env.NODE_ENV === "production",
+    sameSite: "strict",
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });

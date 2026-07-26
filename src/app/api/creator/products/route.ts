@@ -26,6 +26,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const creatorId = await getCreatorId(req);
+  console.log("Creator ID:", creatorId);
+  console.log("Cookie header:", req.headers.get("cookie"));
+  console.log("Parsed cookies:", req.cookies.getAll());
+  console.log("Creator ID:", req.cookies.get("creator_id")?.value);
   if (!creatorId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
