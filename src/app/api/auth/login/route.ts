@@ -5,7 +5,10 @@ import crypto from "crypto";
 export async function POST(req: NextRequest) {
   const { username, password } = await req.json();
   if (!username || !password) {
-    return NextResponse.json({ error: "Username and password required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Username and password required" },
+      { status: 400 },
+    );
   }
 
   // Check env-based master admin first
@@ -13,7 +16,9 @@ export async function POST(req: NextRequest) {
     username === process.env.ADMIN_USERNAME &&
     password === process.env.ADMIN_SECRET
   ) {
-    return setAdminCookie(NextResponse.json({ role: "admin", redirect: "/admin" }));
+    return setAdminCookie(
+      NextResponse.json({ role: "admin", redirect: "/admin" }),
+    );
   }
 
   // Check DB admin accounts (creator with is_admin=true)
@@ -30,7 +35,10 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
     return data;
   })();
-  if (dbAdmin) return setAdminCookie(NextResponse.json({ role: "admin", redirect: "/admin" }));
+  if (dbAdmin)
+    return setAdminCookie(
+      NextResponse.json({ role: "admin", redirect: "/admin" }),
+    );
 
   // Check creator — match by username or email
   const db = getServiceClient();
@@ -53,13 +61,17 @@ export async function POST(req: NextRequest) {
   if (creator && creator.password_hash) {
     const hash = crypto.createHash("sha256").update(password).digest("hex");
     if (hash === creator.password_hash) {
-      const res = NextResponse.json({ role: "creator", redirect: "/creator/dashboard" });
+      const res = NextResponse.json({
+        role: "creator",
+        redirect: "/creator/dashboard",
+      });
       res.cookies.set("creator_id", creator.id, {
         httpOnly: true,
         secure: true,
         sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 30,
         path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+        priority: "high",
       });
       return res;
     }
@@ -76,12 +88,33 @@ export async function POST(req: NextRequest) {
     const hash = crypto.createHash("sha256").update(password).digest("hex");
     if (hash === affiliate.password_hash) {
       if (affiliate.status === "banned") {
-        return NextResponse.json({ error: "Your account has been banned." + (affiliate.status_note ? ` Reason: ${affiliate.status_note}` : "") }, { status: 403 });
+        return NextResponse.json(
+          {
+            error:
+              "Your account has been banned." +
+              (affiliate.status_note
+                ? ` Reason: ${affiliate.status_note}`
+                : ""),
+          },
+          { status: 403 },
+        );
       }
       if (affiliate.status === "restricted") {
-        return NextResponse.json({ error: "Your account has been restricted." + (affiliate.status_note ? ` Reason: ${affiliate.status_note}` : "") }, { status: 403 });
+        return NextResponse.json(
+          {
+            error:
+              "Your account has been restricted." +
+              (affiliate.status_note
+                ? ` Reason: ${affiliate.status_note}`
+                : ""),
+          },
+          { status: 403 },
+        );
       }
-      const res = NextResponse.json({ role: "affiliate", redirect: "/affiliate/dashboard" });
+      const res = NextResponse.json({
+        role: "affiliate",
+        redirect: "/affiliate/dashboard",
+      });
       res.cookies.set("affiliate_id", affiliate.id, {
         httpOnly: true,
         secure: true,
@@ -93,7 +126,10 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
+  return NextResponse.json(
+    { error: "Invalid username or password" },
+    { status: 401 },
+  );
 }
 
 function setAdminCookie(res: NextResponse) {
