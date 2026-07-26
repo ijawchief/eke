@@ -26,13 +26,13 @@ export default function LoginPage() {
       body: JSON.stringify({ username: identifier, password }),
     });
 
-    const data = await res.json();
-    if (res.ok) {
-      router.push(data.redirect);
-    } else {
-      setError(data.error ?? "Invalid credentials");
-      setLoading(false);
-    }
+   const data = await res.json();
+
+console.log("login success");
+
+await new Promise(resolve => setTimeout(resolve, 1000));
+
+router.push(data.redirect);
   };
 
   return (
