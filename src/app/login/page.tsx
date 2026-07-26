@@ -21,21 +21,16 @@ export default function LoginPage() {
 
     const res = await fetch("/api/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({
-        username: identifier,
-        password,
-      }),
+      body: JSON.stringify({ username: identifier, password }),
     });
 
     const data = await res.json();
 
-    if (res.ok) {
-      window.location.assign(data.redirect);
-    }
+router.refresh();
+
+window.location.href = data.redirect;
   };
 
   return (
