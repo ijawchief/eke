@@ -28,8 +28,9 @@ export default function LoginPage() {
 
     const data = await res.json();
 
-    router.refresh();
-    router.push(data.redirect);
+router.refresh();
+
+window.location.href = data.redirect;
   };
 
   return (
