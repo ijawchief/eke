@@ -2,10 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import crypto from "crypto";
 
-function clearAuthCookies(res: NextResponse) {
+
+
+function clearForCreator(res: NextResponse) {
   res.cookies.delete("admin_token");
+  res.cookies.delete("affiliate_id");
+}
+
+function clearForAdmin(res: NextResponse) {
   res.cookies.delete("creator_id");
   res.cookies.delete("affiliate_id");
+}
+
+function clearForAffiliate(res: NextResponse) {
+  res.cookies.delete("admin_token");
+  res.cookies.delete("creator_id");
 }
 
 export async function POST(req: NextRequest) {
@@ -34,7 +45,7 @@ export async function POST(req: NextRequest) {
       redirect: "/admin",
     });
 
-    clearAuthCookies(res);
+    clearForAdmin(res);
 
     res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
       httpOnly: true,
@@ -64,7 +75,7 @@ export async function POST(req: NextRequest) {
       redirect: "/admin",
     });
 
-    clearAuthCookies(res);
+    clearForAdmin(res);
 
     res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
       httpOnly: true,
@@ -102,7 +113,7 @@ export async function POST(req: NextRequest) {
       redirect: "/creator/dashboard",
     });
 
-    clearAuthCookies(res);
+    clearForCreator(res);
 
     res.cookies.set("creator_id", creator.id, {
       httpOnly: true,
@@ -156,7 +167,7 @@ export async function POST(req: NextRequest) {
       redirect: "/affiliate/dashboard",
     });
 
-    clearAuthCookies(res);
+    clearForAffiliate(res);
 
     res.cookies.set("affiliate_id", affiliate.id, {
       httpOnly: true,
