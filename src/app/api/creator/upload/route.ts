@@ -3,6 +3,9 @@ import { getServiceClient } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   // Try req.cookies first (works in most cases), fall back to raw header parse
+  console.log("Cookie header:", req.headers.get("cookie"));
+  console.log("Parsed cookies:", req.cookies.getAll());
+  console.log("Creator ID:", req.cookies.get("creator_id")?.value);
   const fromCookies = req.cookies.get("creator_id")?.value;
   const cookieHeader = req.headers.get("cookie") ?? "";
   const fromHeader = cookieHeader.match(/(?:^|;\s*)creator_id=([^;]+)/)?.[1];
