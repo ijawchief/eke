@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       res.cookies.set("creator_id", creator.id, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 60 * 60 * 24 * 30,
         path: "/",
       });
