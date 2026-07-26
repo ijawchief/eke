@@ -28,10 +28,7 @@ export default function LoginPage() {
 
     const data = await res.json();
 
-    console.log("login success");
-
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
+    router.refresh();
     router.push(data.redirect);
   };
 
