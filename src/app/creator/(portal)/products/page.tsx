@@ -1,9 +1,13 @@
-import { cookies, headers } from "next/headers";
+
 import { getServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
 import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 import { CreatorProductCard } from "./CreatorProductCard";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+
 
 function formatNaira(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
@@ -11,13 +15,12 @@ function formatNaira(kobo: number) {
 
 export default async function CreatorProductsPage() {
   const cookieStore = await cookies();
-  const creatorId_raw = cookieStore.get("creator_id")?.value ?? null;
-  let creatorId = creatorId_raw;
-  if (!creatorId) {
-    const h = await headers();
-    const raw = h.get("cookie")?.match(/creator_id=([^;]+)/)?.[1];
-    creatorId = raw ? decodeURIComponent(raw) : null;
-  }
+const creatorId = cookieStore.get("creator_id")?.value;
+
+if (!creatorId) {
+  redirect("/login");
+}
+ 
 
   const db = getServiceClient();
   const [{ data: products }, { data: orderItems }] = await Promise.all([
