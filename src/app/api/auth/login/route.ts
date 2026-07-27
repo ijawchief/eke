@@ -116,7 +116,13 @@ export async function POST(req: NextRequest) {
 
     clearAuthCookies(res);
 
-    res.cookies.set("creator_id", creator.id);
+    res.cookies.set("creator_id", creator.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
 
     return res;
   }
