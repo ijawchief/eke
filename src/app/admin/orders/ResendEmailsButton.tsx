@@ -17,7 +17,7 @@ export function ResendEmailsButton({ orderId }: { orderId: string }) {
         credentials: "include",
       });
       const data = await res.json();
-      if (res.ok) { setState("done"); setMsg(JSON.stringify(data.emailLog ?? data)); }
+      if (res.ok) { setState("done"); setMsg("Sent"); }
       else { setState("error"); setMsg(data.error ?? "Failed"); }
     } catch {
       setState("error");
