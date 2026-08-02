@@ -13,6 +13,19 @@ export function proxy(req: NextRequest) {
     if (!creatorId) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
+
+    // Forward cookie value as a request header so server components
+    // can read it reliably — cookies() is unreliable on Vercel serverless
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-creator-id", creatorId);
+
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
+    res.headers.set("x-middleware-cache", "no-cache");
+    res.headers.set(
+      "Cache-Control",
+      "private, no-cache, no-store, max-age=0, must-revalidate"
+    );
+    return res;
   }
 
   // Rate limiter for checkout
@@ -30,15 +43,7 @@ export function proxy(req: NextRequest) {
     }
   }
 
-  const res = NextResponse.next();
-  if (pathname.startsWith("/creator")) {
-    res.headers.set("x-middleware-cache", "no-cache");
-    res.headers.set(
-      "Cache-Control",
-      "private, no-cache, no-store, max-age=0, must-revalidate"
-    );
-  }
-  return res;
+  return NextResponse.next();
 }
 
 export const config = {
