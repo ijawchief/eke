@@ -22,7 +22,7 @@ async function getProductAccess(db: ReturnType<typeof getServiceClient>, orderId
 }
 
 export async function POST(req: NextRequest) {
-  const { reference } = await req.json();
+  const { reference, paystack_reference: actualRef } = await req.json();
   if (!reference) return NextResponse.json({ error: "reference required" }, { status: 400 });
 
   const db = getServiceClient();
@@ -42,6 +42,12 @@ export async function POST(req: NextRequest) {
   }
 
   if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+
+  // Sync the actual Paystack reference so the webhook can match it
+  if (actualRef && actualRef !== order.paystack_reference) {
+    await db.from("order").update({ paystack_reference: actualRef }).eq("id", order.id);
+    order.paystack_reference = actualRef;
+  }
 
   if (order.status === "paid") {
     const products = await getProductAccess(db, order.id);

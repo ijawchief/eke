@@ -97,9 +97,11 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
         const handler = window.PaystackPop.setup({
           key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "",
           email,
+          amount: total,
           access_code,
-          callback: () => {
-            const url = `/confirmation?order_id=${order_id}&event_id=${event_id}`;
+          callback: (response: { reference?: string }) => {
+            const ref = response?.reference ?? "";
+            const url = `/confirmation?order_id=${order_id}&event_id=${event_id}&trxref=${encodeURIComponent(ref)}`;
             try { window.location.replace(url); } catch { window.location.href = url; }
           },
           onClose: () => { setLoading(false); },

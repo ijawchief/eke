@@ -28,6 +28,7 @@ function ConfirmationContent() {
   const upsellProductId = searchParams.get("upsell_product_id");
   const upsellName = searchParams.get("upsell_name");
   const upsellPrice = searchParams.get("upsell_price");
+  const trxref = searchParams.get("trxref");
 
   const [pixelFired, setPixelFired] = useState(false);
   const [upsellLoading, setUpsellLoading] = useState(false);
@@ -41,7 +42,7 @@ function ConfirmationContent() {
     fetch(`/api/checkout/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reference: orderId }),
+      body: JSON.stringify({ reference: orderId, paystack_reference: trxref || undefined }),
     })
       .then((r) => r.json())
       .then((data) => {
