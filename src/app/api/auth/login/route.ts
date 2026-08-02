@@ -2,22 +2,49 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import crypto from "crypto";
 
+function signToken(payload: object): string {
+  const data = JSON.stringify(payload);
+  const signature = crypto
+    .createHmac("sha256", process.env.ADMIN_SECRET!)
+    .update(data)
+    .digest("hex");
+  return Buffer.from(data).toString("base64url") + "." + signature;
+}
 
+function makeLoginResponse(
+  role: string,
+  cookieName: string,
+  cookieValue: string,
+  redirect: string
+) {
+  const token = signToken({
+    role,
+    cookieName,
+    cookieValue,
+    redirect,
+    exp: Date.now() + 60_000,
+  });
 
-function clearCookie(res: NextResponse, name: string) {
-  res.cookies.set(name, "", {
-    expires: new Date(0),
-    path: "/",
+  const res = NextResponse.json(
+    { role, redirect: `/api/auth/callback?token=${token}` },
+    {
+      headers: {
+        "Cache-Control": "private, no-store, no-cache",
+      },
+    }
+  );
+
+  // Also set cookies directly on the JSON response (belt)
+  // The callback route is the suspenders if the browser ignores these
+  res.cookies.set(cookieName, cookieValue, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
   });
-}
 
-function clearAuthCookies(res: NextResponse) {
-  clearCookie(res, "admin_token");
-  clearCookie(res, "creator_id");
-  clearCookie(res, "affiliate_id");
+  return res;
 }
 
 export async function POST(req: NextRequest) {
@@ -41,22 +68,12 @@ export async function POST(req: NextRequest) {
     normalized === process.env.ADMIN_USERNAME?.toLowerCase() &&
     password === process.env.ADMIN_SECRET
   ) {
-    const res = NextResponse.json({
-      role: "admin",
-      redirect: "/admin",
-    });
-
-    clearAuthCookies(res);
-
-    res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
-
-    return res;
+    return makeLoginResponse(
+      "admin",
+      "admin_token",
+      process.env.ADMIN_SECRET!,
+      "/admin"
+    );
   }
 
   // ==========================
@@ -71,22 +88,12 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (dbAdmin) {
-    const res = NextResponse.json({
-      role: "admin",
-      redirect: "/admin",
-    });
-
-    clearAuthCookies(res);
-
-    res.cookies.set("admin_token", process.env.ADMIN_SECRET!, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
-
-    return res;
+    return makeLoginResponse(
+      "admin",
+      "admin_token",
+      process.env.ADMIN_SECRET!,
+      "/admin"
+    );
   }
 
   // ==========================
@@ -109,22 +116,12 @@ export async function POST(req: NextRequest) {
   }
 
   if (creator && creator.password_hash === hash) {
-    const res = NextResponse.json({
-      role: "creator",
-      redirect: "/creator/dashboard",
-    });
-
-    clearAuthCookies(res);
-
-    res.cookies.set("creator_id", creator.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-    });
-
-    return res;
+    return makeLoginResponse(
+      "creator",
+      "creator_id",
+      creator.id,
+      "/creator/dashboard"
+    );
   }
 
   // ==========================
@@ -163,22 +160,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const res = NextResponse.json({
-      role: "affiliate",
-      redirect: "/affiliate/dashboard",
-    });
-
-    clearAuthCookies(res);
-
-    res.cookies.set("affiliate_id", affiliate.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-    });
-
-    return res;
+    return makeLoginResponse(
+      "affiliate",
+      "affiliate_id",
+      affiliate.id,
+      "/affiliate/dashboard"
+    );
   }
 
   return NextResponse.json(
