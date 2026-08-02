@@ -25,25 +25,37 @@ export async function POST(req: NextRequest) {
   const db = getServiceClient();
 
   // Idempotency check
-  const { data: order, error: orderError } = await db
+  let { data: order, error: orderError } = await db
     .from("order")
     .select("id, status, total_kobo, currency, event_id, attribution, customer_id, paystack_reference")
     .eq("paystack_reference", reference)
     .single();
 
+  if (!order && data.metadata?.order_id) {
+    console.log("[webhook] Reference lookup missed, trying metadata order_id:", data.metadata.order_id);
+    const { data: byMeta, error: metaError } = await db
+      .from("order")
+      .select("id, status, total_kobo, currency, event_id, attribution, customer_id, paystack_reference")
+      .eq("id", data.metadata.order_id)
+      .single();
+    order = byMeta;
+    orderError = metaError;
+  }
+
   if (!order) {
     console.error("[webhook] Order NOT found for reference:", reference, "| DB error:", orderError);
-    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    return NextResponse.json({ received: true, note: "no matching order" });
   }
   console.log("[webhook] Order found:", order.id, "| Status:", order.status);
   if (order.status === "paid") return NextResponse.json({ received: true });
 
-  // Mark paid
+  // Mark paid (also sync paystack_reference if it changed)
   await db
     .from("order")
     .update({
       status: "paid",
       paid_at: new Date().toISOString(),
+      paystack_reference: reference,
       paystack_authorization: data.authorization?.authorization_code ?? null,
     })
     .eq("id", order.id);
