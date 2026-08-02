@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
+import { loginAction } from "./actions";
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,22 +19,15 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username: identifier, password }),
-      });
+      const result = await loginAction(identifier, password);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Invalid credentials");
+      if (result.error) {
+        setError(result.error);
         setLoading(false);
         return;
       }
 
-      window.location.href = data.redirect;
+      window.location.href = result.redirect!;
     } catch {
       setError("Something went wrong. Please try again.");
       setLoading(false);
