@@ -33,18 +33,22 @@ function ConfirmationContent() {
   const [upsellLoading, setUpsellLoading] = useState(false);
   const [upsellDone, setUpsellDone] = useState(false);
   const [orderValue, setOrderValue] = useState<number | null>(null);
+  const [products, setProducts] = useState<{ name: string; access_link: string }[]>([]);
 
   useEffect(() => {
     if (!orderId || pixelFired) return;
 
-    // Fetch order value for accurate pixel event
     fetch(`/api/checkout/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reference: orderId }),
-    });
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.products?.length) setProducts(data.products);
+      })
+      .catch(() => {});
 
-    // Fire Pixel Purchase
     if (window.fbq && eventId) {
       window.fbq("track", "Purchase", {
         value: orderValue ?? 0,
@@ -95,8 +99,34 @@ function ConfirmationContent() {
           </div>
           <div style={{ padding: "1.75rem", textAlign: "center" }}>
             <p style={{ color: "#2C2C2C", fontSize: "1rem", lineHeight: 1.6, marginBottom: "1.25rem" }}>
-              Your order has been confirmed. Check your email — your access link is on its way.
+              {products.length > 0
+                ? "Your order has been confirmed. Access your product below."
+                : "Your order has been confirmed. Check your email — your access link is on its way."}
             </p>
+            {products.map((p, i) => (
+              <a
+                key={i}
+                href={p.access_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "block",
+                  background: "#C04B1E",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
+                  padding: "0.85rem 1.5rem",
+                  borderRadius: 12,
+                  textDecoration: "none",
+                  marginBottom: "0.75rem",
+                  transition: "opacity 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              >
+                {products.length > 1 ? `Access: ${p.name}` : "Access Your Product"}
+              </a>
+            ))}
             <div style={{ background: "#FDF6EE", borderRadius: 12, padding: "0.75rem 1rem", display: "inline-block" }}>
               <p style={{ fontSize: "0.7rem", color: "#999", marginBottom: "0.2rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Order Reference</p>
               <code style={{ fontSize: "0.75rem", color: "#2C2C2C", fontFamily: "monospace" }}>{orderId}</code>
