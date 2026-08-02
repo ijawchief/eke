@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Simple in-process rate limiter for /api/checkout/init
-// In production, use Redis (Upstash) for distributed rate limiting
 const windowMs = 60_000;
 const maxRequests = 5;
 const counts = new Map<string, { count: number; resetAt: number }>();
 
 export function proxy(req: NextRequest) {
-  if (req.nextUrl.pathname === "/api/checkout/init" && req.method === "POST") {
+  const { pathname } = req.nextUrl;
+
+  // Creator portal auth guard
+  if (pathname.startsWith("/creator") && !pathname.startsWith("/creator/login")) {
+    const creatorId = req.cookies.get("creator_id")?.value;
+    if (!creatorId) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
+
+  // Rate limiter for checkout
+  if (pathname === "/api/checkout/init" && req.method === "POST") {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     const now = Date.now();
     const entry = counts.get(ip);
@@ -21,9 +30,17 @@ export function proxy(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  if (pathname.startsWith("/creator")) {
+    res.headers.set("x-middleware-cache", "no-cache");
+    res.headers.set(
+      "Cache-Control",
+      "private, no-cache, no-store, max-age=0, must-revalidate"
+    );
+  }
+  return res;
 }
 
 export const config = {
-  matcher: ["/api/checkout/init"],
+  matcher: ["/creator/:path*", "/api/checkout/init"],
 };

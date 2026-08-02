@@ -1,19 +1,14 @@
-import { cookies, headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
+import { getCreatorId } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 function formatNaira(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
 }
 
 export default async function CreatorOrdersPage() {
-  const cookieStore = await cookies();
-  const creatorId_raw = cookieStore.get("creator_id")?.value ?? "";
-  let creatorId = creatorId_raw;
-  if (!creatorId) {
-    const h = await headers();
-    const raw = h.get("cookie")?.match(/creator_id=([^;]+)/)?.[1];
-    creatorId = raw ? decodeURIComponent(raw) : "";
-  }
+  const creatorId = (await getCreatorId()) ?? "";
 
   const db = getServiceClient();
   const { data: items } = await db

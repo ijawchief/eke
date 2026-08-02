@@ -1,18 +1,12 @@
-import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServiceClient } from "@/lib/supabase";
 import { CreatorShell } from "@/components/creator/CreatorShell";
+import { getCreatorId } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export default async function CreatorPortalLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  let creatorId = cookieStore.get("creator_id")?.value;
-
-  // Fallback: parse raw cookie header
-  if (!creatorId) {
-    const h = await headers();
-    const raw = h.get("cookie")?.match(/creator_id=([^;]+)/)?.[1];
-    creatorId = raw ? decodeURIComponent(raw) : undefined;
-  }
+  const creatorId = await getCreatorId();
 
   if (!creatorId) redirect("/login");
 

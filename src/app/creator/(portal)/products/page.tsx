@@ -1,26 +1,24 @@
 
 import { getServiceClient } from "@/lib/supabase";
+import { getCreatorId } from "@/lib/auth";
 import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
 import { AfricanVillageBackground } from "@/components/AfricanVillageBackground";
 import { CreatorProductCard } from "./CreatorProductCard";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
 
 function formatNaira(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
 }
 
 export default async function CreatorProductsPage() {
-  const cookieStore = await cookies();
-const creatorId = cookieStore.get("creator_id")?.value;
+  const creatorId = await getCreatorId();
 
-if (!creatorId) {
-  redirect("/login");
-}
+  if (!creatorId) {
+    redirect("/login");
+  }
  
 
   const db = getServiceClient();
