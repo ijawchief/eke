@@ -1,11 +1,12 @@
-import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServiceClient } from "@/lib/supabase";
+import { getCreatorId } from "@/lib/auth";
 import { OnboardingClient } from "./OnboardingClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function OnboardingPage() {
-  const cookieStore = await cookies();
-  const creatorId = cookieStore.get("creator_id")?.value;
+  const creatorId = await getCreatorId();
   if (!creatorId) redirect("/login");
 
   const db = getServiceClient();

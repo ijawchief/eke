@@ -1,9 +1,11 @@
-import { cookies, headers } from "next/headers";
 import { getServiceClient } from "@/lib/supabase";
+import { getCreatorId } from "@/lib/auth";
 import Link from "next/link";
 import { MiniSparkline } from "@/components/admin/MiniSparkline";
 import { Eye, ShoppingCart, TrendingUp, DollarSign, ArrowRight, Info } from "lucide-react";
 import { PeriodTabs } from "./PeriodTabs";
+
+export const dynamic = "force-dynamic";
 
 function formatNaira(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(kobo / 100);
@@ -50,13 +52,7 @@ export default async function CreatorDashboard({
   const period = sp.period ?? "month";
   const { start, end } = getPeriodRange(period, sp.from, sp.to);
 
-  const cookieStore = await cookies();
-  let creatorId = cookieStore.get("creator_id")?.value ?? null;
-  if (!creatorId) {
-    const h = await headers();
-    const raw = h.get("cookie")?.match(/creator_id=([^;]+)/)?.[1];
-    creatorId = raw ? decodeURIComponent(raw) : null;
-  }
+  const creatorId = await getCreatorId();
 
   const db = getServiceClient();
 

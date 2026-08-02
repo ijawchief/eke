@@ -19,18 +19,27 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username: identifier, password }),
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username: identifier, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-router.refresh();
+      if (!res.ok) {
+        setError(data.error || "Invalid credentials");
+        setLoading(false);
+        return;
+      }
 
-window.location.href = data.redirect;
+      window.location.href = data.redirect;
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   };
 
   return (
