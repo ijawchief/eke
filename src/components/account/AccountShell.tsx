@@ -55,13 +55,13 @@ export function AccountShell({
           <Briefcase size={16} />
           Switch to creator
         </Link>
-        <Link
+        <a
           href="/api/account/logout"
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/40 hover:text-white hover:bg-white/10 transition-all"
         >
           <LogOut size={16} />
           Logout
-        </Link>
+        </a>
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/10">
           <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {customer.initials}
