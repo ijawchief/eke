@@ -9,26 +9,33 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get("x-paystack-signature") ?? "";
 
   if (!verifyWebhookSignature(rawBody, signature)) {
+    console.error("[webhook] Signature verification FAILED");
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   const payload = JSON.parse(rawBody);
+  console.log("[webhook] Event received:", payload.event);
   if (payload.event !== "charge.success") {
     return NextResponse.json({ received: true });
   }
 
   const data = payload.data;
   const reference = data.reference;
+  console.log("[webhook] Reference from Paystack:", reference);
   const db = getServiceClient();
 
   // Idempotency check
-  const { data: order } = await db
+  const { data: order, error: orderError } = await db
     .from("order")
     .select("id, status, total_kobo, currency, event_id, attribution, customer_id, paystack_reference")
     .eq("paystack_reference", reference)
     .single();
 
-  if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  if (!order) {
+    console.error("[webhook] Order NOT found for reference:", reference, "| DB error:", orderError);
+    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  }
+  console.log("[webhook] Order found:", order.id, "| Status:", order.status);
   if (order.status === "paid") return NextResponse.json({ received: true });
 
   // Mark paid
