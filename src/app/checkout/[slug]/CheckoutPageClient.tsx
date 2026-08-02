@@ -96,6 +96,8 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
       const openPaystack = () => {
         const handler = window.PaystackPop.setup({
           key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "",
+          email,
+          amount: total,
           access_code,
           callback: () => {
             const url = `/confirmation?order_id=${order_id}&event_id=${event_id}`;
