@@ -93,23 +93,29 @@ export function CheckoutPageClient({ product, bumpProduct, themeColor, thumbnail
       const { access_code, order_id, event_id } = data;
       if (!access_code) throw new Error("Payment could not be initialised — please try again");
 
-      const script = document.createElement("script");
-      script.src = "https://js.paystack.co/v1/inline.js";
-      script.onload = () => {
+      const openPaystack = () => {
         const handler = window.PaystackPop.setup({
           key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "",
           email,
           amount: total,
           access_code,
-          onSuccess: () => {
+          callback: () => {
             const url = `/confirmation?order_id=${order_id}&event_id=${event_id}`;
             try { window.location.replace(url); } catch { window.location.href = url; }
           },
-          onCancel: () => { setLoading(false); },
+          onClose: () => { setLoading(false); },
         });
         handler.openIframe();
       };
-      document.head.appendChild(script);
+
+      if (window.PaystackPop) {
+        openPaystack();
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://js.paystack.co/v1/inline.js";
+        script.onload = openPaystack;
+        document.head.appendChild(script);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);

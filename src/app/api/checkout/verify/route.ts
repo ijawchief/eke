@@ -7,11 +7,20 @@ export async function POST(req: NextRequest) {
   if (!reference) return NextResponse.json({ error: "reference required" }, { status: 400 });
 
   const db = getServiceClient();
-  const { data: order } = await db
+  let { data: order } = await db
     .from("order")
-    .select("id, status, event_id")
+    .select("id, status, event_id, paystack_reference")
     .eq("paystack_reference", reference)
     .single();
+
+  if (!order) {
+    const { data: byId } = await db
+      .from("order")
+      .select("id, status, event_id, paystack_reference")
+      .eq("id", reference)
+      .single();
+    order = byId;
+  }
 
   if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
@@ -20,7 +29,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const tx = await verifyTransaction(reference);
+    const tx = await verifyTransaction(order.paystack_reference);
     return NextResponse.json({ status: tx.status, order_id: order.id, event_id: order.event_id });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 502 });
